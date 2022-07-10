@@ -20,4 +20,8 @@ list:
 
 test:
 	echo Testing the library end to end by requiring it..
-	echo "Storazzo.hi " | irb -Ilib -rstorazzo
+	echo "Storazzo.all_tests " | irb -Ilib -rstorazzo
+	@echo 'OK: ALL TESTS PASSED. #STIKA'
+
+watch-test:
+	watch -c make test
