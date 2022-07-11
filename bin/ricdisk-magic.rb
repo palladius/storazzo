@@ -98,6 +98,11 @@ class RicDisk
   # todo substitute wqith protobuf..
   attr_accessor :name, :description, :ricdisk_file, :local_mountpoint, :wr
 
+  def self.interesting_mount_points(opts={})
+    #https://unix.stackexchange.com/questions/177014/showing-only-interesting-mount-points-filtering-non-interesting-types
+    `mount | grep -Ev 'type (proc|sysfs|tmpfs|devpts|debugfs|rpc_pipefs|nfsd|securityfs|fusectl|devtmpfs) '`.split(/\n+/)
+  end
+
   def initialize(path, ricdisk_file)
     @local_mountpoint = path
     @description = "This is an automated RicDisk description from v.#{VERSION}. Riccardo feel free to edit away with characteristicshs of this device.. Created on #{Time.now}'"
@@ -122,9 +127,9 @@ class RicDisk
 
   # might have other things in the future...
   def find_info_from_mount(path)
-    mount_table = `mount`
+    mount_table_lines = interesting_mount_points()
     mount_line = nil
-    mount_table.split(/\n+/).each do |line|
+    mount_table_lines.each do |line|
       next if line =~ /^map /
       dev, on, mount_path, mode = line.split(/ /)
       if mount_path==path
@@ -232,6 +237,7 @@ class RicDisk
     full_file_path = "#{dir}/#{$stats_file}"
 
     puts("calculate_stats_files(#{white dir}): #{white full_file_path}")
+    puts "TEST1 DIR EXISTS: #{dir} -> #{Dir.directory? dir}"
     Dir.chdir(dir)
     if File.exists?(full_file_path) and ($opts[:force] == false)
       puts "File '#{$stats_file}' exists already." #  - now should see if its too old, like more than 1 week old"
@@ -253,10 +259,16 @@ class RicDisk
   def self.find_active_dirs(base_dirs=nil, also_mountpoints=true)
     base_dirs = $myconf[:media_dirs] if base_dirs.nil? 
     active_dirs = []
-    base_dirs.each do |dir| 
+    base_dirs.each do |ugly_dir| 
       # https://stackoverflow.com/questions/1899072/getting-a-list-of-folders-in-a-directory#:~:text=Dir.chdir(%27/destination_directory%27)%0ADir.glob(%27*%27).select%20%7B%7Cf%7C%20File.directory%3F%20f%7D
+      dir = File.expand_path(ugly_dir)
       begin
         x=[]
+#        puts "TEST2 DIR EXISTS: #{dir} -> #{Dir.exists?(dir)}"
+        unless Dir.exists?(dir)
+          deb "Dir doesnt exist, skipping: #{dir}"
+          next 
+        end
         Dir.chdir(dir) 
         x = Dir.glob('*').select {|f| File.directory? f}
         subdirs = x.map{|subdir|   "#{dir}#{subdir}"}
@@ -275,21 +287,23 @@ class RicDisk
 
     if also_mountpoints
 =begin
-devfs on /dev (devfs, local, nobrowse)
-/dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
-/dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
-/dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
-/dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
-/dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
-/dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
-/dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect)
-map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
-//riccardo@1.0.1.10/video on /Volumes/video (afpfs, nodev, nosuid, mounted by ricc)
-//riccardo@1.0.1.10/photo on /Volumes/photo (afpfs, nodev, nosuid, mounted by ricc)
+  Example output from mount:
+
+  devfs on /dev (devfs, local, nobrowse)
+  /dev/disk3s6 on /System/Volumes/VM (apfs, local, noexec, journaled, noatime, nobrowse)
+  /dev/disk3s2 on /System/Volumes/Preboot (apfs, local, journaled, nobrowse)
+  /dev/disk3s4 on /System/Volumes/Update (apfs, local, journaled, nobrowse)
+  /dev/disk1s2 on /System/Volumes/xarts (apfs, local, noexec, journaled, noatime, nobrowse)
+  /dev/disk1s1 on /System/Volumes/iSCPreboot (apfs, local, journaled, nobrowse)
+  /dev/disk1s3 on /System/Volumes/Hardware (apfs, local, journaled, nobrowse)
+  /dev/disk3s5 on /System/Volumes/Data (apfs, local, journaled, nobrowse, protect)
+  map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
+  //riccardo@1.0.1.10/video on /Volumes/video (afpfs, nodev, nosuid, mounted by ricc)
+  //riccardo@1.0.1.10/photo on /Volumes/photo (afpfs, nodev, nosuid, mounted by ricc)
 =end
         # add directories from current mountpoints...
-        mount_table = `mount`
-        mount_table.split(/\n+/).each{|line|
+        mount_table_lines = interesting_mount_points()
+        mount_table_lines.each{|line|
           next if line =~ /^map /
           dev, on, path, mode = line.split(/ /)
           #puts line
@@ -298,7 +312,7 @@ map auto_home on /System/Volumes/Data/home (autofs, automounted, nobrowse)
         }
       end
       active_dirs.uniq!
-      puts("Found dirs: " + green(active_dirs))
+      puts("find_active_dirs(): found dirs " + green(active_dirs))
       return active_dirs
     end
   
