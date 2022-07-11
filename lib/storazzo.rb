@@ -1,4 +1,4 @@
-# copied from https://guides.rubygems.org/make-your-own-gem/#introduction
+# Inspired from https://guides.rubygems.org/make-your-own-gem/#introduction
 
 #require 'storazzo/colors'
 
