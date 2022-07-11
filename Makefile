@@ -1,6 +1,9 @@
 
 VER = $(shell cat VERSION)
 
+.PHONY: test clean
+
+
 help:
 	cat Makefile
 
