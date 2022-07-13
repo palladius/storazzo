@@ -10,11 +10,14 @@ require 'yaml'
 require 'socket'
 require 'optparse'       # http://ruby.about.com/od/advancedruby/a/optionparser.htm
 
+include Storazzo
+include Storazzo::Colors
+
 #require_relative '../lib/storazzo'
 
 puts "First I need to figure out how to bring in all the libraries in here.."
-puts Storazzo::Main.hi(ARGV[0])
-exit(0)
+puts Storazzo::Main.hi(ARGV.join '::')
+#exit(0)
 ############# ############# ############# ############# ############# ############# ############# ############# 
 
 
@@ -29,10 +32,11 @@ if RUBY_VERSION.split('.')[0] == 1
   exit 2020
 end
 
-$PROG_VER = '0.3'
-$DEBUG    = false
+$PROG_VER = '0.4'
+$DEBUG    = true
 
 HISTORY = <<-BIG_LONG_MULTILINE
+  2022-07-13 v0.4 Now that library has stabilized this kind of works! I can just push gem, update amd include here and work quite well :)
   2022-07-11 v0.3 Ported from private files in GIC into storazzo (open source on gitHub) and cleaned up italian and libs
   2022-07-DD v0.2 Some private stuff on GIC
 BIG_LONG_MULTILINE
@@ -115,7 +119,8 @@ def real_program
   puts "Description: '''#{white $myconf[:description] }'''"
 
 
-  config = RicDiskConfig.auto_sbrodola(ARGV)
+  config = RicDiskConfig.load # auto_sbrodola(ARGV)
+  config.iterate_through_file_list_for_disks(ARGV)
 
   # if ARGV == [] # empty -> ALL
   #   dirs = RicDisk.find_active_dirs()

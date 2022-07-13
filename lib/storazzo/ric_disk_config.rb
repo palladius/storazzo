@@ -9,7 +9,8 @@ module Storazzo
         
         @@default_config_location = "~/.storazzo.yaml" 
         attr_accessor :config, :config_file
-        
+
+public
         def load(config_path=nil, opts={})
             verbose = opts.fetch :verbose, false
 
@@ -63,7 +64,7 @@ module Storazzo
             Storazzo.root + "/etc/storazzo_config.sample.yaml"
         end
 
-        # UGLY CODE, copipasted from binary for ARGV
+        # UGLY CODE, copipasted from binary for ARGV, ex autosbrodola
         def iterate_through_file_list_for_disks(files_list=[])
             if files_list == [] # or files_list.nil?  # empty -> ALL
                 deb "iterate_through_file_list_for_disks(): no args provided"
