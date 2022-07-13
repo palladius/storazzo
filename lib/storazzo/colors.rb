@@ -6,7 +6,7 @@ module Storazzo
 end 
 
 module Storazzo::Colors
-  #class Storazzo::Colors1
+
     PREPEND_ME = "[Storazzo::Colors] "
 
     def deb(s);   puts "#DEB #{gray(s)}" if $DEBUG; end

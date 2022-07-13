@@ -6,45 +6,17 @@
 # placeholder until i make it work..
 # https://guides.rubygems.org/make-your-own-gem/#adding-an-executable
 require 'storazzo'
-#require 'lib/storazzo'
+require 'yaml'
+require 'socket'
+require 'optparse'       # http://ruby.about.com/od/advancedruby/a/optionparser.htm
+
+#require_relative '../lib/storazzo'
+
 puts "First I need to figure out how to bring in all the libraries in here.."
 puts Storazzo::Main.hi(ARGV[0])
 exit(0)
 ############# ############# ############# ############# ############# ############# ############# ############# 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#require 'google/protobuf'
-#require_relative '../etc/protos/out/ricdisk_pb'
-require 'yaml'
-require 'socket'
-require 'optparse'       # http://ruby.about.com/od/advancedruby/a/optionparser.htm
 
 # I believe this is wrong
 #require 'storazzo'
@@ -91,8 +63,8 @@ $myconf = {
     :media_dirs  => %w{ /media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/ /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/ }, 
     :mount_types => %w{ vfat ntfs }, 
 }
-$stats_file = "ricdisk_stats_v11.rds"
-$gcs_bucket = 'palladius'
+$stats_file = "ricdisk_stats_v11.rds" # => RicDiskStatsFile
+$gcs_bucket = 'TODO-CHANGE-CONFIG-palladius'
 
 # This template from scripta.rb. from 2.1.0 removed aby ric gem dependency.
 # 2022-04-26 2.1.1  Added more colors
@@ -142,26 +114,30 @@ def real_program
   puts white("Hello world from #{$myconf[:app_name]}!")
   puts "Description: '''#{white $myconf[:description] }'''"
 
-  if ARGV == [] # empty -> ALL
-    dirs = RicDisk.find_active_dirs()
-    dirs.each {|dir| 
-      RicDisk.sbrodola_ricdisk(dir)
-      RicDisk.calculate_stats_files(dir) # dir is inutile
-    } # TODO refactor in option sbrodola_afterwards=true. :)
-  else
-    deb "I consider ARGV come la lista di directories da parsare :)"
-    dirs = RicDisk.find_active_dirs()
-    ARGV.each{ |dir| 
-      dir = File.expand_path(dir)
-      if dirs.include?(dir)
-        deb "Legit dir: #{green dir}"
-        RicDisk.sbrodola_ricdisk(dir)
-        RicDisk.calculate_stats_files(dir) # dir is inutile
-      else
-        deb "Figghiu ri buttana: doesnt exist #{red dir}" 
-      end
-    }
-  end
+
+  config = RicDiskConfig.auto_sbrodola(ARGV)
+
+  # if ARGV == [] # empty -> ALL
+  #   dirs = RicDisk.find_active_dirs()
+  #   dirs.each {|dir| 
+  #     RicDisk.sbrodola_ricdisk(dir)
+  #     RicDisk.calculate_stats_files(dir) # dir is inutile
+  #   } # TODO refactor in option sbrodola_afterwards=true. :)
+  # else
+  #   deb "I consider ARGV come la lista di directories da parsare :)"
+  #   dirs = RicDisk.find_active_dirs()
+  #   ARGV.each{ |dir| 
+  #     dir = File.expand_path(dir)
+  #     if dirs.include?(dir)
+  #       deb "Legit dir: #{green dir}"
+  #       RicDisk.sbrodola_ricdisk(dir)
+  #       RicDisk.calculate_stats_files(dir) # dir is inutile
+  #     else
+  #       deb "Figghiu ri buttana: doesnt exist #{red dir}" 
+  #     end
+  #   }
+  # end #/if aRGV
+
 end
 
 def main(filename)

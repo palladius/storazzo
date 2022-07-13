@@ -18,11 +18,23 @@ module Storazzo
     def self.version 
         File.read(self.root + '/VERSION').chomp # "10.0.0"
     end
+
+#    alias_method :VERSION, :version 
+    def self.VERSION 
+        version
+    end
 end 
 
+# nice to paste nice output
+require 'pp'
+
+require 'storazzo/common'
 require 'storazzo/colors'
 require 'storazzo/hashify'
-require 'storazzo/ric_disk'
+require 'storazzo/ric_disk'          # NEW and will build from ground up using multiple files..
+require 'storazzo/ric_disk_ugly'     # OLD and 90% working
+require 'storazzo/ric_disk_config'
+require 'storazzo/ric_disk_statsfile'
 require 'storazzo/main'
 require 'storazzo/translator'
 

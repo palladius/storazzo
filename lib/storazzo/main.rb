@@ -29,10 +29,18 @@ module Storazzo
     def self.all_mounts(opts={})
         opts_verbose = opts.fetch :verbose, true 
 
-        self.hi "Storazzo::Main.all_mounts(): BEGIN - RicDiskVersion is: #{Storazzo::RicDisk::RICDISK_VERSION}"
+        self.hi "Storazzo::Main.all_mounts(): BEGIN - RicDiskVersion is: #{Storazzo::RicDiskUgly::RICDISK_VERSION}"
         
+        pwhite("1. First I load the config in verbose mode..")
+        config = Storazzo::RicDiskConfig.instance
+        config.load
+#        puts config.object_id 
+#        puts Storazzo::RicDiskConfig.instance.object_id
         pwhite "TODO(ricc): show a list of all RicDisk relevant mounts" if opts_verbose
+        #d = Storazzo::RicDisk.new 
+        config.iterate_through_file_list_for_disks() # analyze_local_system
         #sbrodola_ricdisk("/Volumes/")
+        Storazzo::RicDisk.test
         Storazzo::RicDisk.find_active_dirs
         #Storazzo::RicDisk.sbrodola_ricdisk StorazzoMod::root + "./var/disks/"
         #sbrodola_ricdisk(StorazzoMod::root + "./var/disks/") rescue "[Storazzo::AllMount] SomeError: #{$!}"

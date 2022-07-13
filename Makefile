@@ -33,9 +33,9 @@ test:
 	make irb-test
 	@echo 'OK: ALL TESTS PASSED. #STIKA'
 
+# RicDisk test
 mounts:
-	echo "Storazzo::Main.all_mounts " | irb -Ilib -rstorazzo
-
+	echo "Storazzo::Main.all_mounts ; nil" | irb -Ilib -rstorazzo
 
 irb:
 	irb -Ilib -rstorazzo
