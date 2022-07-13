@@ -29,6 +29,8 @@ test:
 	#bin/ricdisk-magic Ciao-da-Makefile
 	echo 3. run rake test.. ont configured yet just a memo for the future.
 	RUBYOPT="-W0" rake test
+	echo 4. Prove I can include local gem in irb and play around. Similarly to rails console without reload.  
+	make irb-test
 	@echo 'OK: ALL TESTS PASSED. #STIKA'
 
 mounts:
@@ -37,6 +39,8 @@ mounts:
 
 irb:
 	irb -Ilib -rstorazzo
+irb-test:
+	./irb-test.sh
 
 watch-test:
 	watch -c make test
