@@ -1,2 +1,3 @@
+2022-07-13 0.1.2 RicDisk finally spits out something meaningful and colored.
 2022-07-13 0.1.1 Added Rake test - wow
 2022-07-13 0.1.0 Refactored the Gempec A LOT. Also moved some libraries internally.
