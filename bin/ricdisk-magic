@@ -1,5 +1,45 @@
 #!/usr/bin/env ruby
 
+
+
+############# ############# ############# ############# ############# ############# ############# ############# 
+# placeholder until i make it work..
+# https://guides.rubygems.org/make-your-own-gem/#adding-an-executable
+require 'storazzo'
+#require 'lib/storazzo'
+puts "First I need to figure out how to bring in all the libraries in here.."
+puts Storazzo::Main.hi(ARGV[0])
+exit(0)
+############# ############# ############# ############# ############# ############# ############# ############# 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #require 'google/protobuf'
 #require_relative '../etc/protos/out/ricdisk_pb'
 require 'yaml'
@@ -9,8 +49,8 @@ require 'optparse'       # http://ruby.about.com/od/advancedruby/a/optionparser.
 # I believe this is wrong
 #require 'storazzo'
 # required to have methods wiothout self.
-include 'lib/ric_disk'
-extend Storazzo::Colors
+#include 'lib/ric_disk'
+#extend Storazzo::Colors
 
 if RUBY_VERSION.split('.')[0] == 1
   puts "Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!"
@@ -53,9 +93,6 @@ $myconf = {
 }
 $stats_file = "ricdisk_stats_v11.rds"
 $gcs_bucket = 'palladius'
-
-puts "First I need to figure out how to bring in all the libraries in here.."
-exit(42)
 
 # This template from scripta.rb. from 2.1.0 removed aby ric gem dependency.
 # 2022-04-26 2.1.1  Added more colors

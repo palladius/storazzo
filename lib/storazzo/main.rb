@@ -3,13 +3,27 @@
 # eg from RicDisk.
 
 module Storazzo
+
+  # This is the Main Class - an entrypoint to call the meravilles hidden therein.
+  #
+  # Example:
+  #   >> Storazzo.hi("ciao bello")
+  #   => Hello from Storazzo v0.1.1!
+  #
+  # Arguments:
+  #   message: (String) - optional
+
+
   class Storazzo::Main # Can be same name as Module: https://stackoverflow.com/questions/13261474/ruby-modules-and-classes-same-name-in-structure
     require 'storazzo/colors'
     extend Storazzo::Colors
 
     # version 1.2
-    def self.hi
-      puts "Hello from Storazzo v#{white Storazzo::version rescue "Error: #{$!}"}!"
+    def self.hi(message=nil)
+      str = "Hello from Storazzo v#{white Storazzo::version rescue "Error: #{$!}"}!"
+      str += " Message: '#{yellow message.to_s}'" if message
+      puts str 
+      str 
     end
 
     def self.all_mounts(opts={})

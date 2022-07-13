@@ -1,4 +1,17 @@
-require 'rake'
+#require 'rake'
+
+# from hola: https://guides.rubygems.org/make-your-own-gem/#adding-an-executable
+require "rake/testtask"
+
+Rake::TestTask.new do |t|
+  t.libs << "test"
+  t.verbose = false
+  t.warning = false 
+end
+
+desc "Run tests"
+task default: :test
+
 
 # begin
 #     require 'bundler/setup'
