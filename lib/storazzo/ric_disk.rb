@@ -3,6 +3,15 @@
 module Storazzo
   class Storazzo::RicDisk 
     RICDISK_VERSION = "1.0"
+    DEFAULT_MEDIA_DIRS = %w{ 
+      /media/riccardo/ 
+      /Volumes/ 
+      /mnt/ 
+      ~/git/storazzo/var/test/disks/
+      /wrong/on/purpose/ 
+    }.append(Storazzo.root + "/var/test/disks/")
+
+
     include Hashify
     extend Storazzo::Colors
   
@@ -168,7 +177,7 @@ module Storazzo
     end
   
     def self.find_active_dirs(base_dirs=nil, also_mountpoints=true)
-      base_dirs = $myconf[:media_dirs] if base_dirs.nil? 
+      base_dirs = DEFAULT_MEDIA_DIRS if base_dirs.nil? 
       active_dirs = []
       base_dirs.each do |ugly_dir| 
         # https://stackoverflow.com/questions/1899072/getting-a-list-of-folders-in-a-directory#:~:text=Dir.chdir(%27/destination_directory%27)%0ADir.glob(%27*%27).select%20%7B%7Cf%7C%20File.directory%3F%20f%7D

@@ -27,12 +27,16 @@ module Storazzo
     end
 
     def self.all_mounts(opts={})
-        extend Storazzo::RicDisk
         opts_verbose = opts.fetch :verbose, true 
 
+        self.hi "Storazzo::Main.all_mounts(): BEGIN - RicDiskVersion is: #{Storazzo::RicDisk::RICDISK_VERSION}"
+        
         pwhite "TODO(ricc): show a list of all RicDisk relevant mounts" if opts_verbose
         #sbrodola_ricdisk("/Volumes/")
-        sbrodola_ricdisk(StorazzoMod::root + "./var/disks/") rescue "[Storazzo::AllMount] SomeError: #{$!}"
+        Storazzo::RicDisk.find_active_dirs
+        #Storazzo::RicDisk.sbrodola_ricdisk StorazzoMod::root + "./var/disks/"
+        #sbrodola_ricdisk(StorazzoMod::root + "./var/disks/") rescue "[Storazzo::AllMount] SomeError: #{$!}"
+        self.hi 'Storazzo::Main.all_mounts(): END'
     end
 
     def self.all_tests        
@@ -41,9 +45,8 @@ module Storazzo
         #include Storazzo::Colors
         extend Storazzo::Colors
 
-        pwhite "All tests BEGIN"
+        pwhite "All tests BEGIN - todo obsolete this now that I have proper Rake testing suite..."
         deb "Maybe debug is enabled?"
-        #puts "This is Storazzo v#{StorazzoMod::VERSION}"
         hi 
         # This works with EXTEND..
         puts(yellow "Just YELLOW 0")

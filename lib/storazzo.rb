@@ -16,7 +16,7 @@ module Storazzo
     end
 
     def self.version 
-        File.read('./VERSION').chomp # "10.0.0"
+        File.read(self.root + '/VERSION').chomp # "10.0.0"
     end
 end 
 

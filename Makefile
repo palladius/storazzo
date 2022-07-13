@@ -23,13 +23,17 @@ list:
 
 test:
 	echo 1. Testing the library end to end by requiring it..
-	echo "Storazzo::Main.all_tests " | irb -Ilib -rstorazzo
-	#echo "Storazzo::Main.all_mounts " | irb -Ilib -rstorazzo
+	echo "Storazzo::Main.all_tests "  | irb -Ilib -rstorazzo
+	make mounts
 	#echo 2. Testing ricdisk-magic
 	#bin/ricdisk-magic Ciao-da-Makefile
 	echo 3. run rake test.. ont configured yet just a memo for the future.
 	RUBYOPT="-W0" rake test
 	@echo 'OK: ALL TESTS PASSED. #STIKA'
+
+mounts:
+	echo "Storazzo::Main.all_mounts " | irb -Ilib -rstorazzo
+
 
 irb:
 	irb -Ilib -rstorazzo

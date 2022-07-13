@@ -88,7 +88,7 @@ $myconf = {
         Il tutto condito con un bel protobuf e un'entita che metto in Lib.
     ".strip.gsub(/^\s+/, "").gsub(/\s+$/, ""),
     # TODO move to some class default
-    :media_dirs  => %w{ /media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/test/ /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/ }, 
+    :media_dirs  => %w{ /media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/ /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/ }, 
     :mount_types => %w{ vfat ntfs }, 
 }
 $stats_file = "ricdisk_stats_v11.rds"
