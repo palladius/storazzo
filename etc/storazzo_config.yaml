@@ -1,0 +1,9 @@
+# Sample config file..
+ConfigVersion: 1.0
+StorazzoConfig:
+  AdditionalMountDirs:
+    - /home/riccardo/disks/
+  Backends:
+    GoogleCloudStorage:
+      BucketName: gs://your-bucket-name
+      BucketDir: storazzo/
