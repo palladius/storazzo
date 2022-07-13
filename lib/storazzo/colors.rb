@@ -1,8 +1,12 @@
 # Use EXTEND vs INCLUDE and magically the Class will inherit instead of instance. Magical! :)
 # http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/
 
+module Storazzo 
+    # needs to be defined before
+end 
+
 module Storazzo::Colors
-# class Storazzo::Colors
+  #class Storazzo::Colors1
     PREPEND_ME = "[Storazzo::Colors] "
 
     def deb(s);   puts "#DEB #{gray(s)}" if $DEBUG; end
@@ -38,5 +42,5 @@ module Storazzo::Colors
     def pred(s) puts(red(s)); end
     def pyellow(s) puts(yellow(s)); end
 
-
 end
+#end

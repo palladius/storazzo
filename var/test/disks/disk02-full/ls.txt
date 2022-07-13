@@ -1,0 +1,6 @@
+total 0
+drwxr-xr-x  5 ricc  primarygroup  160 Jul 13 07:18 .
+drwxr-xr-x  4 ricc  primarygroup  128 Jul 13 07:17 ..
+-rw-r--r--  1 ricc  primarygroup    0 Jul 13 07:17 .ricdisk
+-rw-r--r--  1 ricc  primarygroup    0 Jul 13 07:18 fake file.touch
+-rw-r--r--  1 ricc  primarygroup    0 Jul 13 07:18 ls.txt
