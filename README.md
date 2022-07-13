@@ -1,7 +1,7 @@
 
 # storazzo Gem
 
-Storazzo 💎 gem - a Gem to automatically parse your FS for mounts and compute MD5 of all files therein and then collect in central DB through StorazzoApp (TM).
+📦 Storazzo 💎 gem - a Gem to automatically parse your FS for mounts (💽 💾 💿 ) and compute MD5 (🤐) of all files therein and then collect in central DB 🔋 through 📦 StorazzoApp📦 (TM).
 
 # INSTALL
 
@@ -16,3 +16,4 @@ Inspiration from:
 * hola gem awesome guide: https://guides.rubygems.org/make-your-own-gem/
 * RubyGem from DHH: https://github.com/rails/strong_parameters/tree/master/lib for how to trustucre lib/ and gemspec.
 * Stackoverflow and Google for the rest.
+* Elio e le Storie Tese: _Sai chi ti scandisce il disco un casino? Storazzo!_
