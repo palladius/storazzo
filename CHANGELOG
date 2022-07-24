@@ -1,4 +1,6 @@
-2022-07-13 0.2.1 just made public Singleton config methods. So i can try again with binary once updated rubygems. 
+2022-07-24 0.3.0 [MAJOR] renamed hi in say_hi. Also created the AbstractClass and infra for multiple RicDisks.
+2022-07-24 0.2.2 small thing I did this morning and I forgot.
+2022-07-13 0.2.1 just made public Singleton config methods. So i can try again with2022-07-13 0.2.1 just made public Singleton config methods. So i can try again with2022-07-13 0.2.1 just made public Singleton config methods. So i can try again with binary once updated rubygems. 
                  Yup, I really need to learn to load local gem code from binary :)
 2022-07-13 0.2.0 MAJOR refactor
 2022-07-13 0.1.2 RicDisk finally spits out something meaningful and colored.

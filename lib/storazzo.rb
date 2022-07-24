@@ -32,11 +32,15 @@ require 'storazzo/common'
 require 'storazzo/colors'
 require 'storazzo/hashify'
 require 'storazzo/ric_disk'          # NEW and will build from ground up using multiple files..
+#require 'storazzo/ric_disk/asbtract_ric_disk'
+require 'storazzo/media/abstract_ric_disk'
+require 'storazzo/media/gcs_bucket' 
+require 'storazzo/media/local_folder' 
 require 'storazzo/ric_disk_ugly'     # OLD and 90% working
 require 'storazzo/ric_disk_config'
 require 'storazzo/ric_disk_statsfile'
 require 'storazzo/main'
 require 'storazzo/translator'
 
-puts Storazzo::Main.hi 
+#puts Storazzo::Main.say_hi 
 

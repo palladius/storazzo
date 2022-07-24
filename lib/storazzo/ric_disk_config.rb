@@ -1,6 +1,13 @@
 require 'singleton'
 require 'yaml'
 
+=begin
+    This is a singleton class. You call me this way..
+    You call me with:
+
+    Storazzo::RicDiskConfig.instance()
+=end
+
 module Storazzo
     class Storazzo::RicDiskConfig 
         include Singleton
@@ -64,6 +71,16 @@ public
             Storazzo.root + "/etc/storazzo_config.sample.yaml"
         end
 
+
+        # returns all folders from file which are Directories
+        def get_local_folders
+            #return "/etc"
+            config = get_config
+            config['Config']['AdditionalMountDirs'].map{|folder|
+                File.expand_path(folder)
+        }.filter{|f| File.directory?(f)}
+        end
+
         # UGLY CODE, copipasted from binary for ARGV, ex autosbrodola
         def iterate_through_file_list_for_disks(files_list=[])
             if files_list == [] # or files_list.nil?  # empty -> ALL
@@ -90,5 +107,9 @@ public
             end
         end #/iterate_through_file_list_for_disks
         
+
+        def self.get_config 
+            self.instance.get_config
+        end
     end
 end

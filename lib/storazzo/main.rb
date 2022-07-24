@@ -19,7 +19,7 @@ module Storazzo
     extend Storazzo::Colors
 
     # version 1.2
-    def self.hi(message=nil)
+    def self.say_hi(message=nil)
       str = "Hello from Storazzo v#{white Storazzo::version rescue "Error: #{$!}"}!"
       str += " Message: '#{yellow message.to_s}'" if message
       puts str 
@@ -29,7 +29,7 @@ module Storazzo
     def self.all_mounts(opts={})
         opts_verbose = opts.fetch :verbose, true 
 
-        self.hi "Storazzo::Main.all_mounts(): BEGIN - RicDiskVersion is: #{Storazzo::RicDiskUgly::RICDISK_VERSION}"
+        self.say_hi "Storazzo::Main.all_mounts(): BEGIN - RicDiskVersion is: #{Storazzo::RicDiskUgly::RICDISK_VERSION}"
         
         pwhite("1. First I load the config in verbose mode..")
         config = Storazzo::RicDiskConfig.instance
@@ -55,7 +55,7 @@ module Storazzo
 
         pwhite "All tests BEGIN - todo obsolete this now that I have proper Rake testing suite..."
         deb "Maybe debug is enabled?"
-        hi 
+        say_hi 
         # This works with EXTEND..
         puts(yellow "Just YELLOW 0")
         # This reqwuires a INCLUDE.
