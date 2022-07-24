@@ -13,7 +13,7 @@
 
 Inspiration from:
 
-* hola gem awesome guide: https://guides.rubygems.org/make-your-own-gem/
+* `hola` gem awesome guide: https://guides.rubygems.org/make-your-own-gem/
 * RubyGem from DHH: https://github.com/rails/strong_parameters/tree/master/lib for how to trustucre lib/ and gemspec.
 * Stackoverflow and Google for the rest.
 * Elio e le Storie Tese: _Sai chi ti scandisce il disco un casino? Storazzo!_

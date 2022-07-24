@@ -2,4 +2,4 @@
 
 
 # to troubleshoot/debug things
-gem 'rubocop'
+#gem 'rubocop'
