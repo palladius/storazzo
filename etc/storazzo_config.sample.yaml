@@ -10,5 +10,13 @@ Config:
   DefaultFolder: ~/.storazzo/ 
   Backends:
     GoogleCloudStorage:
-      BucketName: gs://your-bucket-name
-      BucketDir: storazzo/
+      # Bad idea to have BucketName and BucketDir
+      # Since you can have both in one :) 
+      #BucketName: gs://palladius-backup/
+      #BucketDir: storazzo/
+      ProjectId: YOUR-PROJECT-ID
+      BucketPaths: 
+      - path: gs://my-local-backup/storazzo/backups/
+        name: My First Backup
+      - path: gs://my-other-bucket/
+        name: My Other Backup

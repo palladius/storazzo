@@ -6,6 +6,9 @@ require 'yaml'
     You call me with:
 
     Storazzo::RicDiskConfig.instance()
+
+    Note that being a Singleton, in Unit Tests it's hard to use the /etc/storazzo_config.sample.yaml instead
+    of the real one - yiikes. How do I fix it? Do I unsingleton it? :) Or do I create TWO singletons? :)
 =end
 
 module Storazzo
@@ -15,6 +18,8 @@ module Storazzo
         include Storazzo::Colors
         
         @@default_config_location = "~/.storazzo.yaml" 
+        @@default_gem_location_for_tests = File.expand_path('../../../', __FILE__) + "/etc/storazzo_config.sample.yaml" 
+        
         attr_accessor :config, :config_file
 
 public
@@ -25,7 +30,8 @@ public
             # trying default location
             possible_locations = [ @@default_config_location , "./.storazzo.yaml"]
             if config_path 
-                possible_locations =possible_locations.append(config_path) 
+                possible_locations = [config_path].append(possible_locations) # .append() 
+                puts "[LOAD] possible_locations: #{possible_locations}"
             end
             puts "[VERBOSE] Searching these paths in order: #{possible_locations}" if verbose
             possible_locations.each do |possible_path|
@@ -46,6 +52,11 @@ public
             raise "No config found across these locations: #{possible_locations}. Consider copying and editing: #{RicDiskConfig.gem_default_config_path}"
 #            @config = 42
 #            puts "[VERBOSE] Storazzo::RicDiskConfig.load(): END " if verbose
+        end
+
+        def load_sample_version
+            puts("Warning! We're destroying the world here. We're taking a Singletong and changing the way it behaves by moving the config file by under her feet. Don't be mad at me if this misbehaves. You saw it coming, my friends. This is why I would NEVER hire you as a Software Developer in my Company.")
+            load(@@default_gem_location_for_tests, :verbose => true )
         end
 
         def config_ver
@@ -79,6 +90,10 @@ public
             config['Config']['AdditionalMountDirs'].map{|folder|
                 File.expand_path(folder)
         }.filter{|f| File.directory?(f)}
+        end
+
+        def get_bucket_paths
+            get_config['Config']['Backends']['GoogleCloudStorage']['BucketPaths'].map{|complex_gcs_struct| complex_gcs_struct['path']}
         end
 
         # UGLY CODE, copipasted from binary for ARGV, ex autosbrodola
