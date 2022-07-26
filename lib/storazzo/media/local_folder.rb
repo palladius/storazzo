@@ -11,7 +11,7 @@ module Storazzo::Media
             
             @local_mountpoint = File.expand_path(local_mount)
             raise "Sorry local mount doesnt exist!" unless File.exist?(@local_mountpoint)
-            @wr = File.writable?("#{path}/#{stats_filename}" ) # .writeable?
+            @wr = File.writable?(stats_filename_default_fullpath) # .writeable? stats_file_smart_fullpath
 
             super.initialize(local_mount) rescue "SUPER_ERROR: #{$!}"
         end
@@ -36,9 +36,11 @@ module Storazzo::Media
             @local_mountpoint
         end
 
-        def self.default_stats_filename 
-            super
+        def writeable?
+            File.writable?(@local_mountpoint)
         end
+
+
         # def stats_filename 
         #     #'42'
         #     self.default_stats_filename 

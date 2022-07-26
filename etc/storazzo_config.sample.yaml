@@ -1,14 +1,21 @@
+################################################################################################
+#                        SAMPLE FILE - copy me and edit me away!
+################################################################################################
 # Sample config file.. This is a distribution file for you to copy and edit away :)
 # TODO put here some nice Kubernetes like thingies so I look intelligent :)
-ConfigVersion: 1.0
+################################################################################################
+#ConfigVersion: 1.1
+kind: StorazzoConfig
+apiVersion: v1alpha1
 Config:
   AdditionalMountDirs:
     - ~/disks/
     - ~/git/storazzo/var/test/disks/
-    - /wrong/on/purpose/ 
+    - /wrong/on/purpose/
     - ~/sbobinamenti/ # Italian for "temporary storage parking" => hence the English "to sbobinate"
   DefaultFolder: ~/.storazzo/ 
   Backends:
+    # Here you get other Cloud Artifacts (S3, ..), Dropbox, OneDrive, GDrive, .. and so on.
     GoogleCloudStorage:
       # Bad idea to have BucketName and BucketDir
       # Since you can have both in one :) 

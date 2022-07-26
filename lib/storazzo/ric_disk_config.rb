@@ -18,32 +18,56 @@ module Storazzo
         include Storazzo::Colors
         
         @@default_config_location = "~/.storazzo.yaml" 
+        @@default_config_locations = [
+            "~/.storazzo.yaml" , # HOME
+            "./.storazzo.yaml" , # LOCAL DIR
+        ]        
+        DefaultConfigLocation = [
+            "~/.storazzo.yaml" , # HOME
+            "./.storazzo.yaml" , # LOCAL DIR
+        ]
         @@default_gem_location_for_tests = File.expand_path('../../../', __FILE__) + "/etc/storazzo_config.sample.yaml" 
         
         attr_accessor :config, :config_file
 
 public
+        # Load from the first valid config.
         def load(config_path=nil, opts={})
             verbose = opts.fetch :verbose, false
 
             puts "[VERBOSE] Storazzo::RicDiskConfig.load(): BEGIN " if verbose
             # trying default location
-            possible_locations = [ @@default_config_location , "./.storazzo.yaml"]
-            if config_path 
-                possible_locations = [config_path].append(possible_locations) # .append() 
-                puts "[LOAD] possible_locations: #{possible_locations}"
+            raise "@@default_config_location is not a string" unless @@default_config_location.is_a?(String)
+            possible_locations = DefaultConfigLocation  #  [ @@default_config_location , "./.storazzo.yaml"]
+            puts "DEB possible_locations: #{possible_locations}"
+            if config_path.is_a?(String) 
+                #possible_locations = [config_path] + possible_locations # .append() 
+                possible_locations = possible_locations.unshift(config_path) # append to front
+                #OR: possible_locations.instert(0, config_path)
+                puts "[LOAD] possible_locations: #{possible_locations}" if verbose
             end
             puts "[VERBOSE] Searching these paths in order: #{possible_locations}" if verbose
+            puts "BUG: This is not always an array of sTRINGS."
+            raise "possible_locations is not an array" unless possible_locations.is_a?(Array)
             possible_locations.each do |possible_path|
-                paz = File.expand_path(possible_path)
-                #puts "DEB paz:#{paz}"
-                if File.exists?(paz) 
+                # ASSERT is a string
+                raise "possible_path is not a string" unless possible_path.is_a?(String)
+                puts "DEB before buggy expand_path paz: '#{possible_path}''"
+                paz = File.expand_path(possible_path) rescue possible_path
+                raise "Not a string: #{paz}" unless paz.is_a?(String)
+                if File.exists?(paz)
                     @config_file = paz 
                     @config = YAML.load(File.read paz) # YAML.load(File.read("file_path"))
+
+                    unless (@config["kind"] == 'StorazzoConfig' rescue false)
+                        puts "RicDiskConfig.load(): Sorry this is wrong Config File. Kind =#{@config["kind"] rescue $!}"
+                        next
+                    end
+                    #
                     #pp @config if verbose
-                    #config_ver = @config[:ConfigVersion]
+                    config_ver = @config["apiVersion"]
                     #puts @config[:ConfigVersion]
-                    puts "Storazzo::RicDiskConfig v#{config_ver} parsed correctly"
+                    puts "OK. Storazzo::RicDiskConfig v#{config_ver} parsed correctly"
                     puts "RicDiskConfig.to_s: #{self}" if verbose
                     return self.config
                 end
@@ -84,11 +108,21 @@ public
 
 
         # returns all folders from file which are Directories
+        # This method is FLAKY! Sometimes gives error.
+#         LocalFolderTest#test_show_all_shouldnt_fail_and_should_return_a_non_empty_array:
+# TypeError: no implicit conversion of Hash into String
+#     /Users/ricc/git/storazzo/lib/storazzo/ric_disk_config.rb:38:in `expand_path'
+#     /Users/ricc/git/storazzo/lib/storazzo/ric_disk_config.rb:38:in `block in load'
+#     /Users/ricc/git/storazzo/lib/storazzo/ric_disk_config.rb:37:in `each'
+#     /Users/ricc/git/storazzo/lib/storazzo/ric_disk_config.rb:37:in `load'
+#     /Users/ricc/git/storazzo/lib/storazzo/ric_disk_config.rb:83:in `get_config'
+#     /Users/ricc/git/storazzo/lib/storazzo/ric_disk_config.rb:95:in `get_local_folders'
         def get_local_folders
             #return "/etc"
             config = get_config
+            #puts config['Config']['AdditionalMountDirs']
             config['Config']['AdditionalMountDirs'].map{|folder|
-                File.expand_path(folder)
+                File.expand_path(folder) rescue folder # TypeError: no implicit conversion of Hash into String
         }.filter{|f| File.directory?(f)}
         end
 
