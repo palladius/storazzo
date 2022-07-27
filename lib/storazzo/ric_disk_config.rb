@@ -17,16 +17,18 @@ module Storazzo
         include Storazzo::Common
         include Storazzo::Colors
         
-        @@default_config_location = "~/.storazzo.yaml" 
-        @@default_config_locations = [
-            "~/.storazzo.yaml" , # HOME
-            "./.storazzo.yaml" , # LOCAL DIR
-        ]        
-        DefaultConfigLocation = [
-            "~/.storazzo.yaml" , # HOME
-            "./.storazzo.yaml" , # LOCAL DIR
+        #@@default_config_location = "~/.storazzo.yaml" 
+        DefaultConfigLocation = File.expand_path "~/.storazzo.yaml" 
+        # @@default_config_locations = [
+        #     "~/.storazzo.yaml" , # HOME
+        #     "./.storazzo.yaml" , # LOCAL DIR
+        # ]        
+        DefaultConfigLocations = [
+            File.expand_path("~/.storazzo.yaml") , # HOME
+            File.expand_path("./.storazzo.yaml") , # LOCAL DIR
         ]
-        @@default_gem_location_for_tests = File.expand_path('../../../', __FILE__) + "/etc/storazzo_config.sample.yaml" 
+        #@@default_gem_location_for_tests
+        DefaultGemLocationForTests = File.expand_path('../../../', __FILE__) + "/etc/storazzo_config.sample.yaml" 
         
         attr_accessor :config, :config_file
 
@@ -37,8 +39,8 @@ public
 
             puts "[VERBOSE] Storazzo::RicDiskConfig.load(): BEGIN " if verbose
             # trying default location
-            raise "@@default_config_location is not a string" unless @@default_config_location.is_a?(String)
-            possible_locations = DefaultConfigLocation  #  [ @@default_config_location , "./.storazzo.yaml"]
+            raise "DefaultConfigLocation is not a string" unless DefaultConfigLocation.is_a?(String)
+            possible_locations = DefaultConfigLocations  #  [ @@default_config_location , "./.storazzo.yaml"]
             puts "DEB possible_locations: #{possible_locations}"
             if config_path.is_a?(String) 
                 #possible_locations = [config_path] + possible_locations # .append() 
@@ -60,7 +62,7 @@ public
                     @config = YAML.load(File.read paz) # YAML.load(File.read("file_path"))
 
                     unless (@config["kind"] == 'StorazzoConfig' rescue false)
-                        puts "RicDiskConfig.load(): Sorry this is wrong Config File. Kind =#{@config["kind"] rescue $!}"
+                        puts white "RicDiskConfig.load(): Sorry this is wrong Config File. Kind=#{@config["kind"] rescue $!}"
                         next
                     end
                     #
@@ -80,7 +82,7 @@ public
 
         def load_sample_version
             puts("Warning! We're destroying the world here. We're taking a Singletong and changing the way it behaves by moving the config file by under her feet. Don't be mad at me if this misbehaves. You saw it coming, my friends. This is why I would NEVER hire you as a Software Developer in my Company.")
-            load(@@default_gem_location_for_tests, :verbose => true )
+            load(DefaultGemLocationForTests, :verbose => true )
         end
 
         def config_ver

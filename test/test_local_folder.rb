@@ -41,15 +41,15 @@ class LocalFolderTest < Minitest::Test
 
         puts yellow("(#{__FILE__}) WEIRD THING: This test is flaky. SKipping for now until I complete the LocalFolder.parse() code")
 
-        # folders = Storazzo::Media::LocalFolder.list_all
+        folders = Storazzo::Media::LocalFolder.list_all
 
-        # test_dir = folders.first
-        # puts "test_first_directory_parsing_actually_works() TestDir: #{test_dir}"
-        # puts "TEST S:M:LF methods: #{folders}"  # methods
-        # disk = Storazzo::Media::LocalFolder.new(test_dir)
-        # stats_file = disk.stats_filename_default_fullpath
-        # puts "stats_file: #{stats_file}"
-        # disk.parse()
+        test_dir = folders.first
+        puts "test_first_directory_parsing_actually_works() TestDir: #{test_dir}"
+        puts yellow "TEST S:M:LF methods: #{folders}"  # methods
+        disk = Storazzo::Media::LocalFolder.new(test_dir)
+        stats_file = disk.stats_filename_default_fullpath
+        puts "stats_file: #{stats_file}"
+        disk.parse()
         # assert(
         #     File.exists?(stats_file),
         #     "parse on LocalFolder should create file '#{stats_file}'"

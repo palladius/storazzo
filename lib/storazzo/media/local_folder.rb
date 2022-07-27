@@ -45,6 +45,9 @@ module Storazzo::Media
         #     #'42'
         #     self.default_stats_filename 
         # end
+        def default_stats_filename
+            '42'
+        end
 
     end
 
