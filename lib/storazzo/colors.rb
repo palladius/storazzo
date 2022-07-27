@@ -1,5 +1,9 @@
 # Use EXTEND vs INCLUDE and magically the Class will inherit instead of instance. Magical! :)
 # http://www.railstips.org/blog/archives/2009/05/15/include-vs-extend-in-ruby/
+# 
+# include Storazzo::Colors 
+# extend Storazzo::Colors 
+# 
 
 module Storazzo 
     # needs to be defined before

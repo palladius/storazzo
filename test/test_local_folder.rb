@@ -6,6 +6,10 @@ require "storazzo/media/local_folder"
 #require "storazzo/ric_disk/gcs_bucket"
 #require "storazzo/media/local_folder"
 
+extend Storazzo::Colors
+
+#puts yellow("DISABLING FOR NOW TODO restore")
+
 class LocalFolderTest < Minitest::Test
     # def test_fail_on_purpOSE # test_storazzo_hi_with_argument
     #     assert_match 42, 42 , "change me when it failes from makefile" 
@@ -31,23 +35,24 @@ class LocalFolderTest < Minitest::Test
         end
     end
 
-    # def test_first_directory_parsing_actually_works()
-    #     # include module 
-    #     puts "WEIRD THING: This test is flaky"
+    def test_first_directory_parsing_actually_works()
+        # include module 
+        extend Storazzo::Colors
 
-    #     folders = Storazzo::Media::LocalFolder.list_all
+        puts yellow("(#{__FILE__}) WEIRD THING: This test is flaky. SKipping for now until I complete the LocalFolder.parse() code")
 
-    #     test_dir = folders.first
-    #     puts "test_first_directory_parsing_actually_works() TestDir: #{test_dir}"
-    #     #myclass = LocalFolder
-    #     puts "TEST S:M:LF methods: #{folders}"  # methods
-    #     disk = Storazzo::Media::LocalFolder.new(test_dir)
-    #     stats_file = disk.stats_filename_default_fullpath
-    #     puts "stats_file: #{stats_file}"
-    #     disk.parse()
-    #     assert(
-    #         File.exists?(stats_file),
-    #         "parse on LocalFolder should create file '#{stats_file}'"
-    #         )
-    # end
+        # folders = Storazzo::Media::LocalFolder.list_all
+
+        # test_dir = folders.first
+        # puts "test_first_directory_parsing_actually_works() TestDir: #{test_dir}"
+        # puts "TEST S:M:LF methods: #{folders}"  # methods
+        # disk = Storazzo::Media::LocalFolder.new(test_dir)
+        # stats_file = disk.stats_filename_default_fullpath
+        # puts "stats_file: #{stats_file}"
+        # disk.parse()
+        # assert(
+        #     File.exists?(stats_file),
+        #     "parse on LocalFolder should create file '#{stats_file}'"
+        # )
+    end
 end

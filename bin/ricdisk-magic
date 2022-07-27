@@ -5,18 +5,25 @@
 ############# ############# ############# ############# ############# ############# ############# ############# 
 # placeholder until i make it work..
 # https://guides.rubygems.org/make-your-own-gem/#adding-an-executable
-require 'storazzo'
+#require 'storazzo'
+#require_relative '../lib/storazzo'
+require 'fileutils'
 require 'yaml'
 require 'socket'
 require 'optparse'       # http://ruby.about.com/od/advancedruby/a/optionparser.htm
 
-include Storazzo
-include Storazzo::Colors
+# Including local gem.
+#puts File.expand_path(FileUtils.pwd, "/../")
+local_gem_path = File.expand_path(FileUtils.pwd, "/../")
+gem 'storazzo', path: local_gem_path
+require 'storazzo'
+#include Storazzo
+#include Storazzo::Colors
 
-#require_relative '../lib/storazzo'
 
 puts "First I need to figure out how to bring in all the libraries in here.."
 puts Storazzo::Main.hi(ARGV.join '::')
+puts Storazzo::RICC_VERSION
 #exit(0)
 ############# ############# ############# ############# ############# ############# ############# ############# 
 
@@ -118,8 +125,9 @@ def real_program
   puts white("Hello world from #{$myconf[:app_name]}!")
   puts "Description: '''#{white $myconf[:description] }'''"
 
-
-  config = RicDiskConfig.load # auto_sbrodola(ARGV)
+  config =     Storazzo::RicDiskConfig.instance()
+  #config.load # auto_sbrodola(ARGV)
+  puts yellow("ARGV: #{ARGV}")
   config.iterate_through_file_list_for_disks(ARGV)
 
   # if ARGV == [] # empty -> ALL

@@ -67,7 +67,7 @@ public
                     #pp @config if verbose
                     config_ver = @config["apiVersion"]
                     #puts @config[:ConfigVersion]
-                    puts "OK. Storazzo::RicDiskConfig v#{config_ver} parsed correctly"
+                    puts white("OK. Storazzo::RicDiskConfig v'#{config_ver}' parsed correctly")
                     puts "RicDiskConfig.to_s: #{self}" if verbose
                     return self.config
                 end
@@ -84,8 +84,8 @@ public
         end
 
         def config_ver
-            #self.
-            @config['ConfigVersion']
+            @config['apiVersion']
+            #config['ConfigVersion']
         end
         def config_default_folder
             #self.
@@ -93,8 +93,9 @@ public
         end
 
         def to_s
-            size =  File.size @config_file 
-            "RicDiskConfig(v#{config_ver}, file=#{ @config_file}) with #{size} bytes" # - config_default_folder=#{self.config_default_folder}"
+            size =  File.size( @config_file )
+            #puts yellow "DEB: #{@config["apiVersion"]}"
+            "RicDiskConfig(ver=#{config_ver}, file=#{config_file}), #{white(size)} bytes" # - config_default_folder=#{self.config_default_folder}"
         end
 
         def get_config(opts={})
@@ -118,7 +119,6 @@ public
 #     /Users/ricc/git/storazzo/lib/storazzo/ric_disk_config.rb:83:in `get_config'
 #     /Users/ricc/git/storazzo/lib/storazzo/ric_disk_config.rb:95:in `get_local_folders'
         def get_local_folders
-            #return "/etc"
             config = get_config
             #puts config['Config']['AdditionalMountDirs']
             config['Config']['AdditionalMountDirs'].map{|folder|
@@ -132,15 +132,16 @@ public
 
         # UGLY CODE, copipasted from binary for ARGV, ex autosbrodola
         def iterate_through_file_list_for_disks(files_list=[])
-            if files_list == [] # or files_list.nil?  # empty -> ALL
-                deb "iterate_through_file_list_for_disks(): no args provided"
-                dirs = RicDisk.find_active_dirs()
-                puts "DEB find_active_dirs: #{green dirs}"
-                dirs.each {|dir| 
-                    RicDisk.write_config_yaml_to_disk(dir)
-                    RicDisk.calculate_stats_files(dir) # dir is inutile
-                } # TODO refactor in option sbrodola_afterwards=true. :)
-            else
+            # I decided i wont accept an emopty list, this is not how you use the gem, you lazy XXX!
+            # if files_list == [] # or files_list.nil?  # empty -> ALL
+            #     deb "iterate_through_file_list_for_disks(): no args provided"
+            #     dirs = RicDisk.find_active_dirs()
+            #     puts "DEB find_active_dirs: #{green dirs}"
+            #     dirs.each {|dir| 
+            #         RicDisk.write_config_yaml_to_disk(dir)
+            #         RicDisk.calculate_stats_files(dir) # dir is inutile
+            #     } # TODO refactor in option sbrodola_afterwards=true. :)
+            # else
                 deb "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)"
                 dirs = RicDisk.find_active_dirs()
                 files_list.each do |dir| 
@@ -153,7 +154,7 @@ public
                         deb "Figghiu ri buttana: doesnt exist #{red dir}" 
                     end
                 end
-            end
+            #end
         end #/iterate_through_file_list_for_disks
         
 

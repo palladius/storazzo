@@ -3,3 +3,4 @@
 
 # to troubleshoot/debug things
 #gem 'rubocop'
+gem 'rake'

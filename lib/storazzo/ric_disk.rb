@@ -121,11 +121,12 @@ module Storazzo
             deb "Dir doesnt exist, skipping: #{dir}"
             next 
           end
-          Dir.chdir(dir) 
+          Dir.chdir(dir)
           x = Dir.glob('*').select {|f| File.directory? f}
           subdirs = x.map{|subdir|   "#{dir}#{subdir}"}
           subdirs.each{|subdir| 
-            #puts `ls -al "#{subdir}"`
+            puts "DEB Subdir: #{subdir}"
+            puts `ls -al "#{subdir}"`
             active_dirs << subdir if ok_dir? # self.ok_dir?(subdir)
           }
           #puts(white x)
