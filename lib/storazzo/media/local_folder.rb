@@ -40,13 +40,9 @@ module Storazzo::Media
             File.writable?(@local_mountpoint)
         end
 
-
-        # def stats_filename 
-        #     #'42'
-        #     self.default_stats_filename 
-        # end
         def default_stats_filename
-            '42'
+            #'42'
+            Storazzo::RicDiskStatsFile.default_name
         end
 
     end

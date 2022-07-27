@@ -11,7 +11,8 @@ module Storazzo
         class << self 
             attr_accessor :default_name, :version
         end
-        
+
+    public
         def self.default_name
              DefaultName
         end

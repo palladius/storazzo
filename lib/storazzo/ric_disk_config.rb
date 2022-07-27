@@ -76,7 +76,6 @@ public
             end
             # only get here if nothing is found
             raise "No config found across these locations: #{possible_locations}. Consider copying and editing: #{RicDiskConfig.gem_default_config_path}"
-#            @config = 42
 #            puts "[VERBOSE] Storazzo::RicDiskConfig.load(): END " if verbose
         end
 
