@@ -14,17 +14,18 @@ require 'optparse'       # http://ruby.about.com/od/advancedruby/a/optionparser.
 
 # Including local gem.
 #puts File.expand_path(FileUtils.pwd, "/../")
-local_gem_path = File.expand_path(FileUtils.pwd, "/../")
-gem 'storazzo', path: local_gem_path
+#local_gem_path = File.expand_path(FileUtils.pwd, "/../")
+#gem 'storazzo', path: local_gem_path
 require 'storazzo'
 #include Storazzo
 #include Storazzo::Colors
+extend Storazzo::Colors
+
 
 
 puts "First I need to figure out how to bring in all the libraries in here.."
-puts Storazzo::Main.hi(ARGV.join '::')
-puts Storazzo::RICC_VERSION
-#exit(0)
+Storazzo::Main.say_hi("ARGV is: #{ ARGV.join ', '}")
+puts Storazzo.version
 ############# ############# ############# ############# ############# ############# ############# ############# 
 
 
@@ -40,7 +41,9 @@ if RUBY_VERSION.split('.')[0] == 1
 end
 
 $PROG_VER = '0.4'
-$DEBUG    = true
+$DEBUG    = ENV['DEBUG'] == 'true'  # (true/false)
+# p ENV['DEBUG']
+# p $DEBUG
 
 HISTORY = <<-BIG_LONG_MULTILINE
   2022-07-13 v0.4 Now that library has stabilized this kind of works! I can just push gem, update amd include here and work quite well :)
@@ -126,6 +129,7 @@ def real_program
   puts "Description: '''#{white $myconf[:description] }'''"
 
   config =     Storazzo::RicDiskConfig.instance()
+  puts "StorazzoConfig: #{config}"
   #config.load # auto_sbrodola(ARGV)
   puts yellow("ARGV: #{ARGV}")
   config.iterate_through_file_list_for_disks(ARGV)
@@ -154,6 +158,7 @@ def real_program
 end
 
 def main(filename)
+  puts "$DEBUG is #{$DEBUG }. Tu turn on, call me with -d"
   deb "I'm called by #{white filename}"
   deb "HISTORY: #{gray HISTORY}"
   #deb "To remove this shit, just set $DEBUG=false :)"

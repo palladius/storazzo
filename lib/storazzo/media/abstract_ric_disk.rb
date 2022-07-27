@@ -84,9 +84,6 @@ module Storazzo::Media
                 raise "Unknown Storazzo::RicDiskStatsFile.default_name  1!!" if Storazzo::RicDiskStatsFile.default_name.nil?
                 Storazzo::RicDiskStatsFile.default_name
             end
-            # def default_stats_filename
-            #     self.default_stats_filename
-            # end
 
             def stats_filename_default_fullpath # if not writeable we need to pick another from stats_file_smart_fullpath()
                 # REDUNDANT, should use stats_file_smart_fullpath instead except on the writeable? part since it would go recursive otherwise.

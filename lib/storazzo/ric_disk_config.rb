@@ -94,7 +94,7 @@ public
         end
 
         def to_s
-            size =  File.size( @config_file )
+            size = File.size(@config_file) rescue -1
             #puts yellow "DEB: #{@config["apiVersion"]}"
             "RicDiskConfig(ver=#{config_ver}, file=#{config_file}), #{white(size)} bytes" # - config_default_folder=#{self.config_default_folder}"
         end
@@ -144,15 +144,17 @@ public
             #     } # TODO refactor in option sbrodola_afterwards=true. :)
             # else
                 deb "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)"
-                dirs = RicDisk.find_active_dirs()
+                #dirs = RicDisk.find_active_dirs()
                 files_list.each do |dir| 
                     dir = File.expand_path(dir)
-                    if dirs.include?(dir)
-                        deb "Legit dir: #{green dir}"
+                    if File.directory?(dir)
+                    #if dirs.include?(dir)
+                        deb "iterate_through_file_list_for_disks() Legit dir: #{green dir}"
                         RicDisk.write_config_yaml_to_disk(dir)
                         RicDisk.calculate_stats_files(dir) # dir is inutile
                     else
-                        deb "Figghiu ri buttana: doesnt exist #{red dir}" 
+                        deb red("Doesnt seem a legit dir to me.")
+                    #     deb "Figghiu ri buttana: doesnt exist #{red dir}" 
                     end
                 end
             #end
