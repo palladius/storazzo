@@ -183,6 +183,10 @@ public
                 end
             #end
         end #/iterate_through_file_list_for_disks
+
+        def config_hash 
+            config['Config']
+        end
         
 
         def self.get_config 
