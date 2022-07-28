@@ -1,11 +1,11 @@
-# require "minitest/autorun"
-# require "storazzo"
+require "minitest/autorun"
+require "storazzo"
 
-# class StorazzoTest < Minitest::Test
-#     def test_storazzo_hi_with_argument
-#         assert_match "Hello from Storazzo", Storazzo::Main.say_hi("ruby this should fail")
-#         assert_match "ruby this should fail", Storazzo::Main.say_hi("ruby this should fail")
-#     end
+class StorazzoTest < Minitest::Test
+    def test_storazzo_hi_with_argument
+        assert_match "Hello from Storazzo", Storazzo::Main.say_hi("ruby this should fail")
+        assert_match "ruby this should fail", Storazzo::Main.say_hi("ruby this should fail")
+    end
 #     def test_storazzo_hi_without_argument
 #         assert_match "Hello from Storazzo", Storazzo::Main.say_hi()
 #     end
@@ -30,5 +30,5 @@
 # #   def test_spanish_hello
 # #     assert_equal "hola mundo",
 # #       Hola.hi("spanish")
-# #   end
-# end
+#   end
+end

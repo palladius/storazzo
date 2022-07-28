@@ -16,7 +16,8 @@ module Storazzo
 
     # in order of finding, so the first will be the one we actually READ and use. I could looknat the date but cmon...
     # These are the files I do accept.
-    ConfigFiles = %W{ ricdisk.yaml .ricdisk  } 
+    ConfigFiles = %W{ ricdisk.yaml .ricdisk storazzo.yaml } 
+    DefaultConfigFile = "storazzo.yaml" # .ricdisk } 
     RicdiskVersion = '2.0'
     DefaultGemfileTestDiskFolder = Storazzo.root + "/var/test/disks/" # was: @@default_gemfile_test_disks_folder
     # Immutable
@@ -39,6 +40,7 @@ module Storazzo
     def initialize(path, opts={})
       deb "RicDisk initialize.. path=#{path}"
 #      @local_mountpoint = path
+      ##@ricdisk_file = "[initialize] Getting there.." # somewhre its not working
       @local_mountpoint = File.expand_path(path)
       @description = "This is an automated RicDisk description from v.#{RicdiskVersion}. Created on #{Time.now}'"
       @ricdisk_version = RicdiskVersion
@@ -97,8 +99,10 @@ module Storazzo
     def writeable?() 
       return @wr unless @wr.nil? 
       # Otherwise I can do an EXPENSIVE calculation
-      puts "TODO(ricc): Do expensive calculation if this FS is writeable: #{path}"
-      @wr = File.writable?(File.expand_path(@ricdisk_file)) # rescue false
+      puts yellow("TODO(ricc): Do expensive calculation if this FS is writeable: #{path}")
+      #@wr = File.writable?(File.expand_path(@ricdisk_file)) # rescue false
+      raise "for some reason an important info (ricdisk_file='#{absolute_path}') is missing!" if ricdisk_file.nil?
+      @wr = File.writable?(absolute_path) # rescue false
       return @wr
       #:boh_todo_fix_me_and_compute
       #false
@@ -123,9 +127,9 @@ module Storazzo
     end
 
     def absolute_path
-      @local_mountpoint + "/" +  @ricdisk_file
+      #@local_mountpoint + "/" +  @ricdisk_file
+      "#{local_mountpoint}/#{ricdisk_file}"
     end
-
   
     def self.find_active_dirs(base_dirs=nil, also_mountpoints=true)
       if base_dirs.nil?
@@ -172,8 +176,25 @@ module Storazzo
         #return ".ricdisk" if File.exist?("#{path}/.ricdisk") # and File.empty?( "#{path}/.ricdisk")
         return papable_config_filename if File.exist?("#{path}/#{papable_config_filename}") # and File.empty?( "#{path}/.ricdisk")
       end
-      return nil
+      deb "File not found! Neither #{ConfigFiles} exist.."
+#      return nil
+      return DefaultConfigFile
     end
+
+
+    # def self.compute_ricdisk_file_by_path_once(path)
+    #   # unless @ricdisk_file.nil?
+    #   #   deb "[CACHE HIT] ricdisk_file (didnt have to recompute it - yay!)"
+    #   #   return @ricdisk_file
+    #   # end
+    #   warn "RICC_WARNING This requires cmputation I wanna do it almost once"
+    #   ConfigFiles.each do |papable_config_filename|
+    #     #return ".ricdisk.yaml" if File.exist?("#{path}/.ricdisk.yaml") #and File.empty?( "#{path}/.ricdisk.yaml")
+    #     #return ".ricdisk" if File.exist?("#{path}/.ricdisk") # and File.empty?( "#{path}/.ricdisk")
+    #     return papable_config_filename if File.exist?("#{path}/#{papable_config_filename}") # and File.empty?( "#{path}/.ricdisk")
+    #   end
+    #   return nil
+    # end
 
     
     # # new

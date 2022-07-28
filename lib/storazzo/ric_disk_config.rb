@@ -41,7 +41,7 @@ public
             verbose = opts.fetch :verbose, false
 
             if already_loaded? # and not self.config.nil?
-                puts "[#{self.class}] load: already loaded"
+                puts "[#{self.class}] VERBOSE load: already loaded" if verbose
                 return self.config
             end
 

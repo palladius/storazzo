@@ -21,7 +21,7 @@ module Storazzo
 
         public
         def load # _sample_version
-            puts white("[RicDiskSampleConfig] Wheew 1! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
+            deb("[RicDiskSampleConfig] Wheew 1! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
 #            super.load DefaultGemLocationForTests #super.load(DefaultGemLocationForTests, :verbose => true )
             super(DefaultGemLocationForTests, :verbose => false )
         end
