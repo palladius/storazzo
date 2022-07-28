@@ -12,6 +12,9 @@ require 'yaml'
 =end
 
 module Storazzo
+    # class Storazzo::Blah
+    # end
+
     class Storazzo::RicDiskConfig
         include Singleton
         include Storazzo::Common
@@ -81,11 +84,11 @@ public
         end
 
         # Obsolete, call another class instead.
-        # def load_sample_version
+        def load_sample_version
         #     puts("Warning! We're destroying the world here. We're taking a Singletong and changing the way it behaves by moving the config file by under her feet. Don't be mad at me if this misbehaves. You saw it coming, my friends. This is why I would NEVER hire you as a Software Developer in my Company.")
-        #     raise "DEPRECATED! USE SampleRicDiskConfig.load() instead!"
+             raise "DEPRECATED! USE SampleRicDiskConfig.load() instead!"
         #     load(DefaultGemLocationForTests, :verbose => true )
-        # end
+        end
 
         def config_ver
             raise "I cant compute Version since I cant compute @config. Are you sure you didnt instance this Singleton without calling load?" unless @config
@@ -100,7 +103,8 @@ public
         def to_s
             size = File.size(@config_file) rescue -1
             #puts yellow "DEB: #{@config["apiVersion"]}"
-            "RicDiskConfig(ver=#{config_ver}, file=#{config_file}), #{white(size)} bytes" # - config_default_folder=#{self.config_default_folder}"
+            #"RicDiskConfig(ver=#{config_ver}, file=#{config_file}), #{white(size)} bytes" # - config_default_folder=#{self.config_default_folder}"
+            "POLY_#{self.class}_(ver=#{config_ver}, file=#{config_file}), #{white(size)} bytes" # - config_default_folder=#{self.config_default_folder}"
         end
 
         def get_config(opts={})
@@ -182,6 +186,29 @@ public
 
     # end
 
+    puts "[REMOVEME]1 Storazzo::RicDiskConfig was read"
 
+#end # module Storazzo
+
+puts "[REMOVEME]2 Storazzo::RicDiskConfig was read"
+
+
+
+#module Storazzo
+    
+    # ric_disk_sample_config
+    #class Pincopallo # Storazzo::Blah #RicDiskSampleConfig #  < Storazzo::RicDiskConfig
+    class Storazzo::Pincopallo # RicDiskSampleConfig
+
+    #include Singleton
+    # public
+    #     def load # _sample_version
+    #         puts white("Wheew! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
+    #         super.load(DefaultGemLocationForTests, :verbose => true )
+    #     end
+    end
+
+    puts "[REMOVEME]1 Storazzo::RicDiskSampleConfig was read"
 end # module Storazzo
 
+puts "[REMOVEME]2 Storazzo::RicDiskSampleConfig was read"

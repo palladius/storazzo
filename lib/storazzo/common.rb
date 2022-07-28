@@ -1,5 +1,9 @@
 # Ric common stuff! :)
-
+#
+#
+# Usage:
+#      include Storazzo::Common 
+#
 require_relative 'colors'
 
 module Storazzo::Common 

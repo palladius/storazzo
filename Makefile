@@ -47,3 +47,6 @@ irb-test:
 
 watch-test:
 	watch -c make test
+
+test-gcs-bucket:
+	ruby -I test test/test_gcs_bucket.rb

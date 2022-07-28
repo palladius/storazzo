@@ -1,6 +1,5 @@
 # Inspired from https://guides.rubygems.org/make-your-own-gem/#introduction
 
-
 module Storazzo
     #VERSION = File.read('./VERSION').chomp # "10.0.0"
     #require 'storazzo/translator'
@@ -23,10 +22,16 @@ module Storazzo
     def self.VERSION 
         version
     end
+
+    def self.storazzo_classes
+        [42, 43]
+    end
 end 
 
 # nice to paste nice output
 require 'pp'
+
+require 'storazzo/ric_disk_sample_config'  # => NOTHING!!
 
 require 'storazzo/common'
 require 'storazzo/colors'
@@ -37,11 +42,9 @@ require 'storazzo/media/abstract_ric_disk'
 require 'storazzo/media/gcs_bucket' 
 require 'storazzo/media/local_folder' 
 require 'storazzo/ric_disk_ugly'     # OLD and 90% working
-require 'storazzo/ric_disk_config'
-require 'storazzo/ric_disk_sample_config'
+require 'storazzo/ric_disk_config'         # => RicDiskConfif
 require 'storazzo/ric_disk_statsfile'
 require 'storazzo/main'
 require 'storazzo/translator'
 
 #puts Storazzo::Main.say_hi 
-
