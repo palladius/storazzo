@@ -31,8 +31,7 @@ end
 # nice to paste nice output
 require 'pp'
 
-require 'storazzo/ric_disk_sample_config'  # => NOTHING!!
-
+require 'storazzo'
 require 'storazzo/common'
 require 'storazzo/colors'
 require 'storazzo/hashify'
@@ -43,6 +42,8 @@ require 'storazzo/media/gcs_bucket'
 require 'storazzo/media/local_folder' 
 require 'storazzo/ric_disk_ugly'     # OLD and 90% working
 require 'storazzo/ric_disk_config'         # => RicDiskConfif
+require 'storazzo/ric_disk_sample_config'   # => NOTHING!!
+require 'storazzo/ric_disk_config_example'  # => NEW!!!
 require 'storazzo/ric_disk_statsfile'
 require 'storazzo/main'
 require 'storazzo/translator'

@@ -1,6 +1,11 @@
-#require "storazzo/ric_disk_sample_config"
 require "minitest/autorun"
 require "storazzo"
+require "storazzo/ric_disk"
+require "storazzo/ric_disk_config"
+require 'storazzo/colors'
+require "storazzo/media/local_folder"
+require "storazzo/ric_disk_config_example"
+
 #require "storazzo/ric_disk_config"
 #require "storazzo/ric_disk_sample_config"
 #require 'storazzo/ric_disk_sample_config'  # => NOTHING!!
@@ -34,10 +39,11 @@ class GcsBucketTest < Minitest::Test
     end
 
     def test_import 
-        require "storazzo/ric_disk_sample_config"
+        require "storazzo/ric_disk_sample_config" rescue nil
+        require "storazzo/ric_disk_config"
 
         #puts Storazzo.class
-        deb Storazzo.constants
+        puts Storazzo.constants
         #puts Storazzo::RicDiskSampleConfig
         config_obj = Storazzo::RicDiskSampleConfig.instance()
         puts config_obj

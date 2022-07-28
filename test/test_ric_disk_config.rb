@@ -8,11 +8,14 @@
 require "minitest/autorun"
 require "storazzo"
 #require "storazzo/ric_disk_config"
-require "storazzo/ric_disk_sample_config"
+#require "storazzo/ric_disk_sample_config"
+#require "storazzo/ric_disk_config_example"
 
 # require "storazzo/media/local_folder"
 #require "storazzo/ric_disk/gcs_bucket"
 #require "storazzo/media/local_folder"
+
+puts :TODO
 
 class RicDiskConfigTest < Minitest::Test
 

@@ -17,6 +17,8 @@ install:
 
 push-to-rubygems: build-local test
 	gem push ./storazzo-$(VER).gem
+push-to-rubygems-without-tests: build-local 
+	gem push ./storazzo-$(VER).gem
 
 list:
 	gem list -r storazzo
