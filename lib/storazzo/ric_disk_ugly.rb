@@ -1,4 +1,4 @@
-
+# TODO remove this! Ugly code to just borrow and cleanup a bit,
 
 module Storazzo
   class Storazzo::RicDiskUgly

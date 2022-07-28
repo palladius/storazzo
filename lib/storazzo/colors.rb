@@ -13,7 +13,8 @@ module Storazzo::Colors
 
     PREPEND_ME = "[Storazzo::Colors] "
 
-    def deb(s);   puts "#DEB #{gray(s)}" if $DEBUG; end
+
+    def deb2(s);   puts "#DEB_OBSOLETE #{gray(s)} [include Storazzo::Common instead]" if $DEBUG; end # Use the Common instead
 
     # colors 16
     def yellow(s)  "\033[1;33m#{s}\033[0m" ; end

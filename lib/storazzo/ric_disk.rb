@@ -1,27 +1,33 @@
 # A RicDisk wraps a local mount/disk/folder
 # it's considered interesting if there's a ".ricdisk/.ricdisk"
 
+require 'digest'
+
 module Storazzo
   class Storazzo::RicDisk 
 
     include Hashify
+    include Storazzo::Common 
     extend Storazzo::Colors
 
  
       ## Instance variables
 
     # in order of finding, so the first will be the one we actually READ and use. I could looknat the date but cmon...
-    @@config_files = %W{ ricdisk.yaml .ricdisk  } 
-    @@ricdisk_version = '2.0'
-    @@default_gemfile_test_disks_folder = Storazzo.root + "/var/test/disks/"
+    # These are the files I do accept.
+    ConfigFiles = %W{ ricdisk.yaml .ricdisk  } 
+    RicdiskVersion = '2.0'
+    DefaultGemfileTestDiskFolder = Storazzo.root + "/var/test/disks/" # was: @@default_gemfile_test_disks_folder
     # Immutable
-    DEFAULT_MEDIA_FOLDERS = %w{ 
+    DefaultMediaFolders = %w{ 
        /Volumes/ 
        /mnt/ 
-     }.append(@@default_gemfile_test_disks_folder ).append("/media/#{ENV["USER"]}/" )
+     }.append(DefaultGemfileTestDiskFolder ).append("/media/#{ENV["USER"]}/" )
 
      #     # todo substitute with protobuf..
-    attr_accessor :name, :description, :ricdisk_file, :local_mountpoint, :wr, :path, :ricdisk_file_empty, :size, :active_dirs
+    attr_accessor :name, :description, :ricdisk_file,:ricdisk_file_full, :local_mountpoint, :wr, :path, 
+                  :ricdisk_file_empty, :size, :active_dirs, :ricdisk_version, 
+                  :unique_hash # new 202207
 
 
   ################################
@@ -30,36 +36,41 @@ module Storazzo
 
 
     def initialize(path, opts={})
-      puts "[DEB] RicDisk initialize.. path=#{path}"
-      @local_mountpoint = path
-      @description = "This is an automated RicDisk description from v.#{@@ricdisk_version}. Created on #{Time.now}'"
-      @ricdisk_version = @@ricdisk_version
-      #@ricdisk_file = ricdisk_file
-      @ricdisk_file = RicDisk.get_ricdisk_file(path)
+      deb "RicDisk initialize.. path=#{path}"
+#      @local_mountpoint = path
+      @local_mountpoint = File.expand_path(path)
+      @description = "This is an automated RicDisk description from v.#{RicdiskVersion}. Created on #{Time.now}'"
+      @ricdisk_version = RicdiskVersion
+      @ricdisk_file = compute_ricdisk_file() # Storazzo::RicDisk.get_ricdisk_file(path)
+      @ricdisk_file_full = "#{@local_mountpoint}/#{@ricdisk_file}"
       @ricdisk_file_empty = ricdisk_file_empty?
       @label = path.split("/").last
       @name = path.split("/").last
       #@wr = File.writable?("#{path}/#{ricdisk_file}" ) # .writeable?
+      #@wr = writeable?
       @tags = ['ricdisk', 'storazzo']
       @size = `du -s '#{path}'`.split(/\s/)[0] # self.size
-      puts :beleza
+      @unique_hash = "MD5::" + Digest::MD5.hexdigest(File.expand_path(path)) #   hash = Digest::MD5.hexdigest(File.expand_path(get_local_mountpoint))
+      @computation_hostname = Socket.gethostname
       # @config = RicDiskConfig.instance.get_config
       # #puts @config if @config
       # find_info_from_mount(path)
+      deb "RicDisk initialize. to_s: #{self}"
       # find_info_from_df()
     end
 
     def ricdisk_file_empty?()
-      File.empty?( "#{local_mountpoint}/#.ricdisk.yaml")
+      #      File.empty?("#{local_mountpoint}/.ricdisk.yaml")
+      File.empty?(compute_ricdisk_file) # was (get_ricdisk_file)
     end
 
     def ok_dir?
-      not @ricdisk_file.nil?
+      not ricdisk_file.nil?
     end
 
 
     def analyze_local_system()
-      puts :TODO 
+      puts "TODO This should analyzze the WHOLE system. TODO(ricc): move to another object which has to do with the system/computer."
       puts "1. Interesting Mounts: #{green interesting_mount_points}"
       puts "2. Sbrodoling everything: :TODO"
       # find_info_from_mount(path)
@@ -71,7 +82,7 @@ module Storazzo
     end
 
     def to_s 
-      "RicDisk(paz=#{path}, writeable=#{writeable?}, size=#{size}B)"
+      "RicDisk(paz=#{path}, r/w=#{writeable?}, size=#{size}B, f=#{ricdisk_file}, v#{ricdisk_version})"
     end
 
     # could take long..
@@ -80,7 +91,13 @@ module Storazzo
     # end
 
     def writeable?() 
-      :boh 
+      return @wr unless @wr.nil? 
+      # Otherwise I can do an EXPENSIVE calculation
+      deb "TODO(ricc): Do expensive caluylation if this FS is writeable: #{path}"
+      wr = File.writable?(ricdisk_file)
+      wr
+      #:boh_todo_fix_me_and_compute
+      #false
     end
 
   ################################
@@ -90,19 +107,20 @@ module Storazzo
 
     # All places where to find for something :)
     def self.default_media_folders
-      DEFAULT_MEDIA_FOLDERS
+      DefaultMediaFolders # was DEFAULT_MEDIA_FOLDERS
     end
 
 
     def self.test # _localgem_disks
-      d = RicDisk.new( @@default_gemfile_test_disks_folder)
+      d = RicDisk.new( DefaultGemfileTestDiskFolder)
       puts (d)
       puts "do something with it: #{d}"
       #d.find_active_dirs()
     end
 
-
-
+    def absolute_path
+      @local_mountpoint + "/" +  @ricdisk_file
+    end
 
   
     def self.find_active_dirs(base_dirs=nil, also_mountpoints=true)
@@ -139,12 +157,33 @@ module Storazzo
       end
     end
 
+    def compute_ricdisk_file()
+      unless @ricdisk_file.nil?
+        deb "[CACHE HIT] ricdisk_file (didnt have to recompute it - yay!)"
+        return @ricdisk_file
+      end
+      warn "RICC_WARNING This requires cmputation I wanna do it almost once"
+      ConfigFiles.each do |papable_config_filename|
+        #return ".ricdisk.yaml" if File.exist?("#{path}/.ricdisk.yaml") #and File.empty?( "#{path}/.ricdisk.yaml")
+        #return ".ricdisk" if File.exist?("#{path}/.ricdisk") # and File.empty?( "#{path}/.ricdisk")
+        return papable_config_filename if File.exist?("#{path}/#{papable_config_filename}") # and File.empty?( "#{path}/.ricdisk")
+      end
+      return nil
+    end
+
     
     # new
-    def self.get_ricdisk_file(path)
-      puts "RICC_WARNING TODO use @@config_files instead"
-      return ".ricdisk.yaml" if File.exist?("#{path}/.ricdisk.yaml") #and File.empty?( "#{path}/.ricdisk.yaml")
-      return ".ricdisk" if File.exist?("#{path}/.ricdisk") # and File.empty?( "#{path}/.ricdisk")
+    def self.get_ricdisk_file_obsolete(path)
+      if @ricdisk_file
+        puts "[CACHE HIT] ricdisk_file"
+        return @ricdisk_file
+      end
+      puts "RICC_WARNING This requires cmputation I wanna do it almost once"
+      ConfigFiles.each do |papable_config_filename|
+        #return ".ricdisk.yaml" if File.exist?("#{path}/.ricdisk.yaml") #and File.empty?( "#{path}/.ricdisk.yaml")
+        #return ".ricdisk" if File.exist?("#{path}/.ricdisk") # and File.empty?( "#{path}/.ricdisk")
+        return papable_config_filename if File.exist?("#{path}/#{papable_config_filename}") # and File.empty?( "#{path}/.ricdisk")
+      end
       return nil
     end
 
@@ -167,35 +206,51 @@ module Storazzo
 
 
     # FORMER SBRODOLA, now write_config_yaml_to_disk
-    def self.write_config_yaml_to_disk(subdir) # sbrodola_ricdisk(subdir)
+    #def self.write_config_yaml_to_disk(subdir, opts={}) # sbrodola_ricdisk(subdir)
+    def write_config_yaml_to_disk(subdir, opts={}) # sbrodola_ricdisk(subdir)
       # given a path, if .ricdisk exists i do stuff with it..
       disk_info = nil
-      unless self.ok_dir?(subdir)
-        puts("Nothing for me here: '#{subdir}'. Existing")
+      unless ok_dir? # self.ok_dir?(subdir)
+        puts("[write_config_yaml_to_disk] Nothing for me here: '#{subdir}'. Existing")
         return 
       end
-      if File.exists?( "#{subdir}/.ricdisk") and File.empty?( "#{subdir}/.ricdisk")
-        deb("Interesting1. Empty file! Now I write YAML with it.")
-        disk_info = RicDisk.new(subdir, '.ricdisk')
-      end
-      if File.exists?( "#{subdir}/.ricdisk.yaml") and File.empty?( "#{subdir}/.ricdisk.yaml")
-        deb("Interesting2. Empty file! TODO write YAML with it.")
-        disk_info = RicDisk.new(subdir, '.ricdisk.yaml')
-        puts(yellow disk_info.to_yaml)
-      end
-      if disk_info
-        if File.empty?(disk_info.ricdisk_absolute_path) and (disk_info.wr)
-          puts(green("yay, we can now write the file '#{disk_info.ricdisk_absolute_path}' (which is R/W, I just checked!) with proper YAML content.."))
-          ret = File.write(disk_info.ricdisk_absolute_path, disk_info.to_yaml)
-          puts("Written file! ret=#{ret}")
-        else
-          puts(red("Nope, qualcosa non va.. #{File.empty?(disk_info.ricdisk_absolute_path)}"))
-          puts("File size: #{File.size(disk_info.ricdisk_absolute_path)}")
+      ConfigFiles.each do |papable_configfile_name|
+        if File.exists?( "#{subdir}/#{papable_configfile_name}") and File.empty?( "#{subdir}/#{papable_configfile_name}")
+          deb("Interesting. Empty file '#{papable_configfile_name}'! Now I write YAML with it.")
+          disk_info = RicDisk.new(subdir, papable_configfile_name)
         end
       end
+      # if File.exists?( "#{subdir}/.ricdisk") and File.empty?( "#{subdir}/.ricdisk")
+      #   deb("Interesting1. Empty file! Now I write YAML with it.")
+      #   disk_info = RicDisk.new(subdir, '.ricdisk')
+      # end
+      # if File.exists?( "#{subdir}/.ricdisk.yaml") and File.empty?( "#{subdir}/.ricdisk.yaml")
+      #   deb("Interesting2. Empty file! TODO write YAML with it.")
+      #   disk_info = RicDisk.new(subdir, '.ricdisk.yaml')
+      #   puts(yellow disk_info.to_yaml)
+      # end
+      if disk_info.is_a?(RicDisk)
+        deb("disk_info.class: #{disk_info.class}")
+        if File.empty?(disk_info.absolute_path) and (disk_info.wr)
+          puts(green("yay, we can now write the file '#{disk_info.absolute_path}' (which is R/W, I just checked!) with proper YAML content.."))
+          ret = File.write(disk_info.absolute_path, disk_info.to_yaml)
+          puts("Written file! ret=#{ret}")
+        else
+          puts(red("Something not right here: either file is NOT empty or disk is NOT writeable.. #{File.empty?(disk_info.absolute_path)}"))
+          puts("File size: #{File.size(disk_info.absolute_path)}")
+          puts(disk_info.to_s)
+          puts(disk_info.obj_to_hash)
+          puts(disk_info.obj_to_yaml)
+        end
+      else 
+        puts "[write_config_yaml_to_disk] No DiskInfo found across #{ConfigFiles}. I leave this function empty-handed."
+      end
       if File.exists?( "#{subdir}/.ricdisk") and ! File.empty?( "#{subdir}/.ricdisk")
-        puts("Config File found with old-style name: '#{subdir}/.ricdisk' !")
-        #puts(white `cat "#{subdir}/.ricdisk"`)
+        puts("Config File found with old-style name: '#{subdir}/.ricdisk' ! Please move it to .ricdisk.yaml!")
+        puts(white `cat "#{subdir}/.ricdisk"`)
+      else
+        puts "WRITING NOW. disk_info.obj_to_yaml .. to #{compute_ricdisk_file}"
+        File.open(ricdisk_file_full, 'w').write(disk_info.obj_to_yaml)
       end
     end
 

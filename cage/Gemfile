@@ -1,0 +1,8 @@
+
+source "https://rubygems.org"
+
+
+#local_gem_path = File.expand_path("../") # FileUtils.pwd,
+#puts :local_gem_path, local_gem_path
+#puts :FileUtilspwd, FileUtils.pwd
+gem 'storazzo', path: File.expand_path("../")  # local_gem_path

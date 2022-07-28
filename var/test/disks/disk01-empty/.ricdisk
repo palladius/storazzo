@@ -1,0 +1,16 @@
+---
+local_mountpoint: "/Users/ricc/git/storazzo/var/test/disks/disk01-empty"
+description: This is an automated RicDisk description from v.2.0. Created on 2022-07-28
+  14:30:46 +0200'
+ricdisk_version: '2.0'
+ricdisk_file: ".ricdisk"
+ricdisk_file_full: "/Users/ricc/git/storazzo/var/test/disks/disk01-empty///.ricdisk"
+ricdisk_file_empty: false
+label: disk01-empty
+name: disk01-empty
+tags:
+- ricdisk
+- storazzo
+size: '0'
+unique_hash: MD5::03b20ce4c43f152dae69f1c04ee92512
+computation_hostname: ricc-macbookpro42.roam.corp.google.com

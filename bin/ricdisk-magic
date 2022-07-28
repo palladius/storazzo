@@ -20,12 +20,12 @@ require 'storazzo'
 #include Storazzo
 #include Storazzo::Colors
 extend Storazzo::Colors
+include Storazzo::Common #instead
 
 
-
-puts "First I need to figure out how to bring in all the libraries in here.."
-Storazzo::Main.say_hi("ARGV is: #{ ARGV.join ', '}")
-puts Storazzo.version
+#puts "First I need to figure out how to bring in all the libraries in here.."
+#Storazzo::Main.say_hi("ARGV is: #{ ARGV.join ', '}")
+#puts Storazzo.version
 ############# ############# ############# ############# ############# ############# ############# ############# 
 
 
@@ -70,8 +70,15 @@ $myconf = {
     :app_name            => "RicDisk Magic should be sth like #{$0}",
     :description         => "
         This program is loosely inspired to ricdisk-magic.sh but its much better.
-        Idea di base: trovare tutti le directory con file ricdisk e da esso estrarre info e magari METTERE info.
-        Il tutto condito con un bel protobuf e un'entita che metto in Lib.
+        The idea is: iterate through all ARGV elements and build a DB of all files with length and MD5. 
+        Then if folder is writeable, put this list INSIDE IT as its so conveniente.
+        If not, put in a ENV-var-defined folder which defaults to ./.storazzo/ :) 
+        
+        And maybe someday - add a nice protobuf and an entity in lib/.
+
+        Note. This software is part of the Storazzo gem ('sai chi ti saluta un casino?'):
+
+            $ gem install storazzo
     ".strip.gsub(/^\s+/, "").gsub(/\s+$/, ""),
     # TODO move to some class default
     :media_dirs  => %w{ /media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/ /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/ }, 
@@ -129,6 +136,7 @@ def real_program
   puts "Description: '''#{white $myconf[:description] }'''"
 
   config =     Storazzo::RicDiskConfig.instance()
+  config.load
   puts "StorazzoConfig: #{config}"
   #config.load # auto_sbrodola(ARGV)
   puts yellow("ARGV: #{ARGV}")
@@ -158,13 +166,19 @@ def real_program
 end
 
 def main(filename)
-  puts "$DEBUG is #{$DEBUG }. Tu turn on, call me with -d"
   deb "I'm called by #{white filename}"
   deb "HISTORY: #{gray HISTORY}"
   #deb "To remove this shit, just set $DEBUG=false :)"
   init        # Enable this to have command line parsing capabilities!
+  puts white("$DEBUG is #{$DEBUG }. Tu turn on, call me with -d") unless $DEBUG
   #warn "[warn] template v#{$TEMPLATE_VER }: proviamo il warn che magari depreca il DEB"
   real_program
+
+  if ($DEBUG) 
+    puts "First I need to figure out how to bring in all the libraries in here.."
+    Storazzo::Main.say_hi("ARGV is: #{ ARGV.join ', '}")
+    puts Storazzo.version  
+  end
 end
 
 main(__FILE__)

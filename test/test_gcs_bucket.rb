@@ -8,9 +8,10 @@ require "storazzo/media/local_folder"
 class GcsBucketTest < Minitest::Test
 
     def setup # tear_up 
-        puts "GcsBucketTest TEAR_UP with sample Config"
+        puts "[GcsBucketTest] TEAR_UP with sample Config"
         config_obj = Storazzo::RicDiskConfig.instance()
         config_obj.load_sample_version
+        puts "[GcsBucketTest] TEAR_UP config_obj: '''#{config_obj}'''"
     end
 
     def test_buckets_are_the_two_i_know
@@ -22,6 +23,7 @@ class GcsBucketTest < Minitest::Test
         assert_equal(expected_list, actual_list,
             "These are the two lists from Sample Storazzo Config")
     end
+
 
     def teardown
         #puts :TEAR_DOWN_TODO

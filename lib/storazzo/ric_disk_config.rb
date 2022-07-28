@@ -12,7 +12,7 @@ require 'yaml'
 =end
 
 module Storazzo
-    class Storazzo::RicDiskConfig 
+    class Storazzo::RicDiskConfig
         include Singleton
         include Storazzo::Common
         include Storazzo::Colors
@@ -30,7 +30,7 @@ module Storazzo
         #@@default_gem_location_for_tests
         DefaultGemLocationForTests = File.expand_path('../../../', __FILE__) + "/etc/storazzo_config.sample.yaml" 
         
-        attr_accessor :config, :config_file
+        attr_accessor :config, :config_file, :load_called
 
 public
         # Load from the first valid config.
@@ -49,12 +49,12 @@ public
                 puts "[LOAD] possible_locations: #{possible_locations}" if verbose
             end
             puts "[VERBOSE] Searching these paths in order: #{possible_locations}" if verbose
-            puts "BUG: This is not always an array of sTRINGS."
+            bug "This is not always an array of sTRINGS."
             raise "possible_locations is not an array" unless possible_locations.is_a?(Array)
             possible_locations.each do |possible_path|
                 # ASSERT is a string
                 raise "possible_path is not a string" unless possible_path.is_a?(String)
-                puts "DEB before buggy expand_path paz: '#{possible_path}''"
+                deb "before buggy expand_path paz: '#{possible_path}''"
                 paz = File.expand_path(possible_path) rescue possible_path
                 raise "Not a string: #{paz}" unless paz.is_a?(String)
                 if File.exists?(paz)
@@ -70,22 +70,26 @@ public
                     config_ver = @config["apiVersion"]
                     #puts @config[:ConfigVersion]
                     puts white("OK. Storazzo::RicDiskConfig v'#{config_ver}' parsed correctly")
-                    puts "RicDiskConfig.to_s: #{self}" if verbose
+                    puts "[VERBOSE] RicDiskConfig.to_s: #{self}" if verbose
+                    @load_called = true
                     return self.config
                 end
             end
+            @load_called = true
             # only get here if nothing is found
             raise "No config found across these locations: #{possible_locations}. Consider copying and editing: #{RicDiskConfig.gem_default_config_path}"
-#            puts "[VERBOSE] Storazzo::RicDiskConfig.load(): END " if verbose
         end
 
-        def load_sample_version
-            puts("Warning! We're destroying the world here. We're taking a Singletong and changing the way it behaves by moving the config file by under her feet. Don't be mad at me if this misbehaves. You saw it coming, my friends. This is why I would NEVER hire you as a Software Developer in my Company.")
-            load(DefaultGemLocationForTests, :verbose => true )
-        end
+        # Obsolete, call another class instead.
+        # def load_sample_version
+        #     puts("Warning! We're destroying the world here. We're taking a Singletong and changing the way it behaves by moving the config file by under her feet. Don't be mad at me if this misbehaves. You saw it coming, my friends. This is why I would NEVER hire you as a Software Developer in my Company.")
+        #     raise "DEPRECATED! USE SampleRicDiskConfig.load() instead!"
+        #     load(DefaultGemLocationForTests, :verbose => true )
+        # end
 
         def config_ver
-            @config['apiVersion']
+            raise "I cant compute Version since I cant compute @config. Are you sure you didnt instance this Singleton without calling load?" unless @config
+            @config['apiVersion'] # rescue :StillUnknown
             #config['ConfigVersion']
         end
         def config_default_folder
@@ -150,10 +154,12 @@ public
                     if File.directory?(dir)
                     #if dirs.include?(dir)
                         deb "iterate_through_file_list_for_disks() Legit dir: #{green dir}"
-                        RicDisk.write_config_yaml_to_disk(dir)
+                        rd = RicDisk.new(dir)
+                        rd.write_config_yaml_to_disk(dir)
+                        #RicDisk.write_config_yaml_to_disk(dir)
                         RicDisk.calculate_stats_files(dir) # dir is inutile
                     else
-                        deb red("Doesnt seem a legit dir to me.")
+                        deb red("Doesnt seem a legit dir to me: #{dir}")
                     #     deb "Figghiu ri buttana: doesnt exist #{red dir}" 
                     end
                 end
@@ -164,5 +170,18 @@ public
         def self.get_config 
             self.instance.get_config
         end
-    end
-end
+    end #     class Storazzo::RicDiskConfig
+
+    # class Storazzo::SampleRicDiskConfig < Storazzo::RicDiskConfig
+    #     include Singleton
+
+    #     def load # _sample_version
+    #         puts white("Wheew! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
+    #         super.load(DefaultGemLocationForTests, :verbose => true )
+    #     end
+
+    # end
+
+
+end # module Storazzo
+
