@@ -43,9 +43,9 @@ require 'storazzo/media/local_folder'
 require 'storazzo/ric_disk_ugly'     # OLD and 90% working
 require 'storazzo/ric_disk_config'         # => RicDiskConfif
 require 'storazzo/ric_disk_sample_config'   # => NOTHING!!
-require 'storazzo/ric_disk_config_example'  # => NEW!!!
+#require 'storazzo/ric_disk_config_example'  # => NEW!!!
 require 'storazzo/ric_disk_statsfile'
 require 'storazzo/main'
-require 'storazzo/translator'
+#require 'storazzo/translator'
 
 #puts Storazzo::Main.say_hi 

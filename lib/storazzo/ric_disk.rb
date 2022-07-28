@@ -9,6 +9,7 @@ module Storazzo
     include Hashify
     include Storazzo::Common 
     extend Storazzo::Colors
+    require 'socket'
 
  
       ## Instance variables
@@ -43,7 +44,6 @@ module Storazzo
       @ricdisk_version = RicdiskVersion
       @ricdisk_file = compute_ricdisk_file() # Storazzo::RicDisk.get_ricdisk_file(path)
       @ricdisk_file_full = "#{@local_mountpoint}/#{@ricdisk_file}"
-      @ricdisk_file_empty = ricdisk_file_empty?
       @label = path.split("/").last
       @name = path.split("/").last
       #@wr = File.writable?("#{path}/#{ricdisk_file}" ) # .writeable?
@@ -52,6 +52,9 @@ module Storazzo
       @size = `du -s '#{path}'`.split(/\s/)[0] # self.size
       @unique_hash = "MD5::" + Digest::MD5.hexdigest(File.expand_path(path)) #   hash = Digest::MD5.hexdigest(File.expand_path(get_local_mountpoint))
       @computation_hostname = Socket.gethostname
+
+      @ricdisk_file_empty = ricdisk_file_empty?
+      
       # @config = RicDiskConfig.instance.get_config
       # #puts @config if @config
       # find_info_from_mount(path)
@@ -61,7 +64,8 @@ module Storazzo
 
     def ricdisk_file_empty?()
       #      File.empty?("#{local_mountpoint}/.ricdisk.yaml")
-      File.empty?(compute_ricdisk_file) # was (get_ricdisk_file)
+      puts "compute_ricdisk_file: #{compute_ricdisk_file}"
+      File.empty?(compute_ricdisk_file.to_s) # was (get_ricdisk_file)
     end
 
     def ok_dir?
@@ -93,9 +97,9 @@ module Storazzo
     def writeable?() 
       return @wr unless @wr.nil? 
       # Otherwise I can do an EXPENSIVE calculation
-      deb "TODO(ricc): Do expensive caluylation if this FS is writeable: #{path}"
-      wr = File.writable?(ricdisk_file)
-      wr
+      puts "TODO(ricc): Do expensive calculation if this FS is writeable: #{path}"
+      @wr = File.writable?(File.expand_path(@ricdisk_file)) # rescue false
+      return @wr
       #:boh_todo_fix_me_and_compute
       #false
     end
@@ -172,20 +176,20 @@ module Storazzo
     end
 
     
-    # new
-    def self.get_ricdisk_file_obsolete(path)
-      if @ricdisk_file
-        puts "[CACHE HIT] ricdisk_file"
-        return @ricdisk_file
-      end
-      puts "RICC_WARNING This requires cmputation I wanna do it almost once"
-      ConfigFiles.each do |papable_config_filename|
-        #return ".ricdisk.yaml" if File.exist?("#{path}/.ricdisk.yaml") #and File.empty?( "#{path}/.ricdisk.yaml")
-        #return ".ricdisk" if File.exist?("#{path}/.ricdisk") # and File.empty?( "#{path}/.ricdisk")
-        return papable_config_filename if File.exist?("#{path}/#{papable_config_filename}") # and File.empty?( "#{path}/.ricdisk")
-      end
-      return nil
-    end
+    # # new
+    # def self.get_ricdisk_file_obsolete(path)
+    #   if @ricdisk_file
+    #     puts "[CACHE HIT] ricdisk_file"
+    #     return @ricdisk_file
+    #   end
+    #   puts "RICC_WARNING This requires cmputation I wanna do it almost once"
+    #   ConfigFiles.each do |papable_config_filename|
+    #     #return ".ricdisk.yaml" if File.exist?("#{path}/.ricdisk.yaml") #and File.empty?( "#{path}/.ricdisk.yaml")
+    #     #return ".ricdisk" if File.exist?("#{path}/.ricdisk") # and File.empty?( "#{path}/.ricdisk")
+    #     return papable_config_filename if File.exist?("#{path}/#{papable_config_filename}") # and File.empty?( "#{path}/.ricdisk")
+    #   end
+    #   return nil
+    # end
 
   
     def self.interesting_mount_points(opts={})

@@ -40,6 +40,11 @@ public
         def load(config_path=nil, opts={})
             verbose = opts.fetch :verbose, false
 
+            if already_loaded? # and not self.config.nil?
+                puts "[#{self.class}] load: already loaded"
+                return self.config
+            end
+
             puts "[VERBOSE] Storazzo::RicDiskConfig.load(): BEGIN " if verbose
             # trying default location
             raise "DefaultConfigLocation is not a string" unless DefaultConfigLocation.is_a?(String)
@@ -72,8 +77,8 @@ public
                     #pp @config if verbose
                     config_ver = @config["apiVersion"]
                     #puts @config[:ConfigVersion]
-                    puts white("OK. Storazzo::RicDiskConfig v'#{config_ver}' parsed correctly")
-                    puts "[VERBOSE] RicDiskConfig.to_s: #{self}" if verbose
+                    deb("OK. Storazzo::RicDiskConfig v'#{config_ver}' parsed correctly")
+                    #puts "[VERBOSE] RicDiskConfig.to_s: #{self}" if verbose
                     @load_called = true
                     return self.config
                 end
@@ -91,13 +96,17 @@ public
         end
 
         def config_ver
-            raise "I cant compute Version since I cant compute @config. Are you sure you didnt instance this Singleton without calling load?" unless @config
+            raise "I cant compute Version since I cant compute @config. Are you sure you didnt instance this Singleton without calling load?" if @config.nil?
             @config['apiVersion'] # rescue :StillUnknown
             #config['ConfigVersion']
         end
         def config_default_folder
             #self.
             @config['Config']['DefaultFolder'] #rescue "Unknown config_default_folder: #{$!}"
+        end
+        def already_loaded?
+            #return 
+            load_called == true
         end
 
         def to_s
@@ -140,7 +149,8 @@ public
         end
 
         # UGLY CODE, copipasted from binary for ARGV, ex autosbrodola
-        def iterate_through_file_list_for_disks(files_list=[])
+        def iterate_through_file_list_for_disks(files_list=[], opts={})
+            verbose = opts.fetch :verbose, true
             # I decided i wont accept an emopty list, this is not how you use the gem, you lazy XXX!
             # if files_list == [] # or files_list.nil?  # empty -> ALL
             #     deb "iterate_through_file_list_for_disks(): no args provided"
@@ -151,17 +161,21 @@ public
             #         RicDisk.calculate_stats_files(dir) # dir is inutile
             #     } # TODO refactor in option sbrodola_afterwards=true. :)
             # else
-                deb "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)"
+                raise "Wrong input: #{files_list} " unless files_list.is_a?(Array)
+   
+                puts "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)" if verbose
+
                 #dirs = RicDisk.find_active_dirs()
                 files_list.each do |dir| 
                     dir = File.expand_path(dir)
                     if File.directory?(dir)
                     #if dirs.include?(dir)
-                        deb "iterate_through_file_list_for_disks() Legit dir: #{green dir}"
+                        puts "iterate_through_file_list_for_disks() Legit dir: #{green dir}" if verbose
                         rd = RicDisk.new(dir)
                         rd.write_config_yaml_to_disk(dir)
                         #RicDisk.write_config_yaml_to_disk(dir)
-                        RicDisk.calculate_stats_files(dir) # dir is inutile
+                        #RicDisk.calculate_stats_files (CLASS) => will become OBJECT compute_stats_files
+                        compute_stats_files(dir) # dir is inutile # TODO
                     else
                         deb red("Doesnt seem a legit dir to me: #{dir}")
                     #     deb "Figghiu ri buttana: doesnt exist #{red dir}" 
@@ -172,43 +186,10 @@ public
         
 
         def self.get_config 
+            self.instance.load unless self.instance.load_called
             self.instance.get_config
         end
     end #     class Storazzo::RicDiskConfig
 
-    # class Storazzo::SampleRicDiskConfig < Storazzo::RicDiskConfig
-    #     include Singleton
-
-    #     def load # _sample_version
-    #         puts white("Wheew! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
-    #         super.load(DefaultGemLocationForTests, :verbose => true )
-    #     end
-
-    # end
-
-    puts "[REMOVEME]1 Storazzo::RicDiskConfig was read"
-
-#end # module Storazzo
-
-puts "[REMOVEME]2 Storazzo::RicDiskConfig was read"
-
-
-
-#module Storazzo
-    
-    # ric_disk_sample_config
-    #class Pincopallo # Storazzo::Blah #RicDiskSampleConfig #  < Storazzo::RicDiskConfig
-    class Storazzo::Pincopallo # RicDiskSampleConfig
-
-    #include Singleton
-    # public
-    #     def load # _sample_version
-    #         puts white("Wheew! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
-    #         super.load(DefaultGemLocationForTests, :verbose => true )
-    #     end
-    end
-
-    puts "[REMOVEME]1 Storazzo::RicDiskSampleConfig was read"
 end # module Storazzo
 
-puts "[REMOVEME]2 Storazzo::RicDiskSampleConfig was read"

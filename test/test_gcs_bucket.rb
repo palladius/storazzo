@@ -21,14 +21,14 @@ class GcsBucketTest < Minitest::Test
 
     include Storazzo::Common
 
-    def TODO_RENAME_MEsetup # tear_up 
+    def TODO_setup # tear_up 
         deb "[GcsBucketTest] TEAR_UP with sample Config"
-        removeme = Storazzo::RicDiskConfig.instance()
+        #removeme = Storazzo::RicDiskConfig.instance()
         config_obj = Storazzo::RicDiskSampleConfig.instance()
         deb "[GcsBucketTest] TEAR_UP config_obj: '''#{config_obj}'''"
     end
 
-    def TODO_RENAME_MEtest_buckets_are_the_two_i_know
+    def TODO_test_buckets_are_the_two_i_know
         expected_list = %w{
             gs://my-local-backup/storazzo/backups/
             gs://my-other-bucket/
@@ -38,21 +38,22 @@ class GcsBucketTest < Minitest::Test
             "These are the two lists from Sample Storazzo Config")
     end
 
-    def test_import 
-        require "storazzo/ric_disk_sample_config" rescue nil
-        require "storazzo/ric_disk_config"
+    def TODO_test_import 
+        #require "storazzo/ric_disk_sample_config" rescue nil
+        #require "storazzo/ric_disk_config"
 
         #puts Storazzo.class
-        puts Storazzo.constants
+        puts " Storazzo.constants: #{ Storazzo.constants}"
         #puts Storazzo::RicDiskSampleConfig
         config_obj = Storazzo::RicDiskSampleConfig.instance()
-        puts config_obj
+        l = config_obj.load
+        puts "config_obj: #{config_obj}"
         config_obj.load # _sample_version
     end
 
 
     def teardown
-        #puts :TEAR_DOWN_TODO
+        puts :TEAR_DOWN_TODO
     end
 
 end

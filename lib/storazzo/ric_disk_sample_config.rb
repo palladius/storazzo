@@ -17,15 +17,19 @@ module Storazzo
     class Storazzo::RicDiskSampleConfig < Storazzo::RicDiskConfig
         #include Storazzo::Common
 
-        include Singleton
-        public
-            def load # _sample_version
-                puts white("Wheew! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
-                super.load(DefaultGemLocationForTests, :verbose => true )
-            end
-     end
+        #include Singleton
 
-    #puts "[REMOVEME]1 Storazzo::RicDiskSampleConfig was read"
+        public
+        def load # _sample_version
+            puts white("[RicDiskSampleConfig] Wheew 1! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
+#            super.load DefaultGemLocationForTests #super.load(DefaultGemLocationForTests, :verbose => true )
+            super(DefaultGemLocationForTests, :verbose => false )
+        end
+        def load_sample_version
+            puts white("[RicDiskSampleConfig] Wheew 2! We're NOT destroying the world here. We're actually instancing a second Singleton which is a child of the mother, and this time doing things nicely and Rubily.")
+            super(DefaultGemLocationForTests, :verbose => false )
+        end
+end
+
 end # module Storazzo
 
-#puts "[REMOVEME]2 Storazzo::RicDiskSampleConfig was read"

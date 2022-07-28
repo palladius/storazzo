@@ -15,7 +15,6 @@ require "storazzo"
 #require "storazzo/ric_disk/gcs_bucket"
 #require "storazzo/media/local_folder"
 
-puts :TODO
 
 class RicDiskConfigTest < Minitest::Test
 
@@ -30,7 +29,6 @@ class RicDiskConfigTest < Minitest::Test
         #puts "[RicDiskConfigTest] config_file: ", config_obj.config_file
         assert_equal(
             config_obj.config_file,
-            # Rails.root  + 
             "etc/",
             "Config file expected to be here.."
         )
