@@ -123,6 +123,8 @@ public
             h[:class] = self.class 
             h[:file] = __FILE__ 
             h[:id] = self.object_id
+            h[:get_bucket_paths] = self.get_bucket_paths()
+            h[:get_local_folders] = self.get_local_folders()
             return h
         end
 
@@ -170,27 +172,26 @@ public
             #         RicDisk.write_config_yaml_to_disk(dir)
             #         RicDisk.calculate_stats_files(dir) # dir is inutile
             #     } # TODO refactor in option sbrodola_afterwards=true. :)
-            # else
-                raise "Wrong input: #{files_list} " unless files_list.is_a?(Array)
-   
-                puts "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)" if verbose
+        # else
+            raise "Wrong input, I need an array here: #{files_list} " unless files_list.is_a?(Array)
+            puts "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)" if verbose
 
-                #dirs = RicDisk.find_active_dirs()
-                files_list.each do |dir| 
-                    dir = File.expand_path(dir)
-                    if File.directory?(dir)
-                    #if dirs.include?(dir)
-                        puts "iterate_through_file_list_for_disks() Legit dir: #{green dir}" if verbose
-                        rd = RicDisk.new(dir)
-                        rd.write_config_yaml_to_disk(dir)
-                        #RicDisk.write_config_yaml_to_disk(dir)
-                        #RicDisk.calculate_stats_files (CLASS) => will become OBJECT compute_stats_files
-                        rd.compute_stats_files() # dir is inutile # TODO
-                    else
-                        deb red("Doesnt seem a legit dir to me: #{dir}")
-                    #     deb "Figghiu ri buttana: doesnt exist #{red dir}" 
-                    end
+            #dirs = RicDisk.find_active_dirs()
+            files_list.each do |dir| 
+                dir = File.expand_path(dir)
+                if File.directory?(dir)
+                #if dirs.include?(dir)
+                    puts "iterate_through_file_list_for_disks() Legit dir: #{green dir}" if verbose
+                    rd = RicDisk.new(dir)
+                    puts "RicDisk: #{rd}"
+                    rd.write_config_yaml_to_disk(dir)
+                    #RicDisk.write_config_yaml_to_disk(dir)
+                    #RicDisk.calculate_stats_files (CLASS) => will become OBJECT compute_stats_files
+                    rd.compute_stats_files() # dir is inutile # TODO
+                else
+                    raise("Doesnt seem a dir to me, quitting: #{dir}")
                 end
+            end
             #end
         end #/iterate_through_file_list_for_disks
 

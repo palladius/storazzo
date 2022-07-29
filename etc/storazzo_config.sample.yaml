@@ -13,6 +13,7 @@ Config:
     - ~/git/storazzo/var/test/disks/
     - /wrong/on/purpose/
     - ~/sbobinamenti/ # Italian for "temporary storage parking" => hence the English "to sbobinate"
+    - /etc/  # Great to test a small, read-only directory which will likely yield some Read error in parsing ;)
   DefaultFolder: ~/.storazzo/ 
   Backends:
     # Here you get other Cloud Artifacts (S3, ..), Dropbox, OneDrive, GDrive, .. and so on.

@@ -104,4 +104,18 @@ class LocalFolderTest < Minitest::Test
             "parse on LocalFolder should create file '#{stats_file}'"
         )
     end
+
+    def test_readonly_folder
+        test_dir = "/etc/"
+        disk = Storazzo::Media::LocalFolder.new(test_dir)
+        stats_file = disk.stats_filename_default_fullpath
+        config = Storazzo::RicDiskSampleConfig.instance()
+        config.load
+        config.iterate_through_file_list_for_disks([test_dir])
+        assert(
+            not(File.exists?(stats_file)),
+            "parse on LocalFolder should NOT create file '#{stats_file}' but another in another TODO place"
+        )
+        # ...
+    end
 end
