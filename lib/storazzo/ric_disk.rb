@@ -317,7 +317,7 @@ module Storazzo
         upload_to_gcs(full_file_path) if opts_upload_to_gcs
       else
         puts "Crunching data stats from '#{dir}' into '#{$stats_file}' ... please bear with me.. [maybe file didnt exist, maybe $opts[:force] is true]" 
-        command = "find . -print0 | xargs -0 stats-with-md5.rb --no-color | tee '#{full_file_path}'"
+        command = "find . -print0 | xargs -0 stats-with-md5 --no-color | tee '#{full_file_path}'"
         puts("[#{`pwd`.chomp}] Executing: #{azure command}")
         ret = backquote_execute(command)
         puts "Done. #{ret.split("\n").count} files processed."
@@ -346,7 +346,7 @@ module Storazzo
         upload_to_gcs(full_file_path) if opts_upload_to_gcs
       else
         puts "Crunching data stats from '#{dir}' into '#{$stats_file}' ... please bear with me.. [maybe file didnt exist, maybe $opts[:force] is true]" 
-        command = "find . -print0 | xargs -0 stats-with-md5.rb --no-color | tee '#{full_file_path}'"
+        command = "find . -print0 | xargs -0 stats-with-md5 --no-color | tee '#{full_file_path}'"
         puts("[#{`pwd`.chomp}] Executing: #{azure command}")
         ret = backquote_execute command
         puts "Done. #{ret.split("\n").count} files processed."

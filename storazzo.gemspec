@@ -9,7 +9,10 @@ Gem::Specification.new do |s|
     # Autoglob as per https://stackoverflow.com/questions/11873294/determining-the-gems-list-of-files-for-the-specification
     s.files = %w(Gemfile LICENSE README.md Makefile Rakefile storazzo.gemspec VERSION) +  Dir["{bin,lib,test,var}/**/*"] 
     s.test_files = Dir["test/**/*"] + Dir["var/test/**/*"] 
-    s.executables << "ricdisk-magic"
+    s.executables << [
+        "ricdisk-magic",
+        "stats-with-md5"
+    ]
 
     s.homepage    = "https://rubygems.org/gems/storazzo" # maybe https://github.com/palladius/storazzo
     s.license       = "MIT"
