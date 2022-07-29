@@ -102,13 +102,23 @@ module Storazzo
     def writeable?() 
       return @wr unless @wr.nil? 
       # Otherwise I can do an EXPENSIVE calculation
-      puts yellow("TODO(ricc): Do expensive calculation if this FS is writeable: #{path}")
+      puts yellow("TODO(ricc): Do expensive calculation if this FS is writeable: #{path} and write/memoize it on @wr once and for all")
+      puts yellow("TODO(ricc): I have a feeling this should be delegated to praecipuus Storazzo::Media::Object we refer to (WR is different on GCS vs Local) : #{self.to_verbose_s}")
       #@wr = File.writable?(File.expand_path(@ricdisk_file)) # rescue false
       raise "for some reason an important info (ricdisk_file='#{absolute_path}') is missing!" if ricdisk_file.nil?
       @wr = File.writable?(absolute_path) # rescue false
       return @wr
       #:boh_todo_fix_me_and_compute
       #false
+    end
+
+    def to_verbose_s 
+      h = {}
+      h[:to_s] = self.to_s
+      h[:wr] = self.wr
+      h[:inspect] = self.inspect
+      h[:writeable] = self.writeable?
+      return h
     end
 
   ################################

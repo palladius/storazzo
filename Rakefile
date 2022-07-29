@@ -3,7 +3,8 @@
 # from hola: https://guides.rubygems.org/make-your-own-gem/#adding-an-executable
 require "rake/testtask"
 
-Rake::TestTask.new do |t|
+desc "Run Unit tests"
+Rake::TestTask.new(:test) do |t|
   t.libs << "test"
   t.libs << "test/media"
   t.verbose = false
@@ -12,13 +13,14 @@ Rake::TestTask.new do |t|
   t.pattern = 'test/**/test_*.rb'
 end
 
-desc "Run tests"
+desc "By default, Run Unit tests"
 task default: :test
 
 # Adding test/media directory to rake test.
-namespace :verbose_test do
-  desc "Test tests/media/* code"
-  Rake::TestTask.new do |t|
+desc "Test tests/media/* code sobenem"
+namespace :test do
+  desc "Test Verbosely by default since I'm too stupid to toggle via ENV var dammit"
+  Rake::TestTask.new(:verbose) do |t|
     t.libs << "test"
     t.libs << "test/media"
     t.verbose = true
