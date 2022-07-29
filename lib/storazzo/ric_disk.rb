@@ -154,8 +154,8 @@ module Storazzo
           x = Dir.glob('*').select {|f| File.directory? f}
           subdirs = x.map{|subdir|   "#{dir}#{subdir}"}
           subdirs.each{|subdir| 
-            puts "DEB Subdir: #{subdir}"
-            puts `ls -al "#{subdir}"`
+            deb "Subdir: #{subdir}"
+            puts `ls -al "#{subdir}"` # TODO refactor in exec
             active_dirs << subdir if ok_dir? # self.ok_dir?(subdir)
           }
           #puts(white x)
@@ -258,7 +258,7 @@ module Storazzo
       #   puts(yellow disk_info.to_yaml)
       # end
       if disk_info.is_a?(RicDisk)
-        puts yellow("DEB disk_info.class: #{disk_info.class}")
+        deb yellow("disk_info.class: #{disk_info.class}")
         if File.empty?(disk_info.absolute_path) # and (disk_info.wr)
           puts(green("yay, we can now write the file '#{disk_info.absolute_path}' (which is R/W, I just checked!) with proper YAML content.."))
           if disk_info.wr

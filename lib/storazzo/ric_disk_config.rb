@@ -49,7 +49,7 @@ public
             # trying default location
             raise "DefaultConfigLocation is not a string" unless DefaultConfigLocation.is_a?(String)
             possible_locations = DefaultConfigLocations  #  [ @@default_config_location , "./.storazzo.yaml"]
-            puts "DEB possible_locations: #{possible_locations}"
+            deb "[Config.load] Possible_locations: #{possible_locations}"
             if config_path.is_a?(String) 
                 #possible_locations = [config_path] + possible_locations # .append() 
                 possible_locations = possible_locations.unshift(config_path) # append to front

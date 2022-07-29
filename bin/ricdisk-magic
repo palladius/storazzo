@@ -168,7 +168,6 @@ end
 def main(filename)
   deb "I'm called by #{white filename}"
   deb "HISTORY: #{gray HISTORY}"
-  #deb "To remove this shit, just set $DEBUG=false :)"
   init        # Enable this to have command line parsing capabilities!
   puts white("$DEBUG is #{$DEBUG }. Tu turn on, call me with -d") unless $DEBUG
   #warn "[warn] template v#{$TEMPLATE_VER }: proviamo il warn che magari depreca il DEB"

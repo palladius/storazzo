@@ -92,8 +92,9 @@ module Storazzo::Media
                 "#{local_mountpoint}/#{my_stats_filename}"
             end
 
-            def validate
-                puts "DEB We're trying to see if your object is valid, across 3 possible sub-classes."
+            def validate(opts={})
+                verbose = opts.fetch(:verbose, true)
+                puts "[VERBOSE] validate(): We're trying to see if your object is valid, across 3 possible sub-classes." if verbose
                 #1. check for 
                 raise "Unknown local mount " unless local_mount.is_a?(String)
                 #2. check thaty writeable? is true or false
@@ -101,6 +102,4 @@ module Storazzo::Media
                 raise "Writeable is not boolean" unless (my_writeable.is_a? TrueClass or my_writeable.is_a? FalseClass )
             end
     end
-    #puts "DEB lib/storazzo/media/abstract_ric_disk Media::ARD inside module"
 end
-#puts "DEB lib/storazzo/media/abstract_ric_disk Media::ARD outside module"

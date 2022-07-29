@@ -3,16 +3,12 @@ require "storazzo"
 require "storazzo/ric_disk"
 require "storazzo/ric_disk_config"
 require 'storazzo/colors'
+require 'storazzo/common'
 require "storazzo/media/local_folder"
-
-#require "storazzo/ric_disk/gcs_bucket"
-#require "storazzo/media/local_folder"
-
-
-#puts yellow("DISABLING FOR NOW TODO restore")
 
 class LocalFolderTest < Minitest::Test
     include Storazzo::Colors
+    include Storazzo::Common
     # def test_fail_on_purpOSE # test_storazzo_hi_with_argument
     #     assert_match 42, 42 , "change me when it failes from makefile" 
     #     #"Hello from Storazzo", Storazzo::Main.hi("ruby this should fail")
@@ -46,7 +42,7 @@ class LocalFolderTest < Minitest::Test
 
     # To only test this:
     # $ ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works
-    def TODO_test_1_first_directory_parsing_actually_works()
+    def test_1_first_directory_parsing_actually_works()
         # include module 
 
         #p $vediamo_se_funge
@@ -65,7 +61,7 @@ class LocalFolderTest < Minitest::Test
         stats_file = disk.stats_filename_default_fullpath
         puts "stats_file: #{stats_file}"
         disk.parse()
-        puts "[DEB] config: ''#{config}''"
+        deb "config: ''#{config}''"
         # config.iterate_through_file_list_for_disks([test_dir])
         # assert(
         #     File.exists?(stats_file),

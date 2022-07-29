@@ -52,3 +52,6 @@ watch-test:
 
 test-gcs-bucket:
 	ruby -I test test/test_gcs_bucket.rb
+# https://medium.com/@tegon/quick-guide-to-minitest-arguments-745bf9fe4b3
+test-media-subfolder:
+	rake test TEST="test/media/*.rb"

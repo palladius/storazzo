@@ -7,24 +7,20 @@ module Storazzo::Media
         attr_accessor :local_mountpoint, :wr
 
         def initialize(local_mount)
-            puts "[Storazzo::Media::LocalFolder] initialize"
+            deb "[Storazzo::Media::LocalFolder] initialize"
             
             @local_mountpoint = File.expand_path(local_mount)
             raise "Sorry local mount doesnt exist!" unless File.exist?(@local_mountpoint)
             @wr = File.writable?(stats_filename_default_fullpath) # .writeable? stats_file_smart_fullpath
 
             #super.initialize(local_mount) rescue "SUPER_ERROR: #{$!}"
-            super(local_mount) rescue "SUPER_ERROR: #{$!}"
+            super(local_mount) rescue "SUPER_ERROR(#{local_mount}): #{$!}"
         end
         
-        def self.list_all
-            # get lisrts from Config singletone
-            #puts " self.list_all: loading config "
-            config = Storazzo::RicDiskConfig.instance # # ).get_config
-            #puts config['Config']['AdditionalMountDirs']
-            #puts "TODO see config: #{config}"
-            #[42, 43]
-            #deb config.get_local_folders
+        def self.list_all(config=nil)
+            # get lists from Config singleton
+            config ||= Storazzo::RicDiskConfig.instance # # ).get_config
+            config.load
             config.get_local_folders
         end
 

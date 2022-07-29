@@ -5,13 +5,26 @@ require "rake/testtask"
 
 Rake::TestTask.new do |t|
   t.libs << "test"
+  t.libs << "test/media"
   t.verbose = false
   t.warning = false 
+  #puts "[RiccardoOnly]: t.pattern: #{t.pattern}" 
+  t.pattern = 'test/**/test_*.rb'
 end
 
 desc "Run tests"
 task default: :test
 
+# Adding test/media directory to rake test.
+namespace :test do
+  desc "Test tests/media/* code"
+  Rake::TestTask.new do |t|
+    t.libs << "test/media"
+    # Rails::TestTask.new(media: 'test:prepare') do |t|
+    t.pattern = 'test/**/test_*.rb'
+  end
+end
+#Rake::Task['test:run'].enhance ["test:media"]
 
 # begin
 #     require 'bundler/setup'
@@ -30,3 +43,6 @@ task default: :test
 #     task.requires << 'rubocop-performance'
 #     task.requires << 'rubocop-rspec'
 #   end
+
+
+
