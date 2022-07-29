@@ -30,22 +30,27 @@ end
 
 # nice to paste nice output
 require 'pp'
+require 'require_all'
+
+#require_all './' , 'media/'
+#require_all 'lib/**/*.rb'
+#require_rel '.', 'media'
+Dir[File.dirname(__FILE__) + '/../lib/*.rb'].each do |file| 
+    puts "+ Requiring... #{file}"
+    require File.basename(file, File.extname(file))
+end
 
 require 'storazzo'
 require 'storazzo/common'
 require 'storazzo/colors'
 require 'storazzo/hashify'
 require 'storazzo/ric_disk'          # NEW and will build from ground up using multiple files..
-#require 'storazzo/ric_disk/asbtract_ric_disk'
 require 'storazzo/media/abstract_ric_disk'
 require 'storazzo/media/gcs_bucket' 
 require 'storazzo/media/local_folder' 
+require 'storazzo/media/mount_point' 
 require 'storazzo/ric_disk_ugly'     # OLD and 90% working
 require 'storazzo/ric_disk_config'         # => RicDiskConfif
 require 'storazzo/ric_disk_sample_config'   # => NOTHING!!
-#require 'storazzo/ric_disk_config_example'  # => NEW!!!
 require 'storazzo/ric_disk_statsfile'
 require 'storazzo/main'
-#require 'storazzo/translator'
-
-#puts Storazzo::Main.say_hi 

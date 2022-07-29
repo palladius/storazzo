@@ -1,6 +1,13 @@
 require 'singleton'
 require 'yaml'
 
+#require 'storazzo/media/abstract_ric_disk'
+Dir[File.dirname(__FILE__) + '/../lib/*.rb'].each do |file| 
+    require File.basename(file, File.extname(file))
+end
+#require_all 'media/directory'
+
+
 =begin
     This is a singleton class. You call me this way..
     You call me with:
@@ -42,22 +49,23 @@ public
 
             if already_loaded? # and not self.config.nil?
                 puts "[#{self.class}] VERBOSE load: already loaded" if verbose
+                pverbose verbose, "[#{self.class}] VERBOSE load: already loaded"
                 return self.config
             end
-
             puts "[VERBOSE] Storazzo::RicDiskConfig.load(): BEGIN " if verbose
+            pverbose verbose, "Storazzo::RicDiskConfig.load(): BEGIN"
             # trying default location
             raise "DefaultConfigLocation is not a string" unless DefaultConfigLocation.is_a?(String)
             possible_locations = DefaultConfigLocations  #  [ @@default_config_location , "./.storazzo.yaml"]
-            deb "[Config.load] Possible_locations: #{possible_locations}"
-            if config_path.is_a?(String) 
+            deb "[Config.load] Possible Locations: #{possible_locations}"
+            if config_path.is_a?(String)
                 #possible_locations = [config_path] + possible_locations # .append() 
                 possible_locations = possible_locations.unshift(config_path) # append to front
                 #OR: possible_locations.instert(0, config_path)
-                puts "[LOAD] possible_locations: #{possible_locations}" if verbose
+                pverbose verbose, "[LOAD] possible_locations: #{possible_locations}"
             end
             puts "[VERBOSE] Searching these paths in order: #{possible_locations}" if verbose
-            bug "This is not always an array of sTRINGS."
+            #bug "This is not always an array of sTRINGS."
             raise "possible_locations is not an array" unless possible_locations.is_a?(Array)
             possible_locations.each do |possible_path|
                 # ASSERT is a string
@@ -182,8 +190,8 @@ public
                 if File.directory?(dir)
                 #if dirs.include?(dir)
                     puts "iterate_through_file_list_for_disks() Legit dir: #{green dir}" if verbose
-                    rd = RicDisk.new(dir)
-                    puts "RicDisk: #{rd}"
+                    rd = RicDisk.new(Storazzo::Media::AbstractRicDisk.DirFactory(dir))
+                    pverbose true, "RicDisk from Factory (woohoo): #{rd}"
                     rd.write_config_yaml_to_disk(dir)
                     #RicDisk.write_config_yaml_to_disk(dir)
                     #RicDisk.calculate_stats_files (CLASS) => will become OBJECT compute_stats_files

@@ -4,7 +4,6 @@ require "storazzo/ric_disk"
 require "storazzo/ric_disk_config"
 require 'storazzo/colors'
 require "storazzo/media/local_folder"
-require "storazzo/ric_disk_config_example"
 
 require 'pry' # must install the gem... but you ALWAYS want pry installed anyways
 
@@ -42,11 +41,13 @@ class GcsBucketTest < Minitest::Test
         deb " Storazzo.constants: #{ Storazzo.constants}"
         #puts Storazzo::RicDiskSampleConfig
         #config_obj = Storazzo::RicDiskSampleConfig.instance()
-        Pry::ColorPrinter.pp($sample_config_obj.to_verbose_s())
+        if_deb? do
+            Pry::ColorPrinter.pp($sample_config_obj.to_verbose_s())
+        end 
         #pp green(config_obj.to_verbose_s())
 
         l = $sample_config_obj.load
-        Pry::ColorPrinter.pp(l)
+        Pry::ColorPrinter.pp(l) if $DEBUG
 
         puts "$sample_config_obj: #{$sample_config_obj}"
         #config_obj.load # _sample_version

@@ -7,6 +7,7 @@ desc "Run Unit tests"
 Rake::TestTask.new(:test) do |t|
   t.libs << "test"
   t.libs << "test/media"
+  # note this is only useful for this: https://chriskottom.com/articles/command-line-flags-for-minitest-in-the-raw/
   t.verbose = false
   t.warning = false 
   #puts "[RiccardoOnly]: t.pattern: #{t.pattern}" 
@@ -26,7 +27,7 @@ namespace :test do
     t.verbose = true
     t.warning = true 
     t.pattern = 'test/**/test_*.rb'
-    #$DEBUG = true
+    $DEBUG = true
   end
 end
 # namespace :verbose_test do

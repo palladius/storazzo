@@ -1,5 +1,8 @@
 module Storazzo::Media
     class Storazzo::Media::AbstractRicDisk
+        #include Storazzo::Common
+        extend Storazzo::Common
+
 
         #@@default_stats_filename = Storazzo::RicDiskStatsFile.default_name
 
@@ -12,7 +15,7 @@ module Storazzo::Media
             # Abstract methods START
             ########################
             def initialize(local_mount)
-                puts "[DEB] [AbstractRicDisk.init()] Some child of AbstractRicDisk (#{self}) called me! Yummie." # disable when you dont need me anymore..
+                pverbose true, "[AbstractRicDisk.init()] Some child of AbstractRicDisk (#{self}) called me! Yummie." # disable when you dont need me anymore..
                 validate
             end
             def self.list_all
@@ -100,6 +103,19 @@ module Storazzo::Media
                 #2. check thaty writeable? is true or false
                 my_writeable = wr
                 raise "Writeable is not boolean" unless (my_writeable.is_a? TrueClass or my_writeable.is_a? FalseClass )
+            end
+
+            # TODO use a proper Factory pattern.
+            def self.DirFactory(path)
+                raise "I need a path/directory string: #{path}" unless path.is_a?(String)
+
+                deb "TODO: if coincides with MountPoint, instance THAT"
+                if path =~ /^gs:\/\//
+                    deb "Smells like GCS"
+                    return GcsBucket.new(path)
+                end
+                deb "Smells like LocalFolder :)"
+                return LocalFolder.new(path)
             end
     end
 end

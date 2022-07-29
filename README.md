@@ -21,7 +21,7 @@ but I found loads of interesting ways to test my code by googling and StoackOver
 Single test in single file:
 
 * `rake test TEST="test/sum_test.rb" TESTOPTS="--name=test_returns_two"` (sample)
-* rake test TEST="test/media/test_local_folder.rb" TESTOPTS="--name=test_1_first_directory_parsing_actually_works"
+* `rake test TEST="test/media/test_local_folder.rb" TESTOPTS="--name=test_1_first_directory_parsing_actually_works"`
 * `ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works` 
 
 

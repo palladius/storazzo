@@ -40,10 +40,21 @@ module Storazzo
   ## INSTANCE methods
   ################################
 
+    def initialize_old_way(path, opts={})
+      raise "Now I dont want a string in input, I want an OBJECT <  Storazzo::Media::AbstractRicDisk"
+    end
 
-    def initialize(path, opts={})
+
+    def initialize(ric_disk_object, opts={})
+      verbose = opts.fetch :verbose, true 
+      pverbose verbose, "This needs an object of type Storazzo::Media::AbstractRicDisk now (this case: #{ric_disk_object.class})"
+      raise "Woopsie, not a Storazzo::Media::AbstractRicDisk! Intead its a #{ric_disk_object.class}" unless ric_disk_object.class.superclass == Storazzo::Media::AbstractRicDisk
+      # ok back to business, now path is a String :)
+      path =  ric_disk_object.path
+      deb "RicDisk initialize.. path=#{path}"
       deb "RicDisk initialize.. path=#{path}"
       @local_mountpoint = File.expand_path(path)
+      @ard = ric_disk_object # AbstractRicDiskObject
       @description = "This is an automated RicDisk description from v.#{RicdiskVersion}. Created on #{Time.now}'"
       @ricdisk_version = RicdiskVersion
       @ricdisk_file = compute_ricdisk_file() # Storazzo::RicDisk.get_ricdisk_file(path)
@@ -91,7 +102,7 @@ module Storazzo
     end
 
     def to_s 
-      "RicDisk(paz=#{path}, r/w=#{writeable?}, size=#{size}B, f=#{ricdisk_file}, v#{ricdisk_version})"
+      "RicDisk(paz=#{path}, r/w=#{writeable?}, size=#{size}B, f=#{ricdisk_file}, v#{ricdisk_version}, ard=#{@ard})"
     end
 
     # could take long..
@@ -100,10 +111,12 @@ module Storazzo
     # end
 
     def writeable?() 
+      #memoize
       return @wr unless @wr.nil? 
-      # Otherwise I can do an EXPENSIVE calculation
+      # NOW: CALCULATE it
+      # Now I can do ONCE an EXPENSIVE calculation
       puts yellow("TODO(ricc): Do expensive calculation if this FS is writeable: #{path} and write/memoize it on @wr once and for all")
-      puts yellow("TODO(ricc): I have a feeling this should be delegated to praecipuus Storazzo::Media::Object we refer to (WR is different on GCS vs Local) : #{self.to_verbose_s}")
+      puts yellow("TODO(ricc): I have a feeling this should be delegated to praecipuus Storazzo::Media::Object we refer to (WR is different on GCS vs Local):") # infinite loop dammit #{self.to_verbose_s}")
       #@wr = File.writable?(File.expand_path(@ricdisk_file)) # rescue false
       raise "for some reason an important info (ricdisk_file='#{absolute_path}') is missing!" if ricdisk_file.nil?
       @wr = File.writable?(absolute_path) # rescue false
@@ -118,6 +131,7 @@ module Storazzo
       h[:wr] = self.wr
       h[:inspect] = self.inspect
       h[:writeable] = self.writeable?
+      h[:ard] = @ard
       return h
     end
 
