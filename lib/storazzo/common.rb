@@ -6,6 +6,7 @@
 #      extend Storazzo::Common   (def to def self.XX)
 #
 require_relative 'colors'
+require 'pry'
 
 module Storazzo::Common 
 
@@ -34,6 +35,10 @@ module Storazzo::Common
     end
     def pverbose(is_verbose, str)
         puts "[V📚RB💀S📚] #{gray str}"
+    end
+    def ppp(complex_object_to_colorize)
+        # TODO i need to learn to return without printing..
+        Pry::ColorPrinter.pp(complex_object_to_colorize)
     end
 
 private

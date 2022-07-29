@@ -3,7 +3,6 @@
 module Storazzo
     class Storazzo::RicDiskStatsFile
         # Please keep these two in sync, until you fix them and DRY the behaviour.
-        #@@default_name
         DefaultName = "ricdisk_stats_v11.rds" # => RicDiskStatsFile
         Version      = "1.1" # @@version
 

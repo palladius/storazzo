@@ -15,14 +15,15 @@ I still struggle to enforce the include of LOCAL unchecked code rather than late
 but I found loads of interesting ways to test my code by googling and StoackOverflowing:
 
 * `rake test TEST="test/sum_test.rb"`
-* test-gcs-bucket: `ruby -I test test/test_gcs_bucket.rb`
+* test-gcs-bucket: `ruby -I test test/test_gcs_bucket.rb` (meh - see below)
 * test-media-subfolder: `rake test TEST="test/media/*.rb"`
 
 Single test in single file:
 
 * `rake test TEST="test/sum_test.rb" TESTOPTS="--name=test_returns_two"` (sample)
 * `rake test TEST="test/media/test_local_folder.rb" TESTOPTS="--name=test_1_first_directory_parsing_actually_works"`
-* `ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works` 
+* `ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works` (note this includes `storazzo` latest gem 
+    and doesnt benefit from LATEST code so its NOT good for testing: use RAKE for that).
 
 
 Now to toggle verbosity I believe I need to go into Rakefile (bummer)

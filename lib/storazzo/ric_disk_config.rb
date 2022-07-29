@@ -27,18 +27,16 @@ module Storazzo
         include Storazzo::Common
         include Storazzo::Colors
         
-        #@@default_config_location = "~/.storazzo.yaml" 
         DefaultConfigLocation = File.expand_path "~/.storazzo.yaml" 
-        # @@default_config_locations = [
-        #     "~/.storazzo.yaml" , # HOME
-        #     "./.storazzo.yaml" , # LOCAL DIR
-        # ]        
+        
         DefaultConfigLocations = [
             File.expand_path("~/.storazzo.yaml") , # HOME
             File.expand_path("./.storazzo.yaml") , # LOCAL DIR
         ]
-        #@@default_gem_location_for_tests
-        DefaultGemLocationForTests = File.expand_path('../../../', __FILE__) + "/etc/storazzo_config.sample.yaml" 
+
+        DefaultGemLocationForTests = 
+            File.expand_path('../../../', __FILE__) + 
+            "/etc/storazzo_config.sample.yaml" 
         
         attr_accessor :config, :config_file, :load_called
 
@@ -48,15 +46,13 @@ public
             verbose = opts.fetch :verbose, false
 
             if already_loaded? # and not self.config.nil?
-                puts "[#{self.class}] VERBOSE load: already loaded" if verbose
                 pverbose verbose, "[#{self.class}] VERBOSE load: already loaded"
                 return self.config
             end
-            puts "[VERBOSE] Storazzo::RicDiskConfig.load(): BEGIN " if verbose
             pverbose verbose, "Storazzo::RicDiskConfig.load(): BEGIN"
             # trying default location
             raise "DefaultConfigLocation is not a string" unless DefaultConfigLocation.is_a?(String)
-            possible_locations = DefaultConfigLocations  #  [ @@default_config_location , "./.storazzo.yaml"]
+            possible_locations = DefaultConfigLocations  #  [ default_config_locations .. , "./.storazzo.yaml"]
             deb "[Config.load] Possible Locations: #{possible_locations}"
             if config_path.is_a?(String)
                 #possible_locations = [config_path] + possible_locations # .append() 
@@ -98,9 +94,7 @@ public
 
         # Obsolete, call another class instead.
         def load_sample_version
-        #     puts("Warning! We're destroying the world here. We're taking a Singletong and changing the way it behaves by moving the config file by under her feet. Don't be mad at me if this misbehaves. You saw it coming, my friends. This is why I would NEVER hire you as a Software Developer in my Company.")
              raise "DEPRECATED! USE SampleRicDiskConfig.load() instead!"
-        #     load(DefaultGemLocationForTests, :verbose => true )
         end
 
         def config_ver
@@ -170,7 +164,9 @@ public
 
         # UGLY CODE, copipasted from binary for ARGV, ex autosbrodola
         def iterate_through_file_list_for_disks(files_list=[], opts={})
-            verbose = opts.fetch :verbose, true
+            verbose = opts.fetch :verbose, false
+            raise "[iterate_through_file_list_for_disks] Wrong input, I need an array here: #{files_list} " unless files_list.is_a?(Array)
+
             # I decided i wont accept an emopty list, this is not how you use the gem, you lazy XXX!
             # if files_list == [] # or files_list.nil?  # empty -> ALL
             #     deb "iterate_through_file_list_for_disks(): no args provided"
@@ -181,7 +177,6 @@ public
             #         RicDisk.calculate_stats_files(dir) # dir is inutile
             #     } # TODO refactor in option sbrodola_afterwards=true. :)
         # else
-            raise "Wrong input, I need an array here: #{files_list} " unless files_list.is_a?(Array)
             puts "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)" if verbose
 
             #dirs = RicDisk.find_active_dirs()

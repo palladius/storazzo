@@ -64,7 +64,7 @@ module Storazzo
       #@wr = File.writable?("#{path}/#{ricdisk_file}" ) # .writeable?
       #@wr = writeable?
       @tags = ['ricdisk', 'storazzo']
-      @size = `du -s '#{path}'`.split(/\s/)[0] # self.size
+      @size = _compute_size_could_take_long(path) 
       @unique_hash = "MD5::" + Digest::MD5.hexdigest(File.expand_path(path)) #   hash = Digest::MD5.hexdigest(File.expand_path(get_local_mountpoint))
       @computation_hostname = Socket.gethostname
       @created_at = Time.now
@@ -109,14 +109,24 @@ module Storazzo
     # def size 
     #   `du -s '#{path}'`.split(/\s/)[0]
     # end
+    def self._compute_size_could_take_long(my_path) 
+      deb "Could take long. TODO(ricc): add some sort of cutoff/timeout to 5 seconds."
+      puts azure('could take long')
+      `du -s '#{my_path}' 2>/dev/null`.chomp.split(/\s/)[0] # self.size
+    end
 
     def writeable?() 
       #memoize
       return @wr unless @wr.nil? 
       # NOW: CALCULATE it
       # Now I can do ONCE an EXPENSIVE calculation
-      puts yellow("TODO(ricc): Do expensive calculation if this FS is writeable: #{path} and write/memoize it on @wr once and for all")
-      puts yellow("TODO(ricc): I have a feeling this should be delegated to praecipuus Storazzo::Media::Object we refer to (WR is different on GCS vs Local):") # infinite loop dammit #{self.to_verbose_s}")
+      puts yellow("[RicDisk.writeable] TODO(ricc): Do expensive calculation if this FS is writeable: #{path} and write/memoize it on @wr once and for all")
+      puts yellow("[RicDisk.writeable]             I have a feeling this should be delegated to praecipuus Storazzo::Media::Object we refer to (WR is different on GCS vs Local):") # infinite loop dammit #{self.to_verbose_s}")
+      puts("Dir: #{ azure path}")
+      puts("absolute_path: #{azure absolute_path}")
+      puts("File.writable?(absolute_path): #{azure File.writable?(absolute_path)}")
+      bash_output = `if [ -w "#{absolute_path}" ]; then echo "WRITABLE"; else echo "NOT WRITABLE"; fi`
+      puts("bash_output: #{azure bash_output}")
       #@wr = File.writable?(File.expand_path(@ricdisk_file)) # rescue false
       raise "for some reason an important info (ricdisk_file='#{absolute_path}') is missing!" if ricdisk_file.nil?
       @wr = File.writable?(absolute_path) # rescue false
@@ -263,7 +273,7 @@ module Storazzo
       # given a path, if .ricdisk exists i do stuff with it..
       disk_info = nil
       unless ok_dir? # self.ok_dir?(subdir)
-        puts("[write_config_yaml_to_disk] Nothing for me here: '#{subdir}'. Existing")
+        warn("[write_config_yaml_to_disk] Nothing for me here: '#{subdir}'. Existing")
         return 
       end
       ConfigFiles.each do |papable_configfile_name|

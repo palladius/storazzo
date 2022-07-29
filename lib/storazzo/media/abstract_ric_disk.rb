@@ -3,13 +3,13 @@ module Storazzo::Media
         #include Storazzo::Common
         extend Storazzo::Common
 
-
-        #@@default_stats_filename = Storazzo::RicDiskStatsFile.default_name
+        #DefaultStatsFilename = Storazzo::RicDiskStatsFile.default_name
 
             # looks like there's not Abstract Class in Ruby, but also SO says he best
             # way to do this is this: 
             
             #    attr_accessor :name, :description, :ricdisk_file, :local_mountpoint, :wr, :path, :ricdisk_file_empty, :size, :active_dirs
+
 
             ########################
             # Abstract methods START
@@ -53,7 +53,7 @@ module Storazzo::Media
                     # if not writeable, I will:
                     # 1. create a dir based on its unique format.
                     # 2. create a file of same look and feel (alternative - used a DASH)
-                    return "{get_local_folder}/#{unique_id}::#{self.default_stats_filename}"
+                    return "TODO FIXME {get_local_folder}/#{unique_id}::#{self.default_stats_filename}"
                     #"{get_local_folder}"/#{unique_id}/#{Storazzo::RicDiskStatsFile.default_name}"
                 end                     
             end
@@ -64,6 +64,18 @@ module Storazzo::Media
                 # Expand path to make it as unique as possible...
                 hash = Digest::MD5.hexdigest(File.expand_path(get_local_mountpoint))
                 "MD5::v1::#{hash}"
+            end
+
+            def to_verbose_s
+                h = {}
+                h[:class] = self.class 
+                h[:unique_id] = self.unique_id
+                h[:inspect] = self.inspect
+                h[:to_s] = self.to_s
+                h[:local_mountpoint] = local_mountpoint
+                h[:writeable] = self.writeable?
+                h[:stats_file_smart_fullpath] = stats_file_smart_fullpath
+                return h
             end
 
             # # Todo check on instances these 3 methods exist

@@ -51,11 +51,17 @@ watch-test:
 	watch -c make test
 
 test-gcs-bucket:
-	ruby -I test test/media/test_gcs_bucket.rb
+	#echo "Warning this uses the INCLUDED gem not the latest one in development'
+	#ruby -I test test/media/test_gcs_bucket.rb
+	rake test TEST=test/media/test_gcs_bucket.rb
+
 test-local-folder:
+	echo "Warning this uses the INCLUDED gem not the latest one in development'
 	ruby -I test test/media/test_local_folder.rb
 # https://medium.com/@tegon/quick-guide-to-minitest-arguments-745bf9fe4b3
 test-media-subfolder:
 	rake test TEST="test/media/*.rb"
 test-verbose:
 	rake test:verbose --verbose 
+test-single-file-continuously:
+	\watch -n 5 --color rake test TEST="test/media/test_local_folder.rb"
