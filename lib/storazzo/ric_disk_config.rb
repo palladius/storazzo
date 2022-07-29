@@ -116,6 +116,16 @@ public
             "POLY_#{self.class}_(ver=#{config_ver}, file=#{config_file}), #{white(size)} bytes" # - config_default_folder=#{self.config_default_folder}"
         end
 
+        def to_verbose_s
+            h = {}
+            h[:description] = "This is a Verbose Hash describing a RicDiskConfig or its child RicDiskSampleConfig to understand why it keeps failing.."
+            h[:to_s] = self.to_s 
+            h[:class] = self.class 
+            h[:file] = __FILE__ 
+            h[:id] = self.object_id
+            return h
+        end
+
         def get_config(opts={})
             return load(opts) if @config.nil?
             @config

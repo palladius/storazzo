@@ -21,7 +21,7 @@ module Storazzo
     RicdiskVersion = '2.1'
     RicdiskHistory = [
       '2022-07-29 2.1 Added timestamp',
-      '2022-07-28 2.0 Added tags, siz, unique_hash, cmputation_hostname, wr, ...',
+      '2022-07-28 2.0 Added tags, siz, unique_hash, computation_hostname, wr, ...',
   ]
     DefaultGemfileTestDiskFolder = Storazzo.root + "/var/test/disks/" # was: @@default_gemfile_test_disks_folder
     # Immutable
@@ -173,7 +173,7 @@ module Storazzo
         deb "[CACHE HIT] ricdisk_file (didnt have to recompute it - yay!)"
         return @ricdisk_file
       end
-      warn "RICC_WARNING This requires cmputation I wanna do it almost once"
+      deb "[compute_ricdisk_file] RICC_WARNING This requires cmputation I wanna do it almost once"
       ConfigFiles.each do |papable_config_filename|
         #return ".ricdisk.yaml" if File.exist?("#{path}/.ricdisk.yaml") #and File.empty?( "#{path}/.ricdisk.yaml")
         #return ".ricdisk" if File.exist?("#{path}/.ricdisk") # and File.empty?( "#{path}/.ricdisk")
