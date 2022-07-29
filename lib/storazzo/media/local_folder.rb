@@ -3,6 +3,8 @@
 
 module Storazzo::Media
     class Storazzo::Media::LocalFolder < Storazzo::Media::AbstractRicDisk
+        #extend Storazzo::Common
+        include Storazzo::Common
 
         attr_accessor :local_mountpoint, :wr
 

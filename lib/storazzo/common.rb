@@ -1,8 +1,9 @@
 # Ric common stuff! :)
 #
-#
 # Usage:
-#      include Storazzo::Common 
+#      include Storazzo::Common  (def to def)
+# or
+#      extend Storazzo::Common   (def to def self.XX)
 #
 require_relative 'colors'
 

@@ -8,16 +8,6 @@ require "storazzo/ric_disk_config_example"
 
 require 'pry' # must install the gem... but you ALWAYS want pry installed anyways
 
-#require "storazzo/ric_disk_config"
-#require "storazzo/ric_disk_sample_config"
-#require 'storazzo/ric_disk_sample_config'  # => NOTHING!!
-#require 'storazzo/ric_disk_config_sample'  # => NOTHING!!
-
-#require "storazzo/ric_disk"
-#require "lib/storazzo/ric_disk_sample_config"
-#require "storazzo/media/local_folder"
-#require "storazzo/ric_disk/gcs_bucket"
-#require "storazzo/media/local_folder"
 
 class GcsBucketTest < Minitest::Test
 

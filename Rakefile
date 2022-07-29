@@ -16,14 +16,25 @@ desc "Run tests"
 task default: :test
 
 # Adding test/media directory to rake test.
-namespace :test do
+namespace :verbose_test do
   desc "Test tests/media/* code"
   Rake::TestTask.new do |t|
+    t.libs << "test"
     t.libs << "test/media"
-    # Rails::TestTask.new(media: 'test:prepare') do |t|
+    t.verbose = true
+    t.warning = true 
     t.pattern = 'test/**/test_*.rb'
+    #$DEBUG = true
   end
 end
+# namespace :verbose_test do
+#   desc "Test tests/media/* code"
+#   Rake::TestTask.new do |t|
+#     t.libs << "test/media"
+#     # Rails::TestTask.new(media: 'test:prepare') do |t|
+#     t.pattern = 'test/**/test_*.rb'
+#   end
+# end
 #Rake::Task['test:run'].enhance ["test:media"]
 
 # begin
