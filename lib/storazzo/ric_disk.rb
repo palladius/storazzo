@@ -18,7 +18,11 @@ module Storazzo
     # These are the files I do accept.
     ConfigFiles = %W{ ricdisk.yaml .ricdisk storazzo.yaml } 
     DefaultConfigFile = "storazzo.yaml" # .ricdisk } 
-    RicdiskVersion = '2.0'
+    RicdiskVersion = '2.1'
+    RicdiskHistory = [
+      '2022-07-29 2.1 Added timestamp',
+      '2022-07-28 2.0 Added tags, siz, unique_hash, cmputation_hostname, wr, ...',
+  ]
     DefaultGemfileTestDiskFolder = Storazzo.root + "/var/test/disks/" # was: @@default_gemfile_test_disks_folder
     # Immutable
     DefaultMediaFolders = %w{ 
@@ -27,7 +31,7 @@ module Storazzo
      }.append(DefaultGemfileTestDiskFolder ).append("/media/#{ENV["USER"]}/" )
 
      #     # todo substitute with protobuf..
-    attr_accessor :name, :description, :ricdisk_file,:ricdisk_file_full, :local_mountpoint, :wr, :path, 
+    attr_accessor :name, :description, :ricdisk_file, :ricdisk_file_full, :local_mountpoint, :wr, :path, 
                   :ricdisk_file_empty, :size, :active_dirs, :ricdisk_version, 
                   :unique_hash # new 202207
 
@@ -39,8 +43,6 @@ module Storazzo
 
     def initialize(path, opts={})
       deb "RicDisk initialize.. path=#{path}"
-#      @local_mountpoint = path
-      ##@ricdisk_file = "[initialize] Getting there.." # somewhre its not working
       @local_mountpoint = File.expand_path(path)
       @description = "This is an automated RicDisk description from v.#{RicdiskVersion}. Created on #{Time.now}'"
       @ricdisk_version = RicdiskVersion
@@ -54,6 +56,7 @@ module Storazzo
       @size = `du -s '#{path}'`.split(/\s/)[0] # self.size
       @unique_hash = "MD5::" + Digest::MD5.hexdigest(File.expand_path(path)) #   hash = Digest::MD5.hexdigest(File.expand_path(get_local_mountpoint))
       @computation_hostname = Socket.gethostname
+      @created_at = Time.now
 
       @ricdisk_file_empty = ricdisk_file_empty?
       
@@ -255,11 +258,16 @@ module Storazzo
       #   puts(yellow disk_info.to_yaml)
       # end
       if disk_info.is_a?(RicDisk)
-        deb("disk_info.class: #{disk_info.class}")
-        if File.empty?(disk_info.absolute_path) and (disk_info.wr)
+        puts yellow("DEB disk_info.class: #{disk_info.class}")
+        if File.empty?(disk_info.absolute_path) # and (disk_info.wr)
           puts(green("yay, we can now write the file '#{disk_info.absolute_path}' (which is R/W, I just checked!) with proper YAML content.."))
-          ret = File.write(disk_info.absolute_path, disk_info.to_yaml)
-          puts("Written file! ret=#{ret}")
+          if disk_info.wr
+            ret = File.write(disk_info.absolute_path, disk_info.obj_to_yaml)
+            puts green("Written file! ret=#{ret}")
+          else
+            raise "TODO_IMPLEMENT: write in proper place in config dir"
+            puts red("TODO implement me")
+          end
         else
           puts(red("Something not right here: either file is NOT empty or disk is NOT writeable.. #{File.empty?(disk_info.absolute_path)}"))
           puts("File size: #{File.size(disk_info.absolute_path)}")
@@ -267,28 +275,37 @@ module Storazzo
           puts(disk_info.obj_to_hash)
           puts(disk_info.obj_to_yaml)
         end
-      else 
+      else # not a RicDisk..
         puts "[write_config_yaml_to_disk] No DiskInfo found across #{ConfigFiles}. I leave this function empty-handed."
       end
-      if File.exists?( "#{subdir}/.ricdisk") and ! File.empty?( "#{subdir}/.ricdisk")
-        puts("Config File found with old-style name: '#{subdir}/.ricdisk' ! Please move it to .ricdisk.yaml!")
-        puts(white `cat "#{subdir}/.ricdisk"`)
-      else
-        puts "WRITING NOW. disk_info.obj_to_yaml .. to #{compute_ricdisk_file}"
-        File.open(ricdisk_file_full, 'w').write(disk_info.obj_to_yaml)
-      end
+
+      #disk_info.absolute_path
+      #if File.exists?( "#{subdir}/.ricdisk") and ! File.empty?( "#{subdir}/.ricdisk")
+      # if File.exists?(disk_info.absolute_path) and ! File.empty?(disk_info.absolute_path)
+      #   puts("Config File found with old-style name: '#{subdir}/.ricdisk' ! Please move it to .ricdisk.yaml!")
+      #   puts(white `cat "#{disk_info.absolute_path}"`)
+      # else
+      #   puts "WRITING NOW. [I BELIEVE THIS IS DUPE CODE - see a few lines above!] disk_info.obj_to_yaml .. to #{compute_ricdisk_file}"
+      #   File.open(ricdisk_file_full, 'w').write(disk_info.obj_to_yaml)
+      # end
     end
 
     # TODO obsolete this as i should NOT be calling it from clas, but from method.
     def self.ok_dir?(subdir)
       File.exists?( "#{subdir}/.ricdisk") or File.exists?( "#{subdir}/.ricdisk.yaml")
     end
+
+    def compute_stats_files(opts={})
+      puts azure("TODO implement natively. Now I'm being lazy")
+      Storazzo::RicDisk.calculate_stats_files(path, opts)
+    end
   
 
 
     # Create RDS file.
     def self.calculate_stats_files(dir, opts={})
-      opts_upload_to_gcs = opts.fetch :upload_to_gcs, true 
+      opts_upload_to_gcs = opts.fetch :upload_to_gcs, true
+      
       full_file_path = "#{dir}/#{$stats_file}"
       return "This refacgtor is for another day"
   

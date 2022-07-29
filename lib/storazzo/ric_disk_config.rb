@@ -175,7 +175,7 @@ public
                         rd.write_config_yaml_to_disk(dir)
                         #RicDisk.write_config_yaml_to_disk(dir)
                         #RicDisk.calculate_stats_files (CLASS) => will become OBJECT compute_stats_files
-                        compute_stats_files(dir) # dir is inutile # TODO
+                        rd.compute_stats_files() # dir is inutile # TODO
                     else
                         deb red("Doesnt seem a legit dir to me: #{dir}")
                     #     deb "Figghiu ri buttana: doesnt exist #{red dir}" 
