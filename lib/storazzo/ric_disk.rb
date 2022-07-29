@@ -222,13 +222,13 @@ module Storazzo
     end
 
     # maybe move to a RiccFile class? Maybe even INHERIT from FILE?
-    def self.obsolescence_seconds file_path
+    def obsolescence_seconds(file_path)
       creation_time = File.stat(file_path).ctime
       deb("[obsolescence_seconds] File #{file_path}: #{creation_time} - #{(Time.now - creation_time)} seconds ago")
       (Time.now - creation_time).to_i
     end
     # maybe move to a RiccFile class? Maybe even INHERIT from FILE?
-    def self.obsolescence_days(file_path)
+    def obsolescence_days(file_path)
       return obsolescence_seconds(file_path) / 86400
     end
 
@@ -296,8 +296,32 @@ module Storazzo
     end
 
     def compute_stats_files(opts={})
-      puts azure("TODO implement natively. Now I'm being lazy")
-      Storazzo::RicDisk.calculate_stats_files(path, opts)
+      puts azure("[compute_stats_files] TODO implement natively. Now I'm being lazy")
+      #Storazzo::RicDisk.calculate_stats_files(path, opts)
+      opts_upload_to_gcs = opts.fetch :upload_to_gcs, true
+      dir = path
+      
+      full_file_path = "#{dir}/#{$stats_file}"
+      #return "This refactor is for another day"
+  
+      puts("compute_stats_files(#{white dir}): #{white full_file_path}")
+      puts "TEST1 DIR EXISTS: #{dir} -> #{File.directory? dir}"
+      Dir.chdir(dir)
+      if File.exists?(full_file_path) and ($opts[:force] == false)
+        puts "File '#{$stats_file}' exists already." #  - now should see if its too old, like more than 1 week old"
+        # TODO check for file time...
+        print "Lines found: #{yellow `wc -l "#{full_file_path}" `.chomp }. File obsolescence (days): #{yellow obsolescence_days(full_file_path)}."
+        if obsolescence_days(full_file_path) > 7 
+          puts("*** ACHTUNG *** FIle is pretty old. You might consider rotating: #{yellow "mv #{full_file_path} #{full_file_path}_old"}. Or invoke with --force")
+        end
+        upload_to_gcs(full_file_path) if opts_upload_to_gcs
+      else
+        puts "Crunching data stats from '#{dir}' into '#{$stats_file}' ... please bear with me.. [maybe file didnt exist, maybe $opts[:force] is true]" 
+        command = "find . -print0 | xargs -0 stats-with-md5.rb --no-color | tee '#{full_file_path}'"
+        puts("[#{`pwd`.chomp}] Executing: #{azure command}")
+        ret = backquote_execute(command)
+        puts "Done. #{ret.split("\n").count} files processed."
+      end
     end
   
 
@@ -307,7 +331,7 @@ module Storazzo
       opts_upload_to_gcs = opts.fetch :upload_to_gcs, true
       
       full_file_path = "#{dir}/#{$stats_file}"
-      return "This refacgtor is for another day"
+      return "This refactor is for another day"
   
       puts("calculate_stats_files(#{white dir}): #{white full_file_path}")
       puts "TEST1 DIR EXISTS: #{dir} -> #{File.directory? dir}"
@@ -432,25 +456,27 @@ end  #/Module
 
 
   
-#     def self.backquote_execute(cmd)
-#       # executed a command wrapped by dryrun though
-#       return "DRYRUN backquote_execute(#{cmd})" if $opts[:dryrun]
-#       `#{cmd}`
-#     end
+    def backquote_execute(cmd, opts={})
+      dryrun = opts.fetch :dryrun, false
+      # executed a command wrapped by dryrun though
+      return "DRYRUN backquote_execute(#{cmd})" if dryrun # $opts[:dryrun]
+      `#{cmd}`
+    end
     
-#     def self.upload_to_gcs(file, opts={})
-#       deb("upload_to_gcs(#{file}). TODO(ricc) after breafast upload to GCS : #{file}")
-#       mount_name = file.split('/')[-2]
-#       filename = "#{mount_name}-#{File.basename file}"
-#       hostname = Socket.gethostname[/^[^.]+/]
-#       command = "gsutil cp '#{file}' gs://#{$gcs_bucket}/backup/ricdisk-magic/#{ hostname }-#{filename}"
-#       deb("Command: #{command}")
-#       ret = backquote_execute(command)
-#       # if $opts[:debug] do
-#       #   puts "+ Current list of files:"
-#       #   ret = backquote_execute("gsutil ls -al gs://#{$gcs_bucket}/backup/ricdisk-magic/")
-#       #   puts ret
-#       # end
-#       ret
-#     end
+    def upload_to_gcs(file, opts={})
+      deb("upload_to_gcs(#{file}). TODO(ricc) after breafast upload to GCS : #{file}")
+      mount_name = file.split('/')[-2]
+      filename = "#{mount_name}-#{File.basename file}"
+      hostname = Socket.gethostname[/^[^.]+/]
+      command = "gsutil cp '#{file}' gs://#{$gcs_bucket}/backup/ricdisk-magic/#{ hostname }-#{filename}"
+      deb("Command: #{command}")
+      puts azure("GCS upload disabled until I know if it works :) command='#{command}'")
+      ret = backquote_execute(command, :dryrun => true)
+      # if $opts[:debug] do
+      #   puts "+ Current list of files:"
+      #   ret = backquote_execute("gsutil ls -al gs://#{$gcs_bucket}/backup/ricdisk-magic/")
+      #   puts ret
+      # end
+      ret
+    end
   
