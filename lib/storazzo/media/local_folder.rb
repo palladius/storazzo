@@ -12,9 +12,9 @@ module Storazzo::Media
             deb "[Storazzo::Media::LocalFolder] initialize"
             
             @local_mountpoint = File.expand_path(local_mount)
+            @description = "Local Folder originally in '#{local_mount}'"
             raise "Sorry local mount doesnt exist!" unless File.exist?(@local_mountpoint)
-            @wr = File.writable?(stats_filename_default_fullpath) # .writeable? stats_file_smart_fullpath
-
+            @wr = writeable? # File.writable?(stats_filename_default_fullpath) # .writeable? stats_file_smart_fullpath
             #super.initialize(local_mount) rescue "SUPER_ERROR: #{$!}"
             super(local_mount) rescue "SUPER_ERROR(#{local_mount}): #{$!}"
         end

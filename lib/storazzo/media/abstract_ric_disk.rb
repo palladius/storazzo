@@ -9,17 +9,26 @@ module Storazzo::Media
             # way to do this is this: 
             
             #    attr_accessor :name, :description, :ricdisk_file, :local_mountpoint, :wr, :path, :ricdisk_file_empty, :size, :active_dirs
-
-
+            attr_accessor :description
             ########################
             # Abstract methods START
             ########################
             def initialize(local_mount)
-                pverbose true, "[AbstractRicDisk.init()] Some child of AbstractRicDisk (#{self}) called me! Yummie." # disable when you dont need me anymore..
-                validate
+                deb "[AbstractRicDisk.init()] Some child of AbstractRicDisk (#{self}) called me! Yummie." # disable when you dont need me anymore..
+                @description ||= "Not provided"
+                #validate
             end
             def self.list_all
                 raise "[AbstractRicDiskc::self.list_all] You should override this, says StackOverflow and Riccardo"
+            end
+            def self.list_all_with_type
+                raise "[AbstractRicDiskc::self.list_all_with_type] You should override this, says StackOverflow and Riccardo"
+            end
+            def self.super_duper_list_all_with_type
+                deb "Would be cool to be able to enumerate them all.."
+                GcsBucket.list_all_with_type + 
+                    MountPoint.list_all_with_type + 
+                        LocalFolder.list_all_with_type 
             end
             def parse(opts={})
                 raise "[AbstractRicDiskc::parse] You should override this, says StackOverflow and Riccardo"
@@ -66,6 +75,13 @@ module Storazzo::Media
                 "MD5::v1::#{hash}"
             end
 
+            def to_s(verbose=false)
+                return to_verbose_s() if verbose
+                readable_class = self.class.to_s.split('::').last # Storazzo::Media::LocalFolder => LocalFolder
+                my_keys = self.inspect.keys
+                "S:M:#{readable_class}(path=#{path}, r/w=#{wr}, keys=#{my_keys})"
+            end
+
             def to_verbose_s
                 h = {}
                 h[:class] = self.class 
@@ -82,6 +98,7 @@ module Storazzo::Media
             def self.abstract_class_mandatory_methods
                 %W{
                     self.list_all
+                    self.list_all_with_type
                     local_mountpoint
                     parse
                     writeable? 
@@ -122,6 +139,8 @@ module Storazzo::Media
                 raise "I need a path/directory string: #{path}" unless path.is_a?(String)
 
                 deb "TODO: if coincides with MountPoint, instance THAT"
+                # if path in Storazzo::Media::MountPoint.list_all_mount_points
+                # then return ...
                 if path =~ /^gs:\/\//
                     deb "Smells like GCS"
                     return GcsBucket.new(path)

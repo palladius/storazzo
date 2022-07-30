@@ -103,7 +103,7 @@ class LocalFolderTest < Minitest::Test
         )
     end
 
-    def TODO_test_readonly_directory_creates_configfile_outside_of_dir
+    def test_readonly_directory_creates_configfile_outside_of_dir
         test_dir = "/etc/"
         disk = Storazzo::Media::LocalFolder.new(test_dir)
         stats_file = disk.stats_filename_default_fullpath
@@ -120,16 +120,9 @@ class LocalFolderTest < Minitest::Test
     def test_readonly_directory_is_indeed_readonly
         test_dir = "/etc/"
         readonly_rdisk = Storazzo::Media::LocalFolder.new(test_dir)
-        # stats_file = disk.stats_filename_default_fullpath
-        # config = Storazzo::RicDiskSampleConfig.instance()
-        # config.load
-        # config.iterate_through_file_list_for_disks([test_dir])
-        # assert(
-        #     not(File.exists?(stats_file)),
-        #     "parse on LocalFolder should NOT create file '#{stats_file}' but another in another TODO place"
-        # )
-        #readonly_rdisk = Storazzo::RicDisk.new(test_dir)
-        ppp(readonly_rdisk.to_verbose_s)
+        if_deb? do
+            ppp(readonly_rdisk.to_verbose_s) 
+        end
         assert_equal(
             readonly_rdisk.wr,
             false,
@@ -139,16 +132,17 @@ class LocalFolderTest < Minitest::Test
     end
 
 
-    def test_writeable_directory_is_indeed_writeable
+    def test_writeable_tmp_directory_is_indeed_writeable
         test_dir = '/tmp/'
+        #test_dir = '~'
         writeable_rdisk = Storazzo::Media::LocalFolder.new(test_dir)
         #writeable_rdisk = Storazzo::RicDisk.new(test_dir)
+        if_deb?{ ppp(writeable_rdisk.to_verbose_s) }
         assert_equal(
-            writeable_rdisk.wr,
             true,
-            "Folder #{test_dir} is INDEED writeble to the author's knowledge, although triggers lot of noise."
+            writeable_rdisk.wr,
+            "Folder #{test_dir} is INDEED writeble to the author's knowledge, although triggers lot of noise => wr=#{ writeable_rdisk.wr }"
         )
-
     end
 
 
