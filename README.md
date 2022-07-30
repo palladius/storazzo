@@ -25,6 +25,11 @@ Single test in single file:
 * `ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works` (note this includes `storazzo` latest gem 
     and doesnt benefit from LATEST code so its NOT good for testing: use RAKE for that).
 
+**Testing binary files** is hard: by default they 'require storazzo' and use the GEM INSTALLed version which is a few versions away, usually.
+So while developing you might want to include the lib/ folder, like this:
+
+* Use local gem (super latest) for checking latest code: `ruby -Ilib bin/hello-storazzo`
+* This will use the gem installed a few days ago, likely so wont do you any good to test latest code: `bin/hello-storazzo`
 
 Now to toggle verbosity I believe I need to go into Rakefile (bummer)
 # Thanks

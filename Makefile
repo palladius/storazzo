@@ -65,3 +65,9 @@ test-verbose:
 	rake test:verbose --verbose 
 test-single-file-continuously:
 	\watch -n 5 --color rake test TEST="test/media/test_local_folder.rb"
+
+test-binary-with-local-gem:
+	ruby -Ilib bin/hello-storazzo
+test-binary-with-system-gem:
+	bin/hello-storazzo
+	
