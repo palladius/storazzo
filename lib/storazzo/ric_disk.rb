@@ -8,6 +8,7 @@ module Storazzo
 
     include Hashify
     include Storazzo::Common 
+    extend Storazzo::Common 
     extend Storazzo::Colors
     require 'socket'
 
@@ -64,7 +65,7 @@ module Storazzo
       #@wr = File.writable?("#{path}/#{ricdisk_file}" ) # .writeable?
       #@wr = writeable?
       @tags = ['ricdisk', 'storazzo']
-      @size = _compute_size_could_take_long(path) 
+      @size = RicDisk._compute_size_could_take_long(path) 
       @unique_hash = "MD5::" + Digest::MD5.hexdigest(File.expand_path(path)) #   hash = Digest::MD5.hexdigest(File.expand_path(get_local_mountpoint))
       @computation_hostname = Socket.gethostname
       @created_at = Time.now
@@ -111,7 +112,7 @@ module Storazzo
     # end
     def self._compute_size_could_take_long(my_path) 
       deb "Could take long. TODO(ricc): add some sort of cutoff/timeout to 5 seconds."
-      puts azure('could take long')
+      puts azure('could take long. Please take precautions like forking with timeout of 5sec')
       `du -s '#{my_path}' 2>/dev/null`.chomp.split(/\s/)[0] # self.size
     end
 
@@ -330,62 +331,60 @@ module Storazzo
     end
 
     def compute_stats_files(opts={})
-      puts azure("[compute_stats_files] TODO implement natively. Now I'm being lazy")
       #Storazzo::RicDisk.calculate_stats_files(path, opts)
-      opts_upload_to_gcs = opts.fetch :upload_to_gcs, true
+      opts_upload_to_gcs = opts.fetch :upload_to_gcs, false
+      opts_force_rewrite = opts.fetch :force, false
+      opts_stats_file    = opts.fetch :stats_file, "ricdisk_stats_v11.rds" # default. TODO point to proper..
       dir = path
+      puts azure("[compute_stats_files] TODO implement natively. Now I'm being lazy. stats_file=#{opts_stats_file} dir=#{dir}")
       
-      full_file_path = "#{dir}/#{$stats_file}"
-      #return "This refactor is for another day"
+      full_file_path = "#{dir}/#{opts_stats_file}"
+      deb "This refactor is for another day. Actually no, TODAY "
+      pverbose true, "TODO(ricc): you should compute more SMARTLY the full_file_path (#{full_file_path}): if its R/O it should be elsewhere.."
+      puts azure("- full_file_path: #{full_file_path}")
+      puts azure("- writeable?: #{writeable?}")
   
       puts("compute_stats_files(#{white dir}): #{white full_file_path}")
-      puts "TEST1 DIR EXISTS: #{dir} -> #{File.directory? dir}"
+      deb "TEST1 DIR EXISTS: #{dir} -> #{File.directory? dir}"
+      raise "Directory doesnt exist: #{dir}" unless File.directory?(dir)
       Dir.chdir(dir)
-      if File.exists?(full_file_path) and ($opts[:force] == false)
-        puts "File '#{$stats_file}' exists already." #  - now should see if its too old, like more than 1 week old"
-        # TODO check for file time...
-        print "Lines found: #{yellow `wc -l "#{full_file_path}" `.chomp }. File obsolescence (days): #{yellow obsolescence_days(full_file_path)}."
-        if obsolescence_days(full_file_path) > 7 
-          puts("*** ACHTUNG *** FIle is pretty old. You might consider rotating: #{yellow "mv #{full_file_path} #{full_file_path}_old"}. Or invoke with --force")
+      puts azure `ls` # im curious
+      if File.exists?(full_file_path)
+        if opts_force_rewrite
+          #raise "TODO implement file exists and FORCE enabled"
+          RicDisk.compute_stats_for_dir_into_file(dir, full_file_path, "ReWrite enabled")
+        else # File.exists?(full_file_path) and (opts_force)
+          puts "File '#{opts_stats_file}' exists already." #  - now should see if its too old, like more than 1 week old"
+          # TODO check for file time...
+          print "Lines found: #{yellow `wc -l "#{full_file_path}" `.chomp }. File obsolescence (days): #{yellow obsolescence_days(full_file_path)}."
+          if obsolescence_days(full_file_path) > 7 
+            #puts yellow("*** ACHTUNG *** FIle is pretty old. You might consider rotating: #{yellow "mv #{full_file_path} #{full_file_path}_old"}. Or invoke with --force")
+            puts yellow("*** ACHTUNG *** FIle is pretty old. I'll force a rewrite")
+            RicDisk.compute_stats_for_dir_into_file(dir, full_file_path, "File older than 7 days. Indeed: #{obsolescence_days(full_file_path)}")
+          end
+          upload_to_gcs(full_file_path) if opts_upload_to_gcs          
         end
-        upload_to_gcs(full_file_path) if opts_upload_to_gcs
       else
-        puts "Crunching data stats from '#{dir}' into '#{$stats_file}' ... please bear with me.. [maybe file didnt exist, maybe $opts[:force] is true]" 
-        command = "find . -print0 | xargs -0 stats-with-md5 --no-color | tee '#{full_file_path}'"
-        puts("[#{`pwd`.chomp}] Executing: #{azure command}")
-        ret = backquote_execute(command)
-        puts "Done. #{ret.split("\n").count} files processed."
+        deb("File doesnt exist..")
+        RicDisk.compute_stats_for_dir_into_file(dir, full_file_path, "ConfigFile doesn't exist")
       end
+    end
+
+    def self.compute_stats_for_dir_into_file(dir, full_file_path, reason)
+      #full_file_path = "#{dir}/#{stats_file}"
+      puts "Crunching data stats from '#{dir}' into '#{full_file_path}' ... please bear with me.. [reason: '#{reason}']" 
+      command = "find . -print0 | xargs -0 stats-with-md5 --no-color | tee '#{full_file_path}'"
+      puts("[#{`pwd`.chomp}] Executing: #{azure command}")
+      ret = backquote_execute(command)
+      puts "Done. #{ret.split("\n").count} files processed."
     end
   
 
 
-    # Create RDS file.
-    def self.calculate_stats_files(dir, opts={})
-      opts_upload_to_gcs = opts.fetch :upload_to_gcs, true
-      
-      full_file_path = "#{dir}/#{$stats_file}"
-      return "This refactor is for another day"
-  
-      puts("calculate_stats_files(#{white dir}): #{white full_file_path}")
-      puts "TEST1 DIR EXISTS: #{dir} -> #{File.directory? dir}"
-      Dir.chdir(dir)
-      if File.exists?(full_file_path) and ($opts[:force] == false)
-        puts "File '#{$stats_file}' exists already." #  - now should see if its too old, like more than 1 week old"
-        # TODO check for file time...
-        print "Lines found: #{yellow `wc -l "#{full_file_path}" `.chomp }. File obsolescence (days): #{yellow obsolescence_days(full_file_path)}."
-        if obsolescence_days(full_file_path) > 7 
-          puts("*** ACHTUNG *** FIle is pretty old. You might consider rotating: #{yellow "mv #{full_file_path} #{full_file_path}_old"}. Or invoke with --force")
-        end
-        upload_to_gcs(full_file_path) if opts_upload_to_gcs
-      else
-        puts "Crunching data stats from '#{dir}' into '#{$stats_file}' ... please bear with me.. [maybe file didnt exist, maybe $opts[:force] is true]" 
-        command = "find . -print0 | xargs -0 stats-with-md5 --no-color | tee '#{full_file_path}'"
-        puts("[#{`pwd`.chomp}] Executing: #{azure command}")
-        ret = backquote_execute command
-        puts "Done. #{ret.split("\n").count} files processed."
-      end
-    end
+    def self.calculate_stats_files_DUPLICATE_STATIC(dir, opts={})
+      raise "Please use object instead. If you cant, please move the object code to STATIC and dedupe code!"
+  end
+
   
 #       if also_mountpoints
 # =begin

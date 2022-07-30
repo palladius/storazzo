@@ -76,14 +76,13 @@ class LocalFolderTest < Minitest::Test
         puts $config
     end
 
-    def TODO_test_2_iterate_through_file_list_for_disks
-        #p $vediamo_se_funge
-        puts("(#{__FILE__}) WEIRD THING: This test is flaky. SKipping for now until I complete the LocalFolder.parse() code")
+    def test_2_iterate_through_file_list_for_disks
+        #puts("(#{__FILE__}) WEIRD THING: This test is flaky. SKipping for now until I complete the LocalFolder.parse() code")
         folders = Storazzo::Media::LocalFolder.list_all
         puts "Folders: #{folders}"
         config = Storazzo::RicDiskSampleConfig.instance()
-        puts "config1: #{config}"
         config.load
+        puts "config1: #{config}"
         puts "config2: #{config.load}"
         test_dir = folders.first
         puts "test_first_directory_parsing_actually_works() TestDir: #{test_dir}"
@@ -103,7 +102,7 @@ class LocalFolderTest < Minitest::Test
         )
     end
 
-    def test_readonly_directory_creates_configfile_outside_of_dir
+    def TODO_test_readonly_directory_creates_configfile_outside_of_dir
         test_dir = "/etc/"
         disk = Storazzo::Media::LocalFolder.new(test_dir)
         stats_file = disk.stats_filename_default_fullpath

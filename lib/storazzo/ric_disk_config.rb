@@ -28,7 +28,7 @@ module Storazzo
         include Storazzo::Colors
         
         DefaultConfigLocation = File.expand_path "~/.storazzo.yaml" 
-        
+
         DefaultConfigLocations = [
             File.expand_path("~/.storazzo.yaml") , # HOME
             File.expand_path("./.storazzo.yaml") , # LOCAL DIR
@@ -106,6 +106,9 @@ public
             #self.
             @config['Config']['DefaultFolder'] #rescue "Unknown config_default_folder: #{$!}"
         end
+        def config_project_id 
+            @config['Config']['Backends']['GoogleCloudStorage']['ProjectId']
+        end
         def already_loaded?
             #return 
             load_called == true
@@ -127,6 +130,7 @@ public
             h[:id] = self.object_id
             h[:get_bucket_paths] = self.get_bucket_paths()
             h[:get_local_folders] = self.get_local_folders()
+            h[:config_project_id] = self.config_project_id()
             return h
         end
 
