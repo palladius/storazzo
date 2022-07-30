@@ -20,10 +20,15 @@ module Storazzo
 
     # version 1.2
     def self.say_hi(message=nil)
-      str = "Hello from Storazzo v#{white Storazzo::version rescue "Error: #{$!}"}!"
-      str += " Message: '#{yellow message.to_s}'" if message
+      str = get_hi(message)
       puts str 
       str 
+    end
+    # salutation
+    def self.get_hi(message=nil)
+      str = "Hello from Storazzo v#{white Storazzo::version rescue "Error: #{$!}"}!"
+      str += " Message: '#{yellow message.to_s}'" if message
+      str
     end
 
     def self.all_mounts(opts={})

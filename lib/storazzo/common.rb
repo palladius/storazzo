@@ -41,6 +41,14 @@ module Storazzo::Common
         Pry::ColorPrinter.pp(complex_object_to_colorize)
     end
 
+    def fatal(s)
+       raise "[FATAL] #{red s}" 
+    end
+
+    def mac? 
+        `uname`.chomp == 'Darwin'
+    end
+
 private
     def _debug_true
         $DEBUG or ENV["DEBUG"] == 'true'

@@ -370,10 +370,25 @@ module Storazzo
       end
     end
 
-    def self.compute_stats_for_dir_into_file(dir, full_file_path, reason)
+    def self.compute_stats_for_dir_into_file(dir, full_file_path, reason, opts={})
+      max_lines = opts.fetch :max_lines, 42 # todo move to nil or -1
       #full_file_path = "#{dir}/#{stats_file}"
       puts "Crunching data stats from '#{dir}' into '#{full_file_path}' ... please bear with me.. [reason: '#{reason}']" 
-      command = "find . -print0 | xargs -0 stats-with-md5 --no-color | tee '#{full_file_path}'"
+      if max_lines < 0 # infinite
+        command = "find . -print0 | xargs -0 stats-with-md5 --no-color | tee '#{full_file_path}'"
+      else
+        # WOW! https://stackoverflow.com/questions/68599963/reliably-stop-bash-find-after-n-matches
+        # find . -type f -iname "*.txt" -print0 |
+        # head -z -n 10 |
+        # xargs -r0 myscript.sh
+        if mac?
+          puts red("Sorry head -z doesnt work on Mac :/ so this head -N will be VERY approximate. Probably you should divide by ten or so :)")
+          spannometric_lines = (max_lines/10) 
+          command = "find . -print0 | head -n '#{spannometric_lines}' | xargs -r0 stats-with-md5 --no-color | tee '#{full_file_path}'"
+        else
+          command = "find . -print0 | head -z -n '#{max_lines}' | xargs -r0 stats-with-md5 --no-color | tee '#{full_file_path}'"
+        end
+      end
       puts("[#{`pwd`.chomp}] Executing: #{azure command}")
       ret = backquote_execute(command)
       puts "Done. #{ret.split("\n").count} files processed."
@@ -425,65 +440,6 @@ end  #/Module
 
   
 
-  
-#     def initialize(path, ricdisk_file)
-#       puts "[DEB] RicDisk initialize.. path=#{path}"
-#       @local_mountpoint = path
-#       @description = "This is an automated RicDisk description from v.#{VERSION}. Riccardo feel free to edit away with characteristicshs of this device.. Created on #{Time.now}'"
-#       @ricdisk_version = VERSION
-#       @ricdisk_file = ricdisk_file
-#       #@questo_non_esiste = :sobenme
-#       @label = path.split("/").last
-#       @name = path.split("/").last
-#       @wr = File.writable?("#{path}/#{ricdisk_file}" ) # .writeable?
-#       @tags = 'ricdisk'
-#       puts :beleza
-#       @config = RicDiskConfig.instance.get_config
-#       #puts @config if @config
-#       find_info_from_mount(path)
-#       find_info_from_df()
-#     end
-  
-#     def ricdisk_absolute_path
-#       @local_mountpoint + "/" +  @ricdisk_file
-#     end
-  
-#     def add_tag(tag)
-#       @tags += ", #{tag}"
-#     end
-  
-#     # might have other things in the future...
-#     def find_info_from_mount(path)
-#       mount_table_lines = interesting_mount_points()
-#       mount_line = nil
-#       mount_table_lines.each do |line|
-#         next if line =~ /^map /
-#         dev, on, mount_path, mode = line.split(/ /)
-#         if mount_path==path
-#           mount_line = line 
-#         else
-#           @info_from_mount = false      
-#         end
-#       end
-#       @info_from_mount = ! (mount_line.nil?)
-#       if @info_from_mount
-#         #@mount_line = mount_line
-#         @description += "\nMount line:\n" + mount_line
-#         @remote_mountpoint = mount_line.split(/ /)[0]
-#         @fstype = mount_line.split(/ /)[3].gsub(/[\(,]/, '')
-#         add_tag(:synology) if @remote_mountpoint.match('1.0.1.10')
-#       end
-#     end
-  
-#     def find_info_from_df()
-#       path = @local_mountpoint
-#       df_info = `df -h "#{path}"`
-#       @df_info = df_info
-#       lines = df_info.split(/\n+/)
-#       raise "I need exactly TWO lines! Or no info is served here..." unless lines.size == 2
-#       mount, @size_readable, used_size, avail_size, @disk_utilization, other =  lines[1].split(/\s+/) # second line..
-#     end
-  
   
   
 

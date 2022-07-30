@@ -108,7 +108,9 @@ module Storazzo::Media
             # Putting here since its same code for MountPoint or generic folder.
             def parse_block_storage_folder(opts={})
                 #Storazzo::RicDiskUgly.calculate_stats_files(get_local_mountpoint)
-                Storazzo::RicDisk.calculate_stats_files(get_local_mountpoint, opts)
+                rd = Storazzo::RicDisk.new(self)
+                #Storazzo::RicDisk
+                rd.compute_stats_files(get_local_mountpoint, opts)
                 #return "42"
             end
 

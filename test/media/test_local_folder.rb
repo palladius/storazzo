@@ -44,7 +44,7 @@ class LocalFolderTest < Minitest::Test
 
     # To only test this:
     # $ ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works
-    def TODO_test_1_first_directory_parsing_actually_works()
+    def test_1_first_directory_parsing_actually_works()
         # include module 
 
         #p $vediamo_se_funge
@@ -102,8 +102,8 @@ class LocalFolderTest < Minitest::Test
         )
     end
 
-    def TODO_test_readonly_directory_creates_configfile_outside_of_dir
-        test_dir = "/etc/"
+    def test_readonly_directory_creates_configfile_outside_of_dir
+        test_dir = "/etc/ssh/"
         disk = Storazzo::Media::LocalFolder.new(test_dir)
         stats_file = disk.stats_filename_default_fullpath
         config = Storazzo::RicDiskSampleConfig.instance()
@@ -117,7 +117,7 @@ class LocalFolderTest < Minitest::Test
     end
 
     def test_readonly_directory_is_indeed_readonly
-        test_dir = "/etc/"
+        test_dir = "/etc/ssh"
         readonly_rdisk = Storazzo::Media::LocalFolder.new(test_dir)
         if_deb? do
             ppp(readonly_rdisk.to_verbose_s) 

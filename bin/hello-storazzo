@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'storazzo'
+
+Storazzo::Main.say_hi(ARGV[0])
+
