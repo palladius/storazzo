@@ -11,6 +11,8 @@ require "storazzo"
 
 class RicDiskConfigTest < Minitest::Test
 
+    include Storazzo::Common 
+
     def test_load_sample_version # test_sample_config_is_within_gems_boundaries
         #config_obj = Storazzo::RicDiskConfig.instance()
         #puts :sofar_so_good

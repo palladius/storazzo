@@ -4,7 +4,7 @@ require "storazzo"
 class RicDiskTest < Minitest::Test
 
     def test_factory_works_for_gcs 
-        rd1 = RicDisk.new('/tmp')
+        rd1 = Storazzo::RicDisk.new('/tmp')
         hash = rd1.to_verbose_s()
         pp hash
         assert_equal(

@@ -2,6 +2,8 @@ module Storazzo::Media
 
     class Storazzo::RicDisk::GcsBucket
 
+        extend Storazzo::Common 
+
         attr_accessor :project_id
 
         def initialize(local_mount, project_id=nil)
