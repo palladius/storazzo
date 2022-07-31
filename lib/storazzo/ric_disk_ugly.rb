@@ -3,24 +3,24 @@
 # module Storazzo
 #   class Storazzo::RicDiskUgly
 #     RICDISK_VERSION = "1.0ugly"
-#     DEFAULT_MEDIA_DIRS = %w{ 
-#       /media/riccardo/ 
-#       /Volumes/ 
-#       /mnt/ 
+#     DEFAULT_MEDIA_DIRS = %w{
+#       /media/riccardo/
+#       /Volumes/
+#       /mnt/
 #       ~/storazzo/var/test/disks/
 #     }.append(Storazzo.root + "/var/test/disks/")
 
 #     include Hashify
 #     extend Storazzo::Colors
-  
+
 #     # todo substitute with protobuf..
 #     attr_accessor :name, :description, :ricdisk_file, :local_mountpoint, :wr
-  
+
 #     def self.interesting_mount_points(opts={})
 #       #https://unix.stackexchange.com/questions/177014/showing-only-interesting-mount-points-filtering-non-interesting-types
 #       `mount | grep -Ev 'type (proc|sysfs|tmpfs|devpts|debugfs|rpc_pipefs|nfsd|securityfs|fusectl|devtmpfs) '`.split(/\n+/)
 #     end
-  
+
 #     def initialize(path, ricdisk_file)
 #       puts "[DEB] RicDiskUgly initialize.. path=#{path}"
 #       @local_mountpoint = path
@@ -38,15 +38,15 @@
 #       find_info_from_mount(path)
 #       find_info_from_df()
 #     end
-  
+
 #     def ricdisk_absolute_path
 #       @local_mountpoint + "/" +  @ricdisk_file
 #     end
-  
+
 #     def add_tag(tag)
 #       @tags += ", #{tag}"
 #     end
-  
+
 #     # might have other things in the future...
 #     def find_info_from_mount(path)
 #       mount_table_lines = interesting_mount_points()
@@ -55,9 +55,9 @@
 #         next if line =~ /^map /
 #         dev, on, mount_path, mode = line.split(/ /)
 #         if mount_path==path
-#           mount_line = line 
+#           mount_line = line
 #         else
-#           @info_from_mount = false      
+#           @info_from_mount = false
 #         end
 #       end
 #       @info_from_mount = ! (mount_line.nil?)
@@ -69,7 +69,7 @@
 #         add_tag(:synology) if @remote_mountpoint.match('1.0.1.10')
 #       end
 #     end
-  
+
 #     def find_info_from_df()
 #       path = @local_mountpoint
 #       df_info = `df -h "#{path}"`
@@ -78,15 +78,13 @@
 #       raise "I need exactly TWO lines! Or no info is served here..." unless lines.size == 2
 #       mount, @size_readable, used_size, avail_size, @disk_utilization, other =  lines[1].split(/\s+/) # second line..
 #     end
-  
-  
-  
+
 #     def self.sbrodola_ricdisk(subdir)
 #       # given a path, if .ricdisk exists i do stuff with it..
 #       disk_info = nil
 #       unless self.ok_dir?(subdir)
 #         puts("Nothing for me here. Existing")
-#         return 
+#         return
 #       end
 #       if File.exists?( "#{subdir}/.ricdisk") and File.empty?( "#{subdir}/.ricdisk")
 #         deb("Interesting1. Empty file! Now I write YAML with it.")
@@ -116,12 +114,12 @@
 #         #puts(white `cat "#{subdir}/.ricdisk"`)
 #       end
 #     end
-  
+
 #     # separiamo cosi usiamo meglio...
 #     def self.ok_dir?(subdir)
 #       File.exists?( "#{subdir}/.ricdisk") or File.exists?( "#{subdir}/.ricdisk.yaml")
 #     end
-  
+
 #     def self.obsolescence_seconds file_path
 #       creation_time = File.stat(file_path).ctime
 #       deb("[obsolescence_seconds] File #{file_path}: #{creation_time} - #{(Time.now - creation_time)} seconds ago")
@@ -130,13 +128,13 @@
 #     def self.obsolescence_days(file_path)
 #       return obsolescence_seconds(file_path) / 86400
 #     end
-  
+
 #     def self.backquote_execute(cmd)
 #       # executed a command wrapped by dryrun though
 #       return "DRYRUN backquote_execute(#{cmd})" if $opts[:dryrun]
 #       `#{cmd}`
 #     end
-    
+
 #     def self.upload_to_gcs(file, opts={})
 #       deb("upload_to_gcs(#{file}). TODO(ricc) after breafast upload to GCS : #{file}")
 #       mount_name = file.split('/')[-2]
@@ -152,12 +150,12 @@
 #       # end
 #       ret
 #     end
-  
+
 #     # Create RDS file.
 #     def self.calculate_stats_files(dir, opts={})
-#       opts_upload_to_gcs = opts.fetch :upload_to_gcs, true 
+#       opts_upload_to_gcs = opts.fetch :upload_to_gcs, true
 #       full_file_path = "#{dir}/#{$stats_file}"
-  
+
 #       puts("calculate_stats_files(#{white dir}): #{white full_file_path}")
 #       puts "TEST1 DIR EXISTS: #{dir} -> #{File.directory? dir}"
 #       Dir.chdir(dir)
@@ -165,23 +163,23 @@
 #         puts "File '#{$stats_file}' exists already." #  - now should see if its too old, like more than 1 week old"
 #         # TODO check for file time...
 #         print "Lines found: #{yellow `wc -l "#{full_file_path}" `.chomp }. File obsolescence (days): #{yellow obsolescence_days(full_file_path)}."
-#         if obsolescence_days(full_file_path) > 7 
+#         if obsolescence_days(full_file_path) > 7
 #           puts("*** ACHTUNG *** FIle is pretty old. You might consider rotating: #{yellow "mv #{full_file_path} #{full_file_path}_old"}. Or invoke with --force")
 #         end
 #         upload_to_gcs(full_file_path) if opts_upload_to_gcs
 #       else
-#         puts "Crunching data stats from '#{dir}' into '#{$stats_file}' ... please bear with me.. [maybe file didnt exist, maybe $opts[:force] is true]" 
+#         puts "Crunching data stats from '#{dir}' into '#{$stats_file}' ... please bear with me.. [maybe file didnt exist, maybe $opts[:force] is true]"
 #         command = "find . -print0 | xargs -0 stats-with-md5.rb --no-color | tee '#{full_file_path}'"
 #         puts("[#{`pwd`.chomp}] Executing: #{azure command}")
 #         ret = backquote_execute command
 #         puts "Done. #{ret.split("\n").count} files processed."
 #       end
 #     end
-  
+
 #     def self.find_active_dirs(base_dirs=nil, also_mountpoints=true)
-#       base_dirs = DEFAULT_MEDIA_DIRS if base_dirs.nil? 
+#       base_dirs = DEFAULT_MEDIA_DIRS if base_dirs.nil?
 #       active_dirs = []
-#       base_dirs.each do |ugly_dir| 
+#       base_dirs.each do |ugly_dir|
 #         # https://stackoverflow.com/questions/1899072/getting-a-list-of-folders-in-a-directory#:~:text=Dir.chdir(%27/destination_directory%27)%0ADir.glob(%27*%27).select%20%7B%7Cf%7C%20File.directory%3F%20f%7D
 #         dir = File.expand_path(ugly_dir)
 #         begin
@@ -189,12 +187,12 @@
 #   #        puts "TEST2 DIR EXISTS: #{dir} -> #{Dir.exists?(dir)}"
 #           unless Dir.exists?(dir)
 #             deb "Dir doesnt exist, skipping: #{dir}"
-#             next 
+#             next
 #           end
-#           Dir.chdir(dir) 
+#           Dir.chdir(dir)
 #           x = Dir.glob('*').select {|f| File.directory? f}
 #           subdirs = x.map{|subdir|   "#{dir}#{subdir}"}
-#           subdirs.each{|subdir| 
+#           subdirs.each{|subdir|
 #             #puts `ls -al "#{subdir}"`
 #             active_dirs << subdir if self.ok_dir?(subdir)
 #           }
@@ -204,9 +202,9 @@
 #         ensure # will always get executed
 #           #deb 'Always gets executed.'
 #           #x = []
-#         end 
+#         end
 #       end
-  
+
 #       if also_mountpoints
 # =begin
 #   Example output from mount:
@@ -237,15 +235,14 @@
 #         puts("find_active_dirs(): found dirs " + green(active_dirs))
 #         return active_dirs
 #       end
-    
 
 #       def analyze_local_system()
-#         puts :TODO 
+#         puts :TODO
 #         puts "1. Interesting Mounts: #{green interesting_mount_points}"
 #         puts "2. Sbrodoling everything: :TODO"
 #         # find_info_from_mount(path)
 #         # find_info_from_df()
 #       end
-  
+
 #   end
-# end 
+# end

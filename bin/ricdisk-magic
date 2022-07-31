@@ -1,39 +1,35 @@
 #!/usr/bin/env ruby
 
-
-
-############# ############# ############# ############# ############# ############# ############# ############# 
+############# ############# ############# ############# ############# ############# ############# #############
 # placeholder until i make it work..
 # https://guides.rubygems.org/make-your-own-gem/#adding-an-executable
-#require 'storazzo'
-#require_relative '../lib/storazzo'
+# require 'storazzo'
+# require_relative '../lib/storazzo'
 require 'fileutils'
 require 'yaml'
 require 'socket'
-require 'optparse'       # http://ruby.about.com/od/advancedruby/a/optionparser.htm
+require 'optparse' # http://ruby.about.com/od/advancedruby/a/optionparser.htm
 
 # Including local gem.
-#puts File.expand_path(FileUtils.pwd, "/../")
-#local_gem_path = File.expand_path(FileUtils.pwd, "/../")
-#gem 'storazzo', path: local_gem_path
+# puts File.expand_path(FileUtils.pwd, "/../")
+# local_gem_path = File.expand_path(FileUtils.pwd, "/../")
+# gem 'storazzo', path: local_gem_path
 require 'storazzo'
-#include Storazzo
-#include Storazzo::Colors
+# include Storazzo
+# include Storazzo::Colors
 extend Storazzo::Colors
-include Storazzo::Common #instead
+include Storazzo::Common # instead
 
-
-#puts "First I need to figure out how to bring in all the libraries in here.."
-#Storazzo::Main.say_hi("ARGV is: #{ ARGV.join ', '}")
-#puts Storazzo.version
-############# ############# ############# ############# ############# ############# ############# ############# 
-
+# puts "First I need to figure out how to bring in all the libraries in here.."
+# Storazzo::Main.say_hi("ARGV is: #{ ARGV.join ', '}")
+# puts Storazzo.version
+############# ############# ############# ############# ############# ############# ############# #############
 
 # I believe this is wrong
-#require 'storazzo'
+# require 'storazzo'
 # required to have methods wiothout self.
-#include 'lib/ric_disk'
-#extend Storazzo::Colors
+# include 'lib/ric_disk'
+# extend Storazzo::Colors
 
 if RUBY_VERSION.split('.')[0] == 1
   puts "Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!"
@@ -41,7 +37,7 @@ if RUBY_VERSION.split('.')[0] == 1
 end
 
 $PROG_VER = '0.4'
-$DEBUG    = ENV['DEBUG'] == 'true'  # (true/false)
+$DEBUG    = ENV['DEBUG'] == 'true' # (true/false)
 # p ENV['DEBUG']
 # p $DEBUG
 
@@ -65,24 +61,24 @@ BIG_LONG_MULTILINE
 
 =end
 
-
 $myconf = {
-    :app_name            => "RicDisk Magic should be sth like #{$0}",
-    :description         => "
+  :app_name => "RicDisk Magic should be sth like #{$0}",
+  :description => "
         This program is loosely inspired to ricdisk-magic.sh but its much better.
-        The idea is: iterate through all ARGV elements and build a DB of all files with length and MD5. 
+        The idea is: iterate through all ARGV elements and build a DB of all files with length and MD5.
         Then if folder is writeable, put this list INSIDE IT as its so conveniente.
-        If not, put in a ENV-var-defined folder which defaults to ./.storazzo/ :) 
-        
+        If not, put in a ENV-var-defined folder which defaults to ./.storazzo/ :)
+
         And maybe someday - add a nice protobuf and an entity in lib/.
 
         Note. This software is part of the Storazzo gem ('sai chi ti saluta un casino?'):
 
             $ gem install storazzo
     ".strip.gsub(/^\s+/, "").gsub(/\s+$/, ""),
-    # TODO move to some class default
-    :media_dirs  => %w{ /media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/ /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/ }, 
-    :mount_types => %w{ vfat ntfs }, 
+  # TODO move to some class default
+  :media_dirs => %w{/media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/
+                    /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/},
+  :mount_types => %w{vfat ntfs},
 }
 $stats_file = "ricdisk_stats_v11.rds" # => RicDiskStatsFile
 $gcs_bucket = 'TODO-CHANGE-CONFIG-palladius'
@@ -92,18 +88,17 @@ $gcs_bucket = 'TODO-CHANGE-CONFIG-palladius'
 # 2022-04-26 2.1.0  Historical momemnt: removed gem 'ric' dependency
 $TEMPLATE_VER = '2.1.1'
 
-
-def usage(comment=nil)
+def usage(comment = nil)
   puts white($optparse.banner)
   puts($optparse.summarize)
   puts("Description: " + gray($myconf[:description]))
   puts red(comment) if comment
-  #puts "Description: #{ $myconf[:description] }"
+  # puts "Description: #{ $myconf[:description] }"
   exit 13
 end
 
 # include it in main if you want a custome one
-def init()    # see lib_autoinit in lib/util.rb
+def init() # see lib_autoinit in lib/util.rb
   $opts = {}
   # setting defaults
   $opts[:verbose] = false
@@ -113,19 +108,19 @@ def init()    # see lib_autoinit in lib/util.rb
 
   $optparse = OptionParser.new do |opts|
     opts.banner = "#{$0} v.#{$PROG_VER}\n Usage: #{File.basename $0} [options] file1 file2 ..."
-    opts.on( '-d', '--debug', 'enables debug (DFLT=false)' )  {  $opts[:debug] = true ; $DEBUG = true }
-    opts.on( '-f', '--force', 'force stuff (DFLT=false)' )  {  $opts[:force] = true  }
-    opts.on( '-h', '--help', 'Display this screen' )          {  usage }
-    #opts.on( '-j', '--jabba', 'Activates my Jabber powerful CLI' ) {  $opts[:jabba] = true  }
-    opts.on( '-n', '--dryrun', "Don't really execute code" ) { $opts[:dryrun] = true }
-    opts.on( '-l', '--logfile FILE', 'Write log to FILE' )    {|file| $opts[:logfile] = file }
-    opts.on( '-v', '--verbose', 'Output more information' )   { $opts[:verbose] = true}
+    opts.on('-d', '--debug', 'enables debug (DFLT=false)') { $opts[:debug] = true; $DEBUG = true }
+    opts.on('-f', '--force', 'force stuff (DFLT=false)') { $opts[:force] = true }
+    opts.on('-h', '--help', 'Display this screen') { usage }
+    # opts.on( '-j', '--jabba', 'Activates my Jabber powerful CLI' ) {  $opts[:jabba] = true  }
+    opts.on('-n', '--dryrun', "Don't really execute code") { $opts[:dryrun] = true }
+    opts.on('-l', '--logfile FILE', 'Write log to FILE')    { |file| $opts[:logfile] = file }
+    opts.on('-v', '--verbose', 'Output more information')   { $opts[:verbose] = true }
   end
   $optparse.parse!
 end
 
 def real_program
-  deb("Hello world from a templated '#{yellow $0 }'")
+  deb("Hello world from a templated '#{yellow $0}'")
   deb "+ Options are:  #{gray $opts}"
   deb "+ Depured args: #{azure ARGV}"
   deb "+ Script-specifig super-cool conf: #{green $prog_conf_d}"
@@ -133,50 +128,49 @@ def real_program
 
   # Your code goes here...
   puts white("Hello world from #{$myconf[:app_name]}!")
-  puts "Description: '''#{white $myconf[:description] }'''"
+  puts "Description: '''#{white $myconf[:description]}'''"
 
-  config =     Storazzo::RicDiskConfig.instance()
+  config = Storazzo::RicDiskConfig.instance()
   config.load
   puts "StorazzoConfig: #{config}"
-  #config.load # auto_sbrodola(ARGV)
+  # config.load # auto_sbrodola(ARGV)
   puts yellow("ARGV: #{ARGV}")
   config.iterate_through_file_list_for_disks(ARGV)
 
   # if ARGV == [] # empty -> ALL
   #   dirs = RicDisk.find_active_dirs()
-  #   dirs.each {|dir| 
+  #   dirs.each {|dir|
   #     RicDisk.sbrodola_ricdisk(dir)
   #     RicDisk.calculate_stats_files(dir) # dir is inutile
   #   } # TODO refactor in option sbrodola_afterwards=true. :)
   # else
   #   deb "I consider ARGV come la lista di directories da parsare :)"
   #   dirs = RicDisk.find_active_dirs()
-  #   ARGV.each{ |dir| 
+  #   ARGV.each{ |dir|
   #     dir = File.expand_path(dir)
   #     if dirs.include?(dir)
   #       deb "Legit dir: #{green dir}"
   #       RicDisk.sbrodola_ricdisk(dir)
   #       RicDisk.calculate_stats_files(dir) # dir is inutile
   #     else
-  #       deb "Figghiu ri buttana: doesnt exist #{red dir}" 
+  #       deb "Figghiu ri buttana: doesnt exist #{red dir}"
   #     end
   #   }
   # end #/if aRGV
-
 end
 
 def main(filename)
   deb "I'm called by #{white filename}"
   deb "HISTORY: #{gray HISTORY}"
-  init        # Enable this to have command line parsing capabilities!
-  puts white("$DEBUG is #{$DEBUG }. Tu turn on, call me with -d") unless $DEBUG
-  #warn "[warn] template v#{$TEMPLATE_VER }: proviamo il warn che magari depreca il DEB"
+  init # Enable this to have command line parsing capabilities!
+  puts white("$DEBUG is #{$DEBUG}. Tu turn on, call me with -d") unless $DEBUG
+  # warn "[warn] template v#{$TEMPLATE_VER }: proviamo il warn che magari depreca il DEB"
   real_program
 
-  if ($DEBUG) 
+  if ($DEBUG)
     puts "First I need to figure out how to bring in all the libraries in here.."
-    Storazzo::Main.say_hi("ARGV is: #{ ARGV.join ', '}")
-    puts Storazzo.version  
+    Storazzo::Main.say_hi("ARGV is: #{ARGV.join ', '}")
+    puts Storazzo.version
   end
 end
 
