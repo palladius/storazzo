@@ -20,7 +20,7 @@ class LocalFolderTest < Minitest::Test
         include Storazzo::Colors
         puts yellow("LocalFolderTest: tear up")
         #$config_useless = Storazzo::RicDiskConfig.instance()
-        $config = Storazzo::RicDiskSampleConfig.instance()
+        $config = Storazzo::RicDiskSampleConfig.safe_instance()
         $config_load = $config.load()
         puts $config.to_verbose_s
         
@@ -51,9 +51,8 @@ class LocalFolderTest < Minitest::Test
         puts("(#{__FILE__}) WEIRD THING: This test is flaky. SKipping for now until I complete the LocalFolder.parse() code")
         folders = Storazzo::Media::LocalFolder.list_all
         puts "Folders: #{folders}"
-        config = Storazzo::RicDiskSampleConfig.instance()
+        config = Storazzo::RicDiskSampleConfig.safe_instance()
         puts "config1: #{config}"
-        config.load
         puts "config2: #{config.load}"
         test_dir = folders.first
         puts "test_first_directory_parsing_actually_works() TestDir: #{test_dir}"
@@ -80,7 +79,7 @@ class LocalFolderTest < Minitest::Test
         #puts("(#{__FILE__}) WEIRD THING: This test is flaky. SKipping for now until I complete the LocalFolder.parse() code")
         folders = Storazzo::Media::LocalFolder.list_all
         puts "Folders: #{folders}"
-        config = Storazzo::RicDiskSampleConfig.instance()
+        config = Storazzo::RicDiskSampleConfig.safe_instance()
         config.load
         puts "config1: #{config}"
         puts "config2: #{config.load}"
@@ -106,7 +105,7 @@ class LocalFolderTest < Minitest::Test
         test_dir = "/etc/ssh/"
         disk = Storazzo::Media::LocalFolder.new(test_dir)
         stats_file = disk.stats_filename_default_fullpath
-        config = Storazzo::RicDiskSampleConfig.instance()
+        config = Storazzo::RicDiskSampleConfig.safe_instance()
         config.load
         config.iterate_through_file_list_for_disks([test_dir])
         assert(

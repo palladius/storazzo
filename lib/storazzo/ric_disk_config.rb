@@ -14,6 +14,10 @@ end
 
     Storazzo::RicDiskConfig.instance()
 
+    or better
+
+    Storazzo::RicDiskConfig.safe_instance()
+
     Note that being a Singleton, in Unit Tests it's hard to use the /etc/storazzo_config.sample.yaml instead
     of the real one - yiikes. How do I fix it? Do I unsingleton it? :) Or do I create TWO singletons? :)
 =end
@@ -144,6 +148,9 @@ public
         end
 
 
+        #Storazzo::RicDiskConfig
+
+
         # returns all folders from file which are Directories
         # This method is FLAKY! Sometimes gives error.
 #         LocalFolderTest#test_show_all_shouldnt_fail_and_should_return_a_non_empty_array:
@@ -207,11 +214,29 @@ public
         end
         
 
+        def self.safe_instance() 
+            puts "This is a safe instance :)"
+            my_config = self.instance() 
+            my_config.load 
+            my_config
+        end
+
         def self.get_config 
             self.instance.load unless self.instance.load_called
             self.instance.get_config
         end
+
+        # # gem 'after_do'
+        # require 'after_do'
+        # Storazzo::RicDiskConfig.extend AfterDo
+        # Storazzo::RicDiskConfig.after :instance do # |activity|  #:pause, :finish, :resurrect, :do_today, :do_another_day 
+        #     puts yellow("after INSTANCE() has been called I call LOAD!!!")
+        #     self.load 
+        #     #persistor.save activity
+        # end
+
     end #     class Storazzo::RicDiskConfig
+
 
 end # module Storazzo
 
