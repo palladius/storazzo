@@ -5,17 +5,17 @@ module Storazzo
   # require 'storazzo/translator'
 
   def latest_parser_version
-    "1.2"
+    '1.2'
   end
 
   # Finds RAILS_ROOT for Storazzo Gem. Copied from:
   # https://stackoverflow.com/questions/10132949/finding-the-gem-root
   def self.root
-    File.expand_path '../..', __FILE__
+    File.expand_path '..', __dir__
   end
 
   def self.version
-    File.read(self.root + '/VERSION').chomp # "10.0.0"
+    File.read(root + '/VERSION').chomp # "10.0.0"
   end
 
   #    alias_method :VERSION, :version
@@ -30,7 +30,7 @@ end
 
 # nice to paste nice output
 require 'pp'
-require 'require_all'
+# require 'require_all'
 
 # require_all './' , 'media/'
 # require_all 'lib/**/*.rb'
