@@ -3,8 +3,9 @@ require "storazzo"
 
 class RicDiskTest < Minitest::Test
 
-    def test_factory_works_for_gcs 
-        rd1 = Storazzo::RicDisk.new('/tmp')
+    def TODO_test_factory_works_for_gcs 
+        #actual_list = Storazzo::RicDisk::GcsBucket.list_all($sample_config_obj)
+        rd1 = Storazzo::RicDisk.new('Doesnt accept a string, should be a Gcs Something... Plus why is this test here and not under TestGcsBucket?!?')
         hash = rd1.to_verbose_s()
         pp hash
         assert_equal(

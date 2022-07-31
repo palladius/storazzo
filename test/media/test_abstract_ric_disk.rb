@@ -10,9 +10,9 @@ class AbstractRicDiskTest < Minitest::Test
 
     include Storazzo::Common
 
-    def test_super_duper_list_all_with_type_returns_something
+    def TODO_test_super_duper_list_all_with_type_returns_something
         deb "This would be already... something :) it means they're all implemented"
-        ret =
+        ret = Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
         assert(
             ret.class,
             Array,

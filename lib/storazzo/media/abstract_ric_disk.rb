@@ -110,7 +110,7 @@ module Storazzo::Media
                 #Storazzo::RicDiskUgly.calculate_stats_files(get_local_mountpoint)
                 rd = Storazzo::RicDisk.new(self)
                 #Storazzo::RicDisk
-                rd.compute_stats_files(get_local_mountpoint, opts)
+                rd.compute_stats_files(opts)
                 #return "42"
             end
 
