@@ -1,0 +1,4 @@
+2022-08-05 (ops) pushed by mistak gem 0.4.10 but i had upgraded version 0.5.0 from another computer.
+   2 things to do: invalidate gem 0.4.10 and also add to the make push the git pull part which ensures
+   that we are not behind remote HEAD. Not sure how to do for generic UNCOMMITTED code (if all was committed,
+   then just a git pull would be the easy solution..).
