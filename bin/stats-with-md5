@@ -109,6 +109,7 @@ def compute_stats_and_md5(file)
   ret = {}
   ret[:name] = file
 
+<<<<<<< HEAD
   begin
     stats = File.stat(file)
     ret[:stats_object] = stats # TODO deprecate
@@ -142,9 +143,44 @@ def compute_stats_and_md5(file)
     ret[:error] = e
   end
   ret
+=======
+	begin
+		stats = File.stat(file)
+		ret[:stats_object] = stats # TODO deprecate
+		#deb("Stats methods: #{stats.methods.sort.join(', ')}")
+		#deb(stats.ctime)
+		#puts(stats.birthtime rescue (stats.ctime))
+		# On Mac/Linux: see test/dumps/***.yaml
+		ret[:size] = stats.size
+		ret[:mode] = stats.mode
+		# datetimes
+		ret[:stat_safebirthtime] = getSafeCreationTime(file) # in Mac uses birthtime,but on Linux wont work
+#			defined?(stats.birthtime) ? # rescue stats.mtime # eg,  2022-03-05 21:47:51 +0100 on Mac (not implemented on my Linuix)#
+#			stats.birthtime : # works on Mac 
+#			stats.ctime
+		ret[:stat_mtime] = stats.mtime # eg,  2022-03-05 21:47:51 +0100 Returns the modification time of stat.
+		ret[:stat_ctime] = stats.ctime # eg,  2022-03-05 21:47:51 +0100 Returns the change time for stat (that is, the time directory information about the file was changed, not the file itself). Note that on Windows (NTFS), returns creation time (birth time).
+		ret[:stat_atime] = stats.atime # eg,  2022-03-05 21:47:51 +0100 Last Access
+		ret[:stat_gid] = stats.gid     # Group Id
+		ret[:stat_uid] = stats.uid     # UUID
+		ret[:stat_ftype] = stats.ftype     # 
+		
+		ret[:md5] = '______________NONE______________'
+		if stats.ftype != "directory"
+			file_content = File.read(file)
+			ret[:md5] = Digest::MD5.hexdigest(file_content) # rescue 'none                             ' #=> string with hexadecimal digits
+		end
+	rescue Errno::EISDIR => e 
+		#puts "It's a dir, nothing I can do here except skipping the stuff"
+		ret[:md5] = "_________I'm a dir sorry________" 	
+	rescue Exception => e 
+		ret[:error] = e
+	end
+	ret 
+>>>>>>> 97a64f1 (perfected CLI)
 end
 
-$print_stats_and_md5_version = "1.1a_220624_F" # files
+$print_stats_and_md5_version = "1.1b_220805_F" # files
 $print_stats_and_md5_counter = 0
 $print_stats_and_md5_for_gcs_version = "1.1alpha_220628_G" # GCS bucket
 
@@ -334,18 +370,24 @@ def autowrite_to_dir_or_gcs(fs_type, path, opts = {})
   return :ok
 end
 
-def print_stats_and_md5_for_directory(directory_to_explore_recursively, opts = {})
-  puts "# [print_stats_and_md5_for_directory] DIR to explore (make sure you glob also): #{directory_to_explore_recursively}"
-  puts "# DEB Options: #{opts}"
 
-  opts_autowrite = opts.fetch :autowrite, false
+def print_stats_and_md5_for_directory_from_cli(directory_to_explore_recursively, opts={})
+	puts "# [print_stats_and_md5_for_directory_from_cli] v#{$print_stats_and_md5_version}] DIR to explore (make sure you glob also): #{directory_to_explore_recursively }"
+	opts_autowrite = opts.fetch :autowrite, false
+	opts_verbose = opts.fetch( :verbose, $opts[:verbose]) 
+	opts_debug = opts.fetch :debug, $opts[:debug]
+	opts_color = opts.fetch :color, $opts[:color]
+	if opts_debug
+		puts "# DEB Options1 opts (FUNC) BAD:  s  #{opts}" # probably useless since this is invoked by CLI and has ful fledged options.
+		puts "# DEB Options2 $opts (ARGV) GOOD: #{$opts}" # This is what we ewant in this CLI. TODO(ricc): if you move this function to be used as function invert the priority...
+		puts("# DEB version=#{$print_stats_and_md5_version} host=#{Socket.gethostname}(#{`uname`.chomp}) created_on=#{Time.now}") # if ARGV.size > 0
+	end
 
-  Dir.glob("#{(directory_to_explore_recursively)}/**/*") do |globbed_filename|
-    # Do work on files & directories ending in .rb
-    # puts "[deb] #{globbed_filename}"
-    print_stats_and_md5(globbed_filename, :color => $opts[:color], :verbose => $opts[:verbose],
-                                          :autowrite => $opts[:autowrite])
-  end
+	Dir.glob("#{(directory_to_explore_recursively)}/**/*") do |globbed_filename|
+		# Do work on files & directories ending in .rb
+		#puts "[deb] #{globbed_filename}" 
+		print_stats_and_md5(globbed_filename, :color => opts_color, :verbose => opts_verbose, :autowrite => opts_autowrite)
+	end
 
   autowrite_to_dir_or_gcs(:dir, directory_to_explore_recursively) if opts_autowrite
 end
@@ -368,25 +410,46 @@ def real_program
   if ARGV.size == 1
     directory_to_explore_recursively = ARGV[0]
     if smells_like_gcs?(directory_to_explore_recursively)
+<<<<<<< HEAD
       print_stats_and_md5_for_gcs(directory_to_explore_recursively, common_opts)
     else # normal file..
       print_stats_and_md5_for_directory(directory_to_explore_recursively, common_opts)
     end
+=======
+		print_stats_and_md5_for_gcs(directory_to_explore_recursively, common_opts)
+	else # normal file..
+		print_stats_and_md5_for_directory_from_cli(directory_to_explore_recursively, common_opts)
+	end
+>>>>>>> 97a64f1 (perfected CLI)
   elsif ARGV.size > 1
     deb "2. I expect a lot of single files or directories:"
     for arg in ARGV
+<<<<<<< HEAD
       if File.directory?(arg)
         print_stats_and_md5_for_directory(arg, common_opts)
       else
         print_stats_and_md5(arg, common_opts)
       end
+=======
+		if File.directory?(arg)
+			print_stats_and_md5_for_directory_from_cli(arg, common_opts )
+		else
+	   		print_stats_and_md5(arg, common_opts)
+		end
+>>>>>>> 97a64f1 (perfected CLI)
     end
   else
     puts "No args given. Exiting"
     exit 41
   end
   tf = Time.now
+<<<<<<< HEAD
   puts "# [#{File.basename $0}] Time taken for processing #{stats_and_md5_number_of_files_processed} files: #{tf - t0}"
+=======
+  #rounding to 3 decimals
+  approx_delta = (tf-t0).round(3)
+  puts "# [#{File.basename $0}] Time taken for processing #{stats_and_md5_number_of_files_processed} files: #{approx_delta} seconds" 
+>>>>>>> 97a64f1 (perfected CLI)
 end
 
 def main(filename)
