@@ -10,12 +10,14 @@ Gem::Specification.new do |s|
   s.files = %w(Gemfile LICENSE README.md Makefile Rakefile storazzo.gemspec
                VERSION) + Dir["{bin,lib,test,var}/**/*"]
   s.test_files = Dir["test/**/*"] + Dir["var/test/**/*"]
-  s.executables = [
-    # todo: everything in bin/
-    "ricdisk-magic",
-    "stats-with-md5",
-    "hello-storazzo",
-  ]
+  s.executables = Dir["bin/*"] 
+  # [
+  #   # todo: everything in bin/
+  #   "ricdisk-magic",
+  #   "stats-with-md5",
+  #   "storazzo",
+  #   "hello-storazzo",
+  # ]
   s.homepage = "https://rubygems.org/gems/storazzo" # maybe https://github.com/palladius/storazzo
   s.license = "MIT"
   # s.add_dependency "activesupport", "~> 3.0"

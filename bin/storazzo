@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require 'storazzo'
+
+
+if RUBY_VERSION.split('.')[0] == 1
+    puts "Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!"
+    exit 2020
+  end
+
+$PROG_VER = '0.1'
+$DEBUG    = ENV['DEBUG'] == 'true' # (true/false)
+
+PROG_HISTORY = <<-BIG_LONG_MULTILINE
+    2022-0806  v0.1 First stesure
+BIG_LONG_MULTILINE
+
+
+$description = <<DESCRIPTION_HEREFILE.gsub(/\s+/, " ").strip
+    This util shall expose all Storazzo aPIs via CLI: show-local-dirs, ...
+    show GCS buckets, ...
+
+    It's also my dream to add some nice icons which are joy to the eye, like
+    some  [ ] [x] before the list to show if its agood or bad directory and type also 
+DESCRIPTION_HEREFILE
+# >> "SELECT * FROM users ORDER BY users.id DESC"
+
+Storazzo::Main.say_hi("ARGV: #{ARGV}")
+Storazzo::Main.say_hi("Note: if the version of this storazzo is behind local version youre probably using a old library. 
+    I still need to learn how to call the binary with local/current lib/: bundle exec stiKazzi?")
+Storazzo::Main.say_hi($description)
+

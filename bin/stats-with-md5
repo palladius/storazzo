@@ -410,46 +410,27 @@ def real_program
   if ARGV.size == 1
     directory_to_explore_recursively = ARGV[0]
     if smells_like_gcs?(directory_to_explore_recursively)
-<<<<<<< HEAD
-      print_stats_and_md5_for_gcs(directory_to_explore_recursively, common_opts)
-    else # normal file..
-      print_stats_and_md5_for_directory(directory_to_explore_recursively, common_opts)
-    end
-=======
 		print_stats_and_md5_for_gcs(directory_to_explore_recursively, common_opts)
 	else # normal file..
 		print_stats_and_md5_for_directory_from_cli(directory_to_explore_recursively, common_opts)
 	end
->>>>>>> 97a64f1 (perfected CLI)
   elsif ARGV.size > 1
     deb "2. I expect a lot of single files or directories:"
     for arg in ARGV
-<<<<<<< HEAD
-      if File.directory?(arg)
-        print_stats_and_md5_for_directory(arg, common_opts)
-      else
-        print_stats_and_md5(arg, common_opts)
-      end
-=======
 		if File.directory?(arg)
 			print_stats_and_md5_for_directory_from_cli(arg, common_opts )
 		else
 	   		print_stats_and_md5(arg, common_opts)
 		end
->>>>>>> 97a64f1 (perfected CLI)
     end
   else
     puts "No args given. Exiting"
     exit 41
   end
   tf = Time.now
-<<<<<<< HEAD
-  puts "# [#{File.basename $0}] Time taken for processing #{stats_and_md5_number_of_files_processed} files: #{tf - t0}"
-=======
   #rounding to 3 decimals
   approx_delta = (tf-t0).round(3)
   puts "# [#{File.basename $0}] Time taken for processing #{stats_and_md5_number_of_files_processed} files: #{approx_delta} seconds" 
->>>>>>> 97a64f1 (perfected CLI)
 end
 
 def main(filename)
