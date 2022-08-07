@@ -10,7 +10,9 @@ Gem::Specification.new do |s|
   s.files = %w(Gemfile LICENSE README.md Makefile Rakefile storazzo.gemspec
                VERSION) + Dir["{bin,lib,test,var}/**/*"]
   s.test_files = Dir["test/**/*"] + Dir["var/test/**/*"]
-  s.executables = Dir["bin/*"] 
+  s.executables = Dir["bin/*"].map{|full_path| # bin/blah-blah
+    full_path.gsub("bin/", "")
+  }
   # [
   #   # todo: everything in bin/
   #   "ricdisk-magic",
