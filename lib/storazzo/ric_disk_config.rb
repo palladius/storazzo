@@ -50,7 +50,7 @@ module Storazzo
       verbose = opts.fetch :verbose, false
 
       if already_loaded? # and not self.config.nil?
-        pverbose verbose, "[#{self.class}] VERBOSE load: already loaded"
+        pverbose verbose, "[#{self.class}] Config.Load: already loaded"
         return self.config
       end
       pverbose verbose, "Storazzo::RicDiskConfig.load(): BEGIN"
@@ -65,7 +65,7 @@ module Storazzo
         # OR: possible_locations.instert(0, config_path)
         pverbose verbose, "[LOAD] possible_locations: #{possible_locations}"
       end
-      puts "[VERBOSE] Searching these paths in order: #{possible_locations}" if verbose
+      pverbose verbose, "Searching these paths in order: #{possible_locations}"
       # bug "This is not always an array of sTRINGS."
       raise "possible_locations is not an array" unless possible_locations.is_a?(Array)
 
@@ -90,7 +90,6 @@ module Storazzo
           config_ver = @config["apiVersion"]
           # puts @config[:ConfigVersion]
           deb("OK. Storazzo::RicDiskConfig v'#{config_ver}' parsed correctly")
-          # puts "[VERBOSE] RicDiskConfig.to_s: #{self}" if verbose
           @load_called = true
           return self.config
         end
@@ -203,16 +202,16 @@ module Storazzo
       #         RicDisk.calculate_stats_files(dir) # dir is inutile
       #     } # TODO refactor in option sbrodola_afterwards=true. :)
       # else
-      puts "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)" if verbose
+      pverbose verbose, "iterate_through_file_list_for_disks(): I consider files_list as a list of directories to parse :)"
 
       # dirs = RicDisk.find_active_dirs()
       files_list.each do |dir|
         dir = File.expand_path(dir)
         if File.directory?(dir)
           # if dirs.include?(dir)
-          puts "iterate_through_file_list_for_disks() Legit dir: #{green dir}" if verbose
+          pverbose verbose, "iterate_through_file_list_for_disks() Legit dir: #{green dir}"
           rd = RicDisk.new(Storazzo::Media::AbstractRicDisk.DirFactory(dir))
-          pverbose true, "RicDisk from Factory (woohoo): #{rd}"
+          pverbose verbose, "RicDisk from Factory (woohoo): #{rd}"
           rd.write_config_yaml_to_disk(dir)
           # RicDisk.write_config_yaml_to_disk(dir)
           # RicDisk.calculate_stats_files (CLASS) => will become OBJECT compute_stats_files

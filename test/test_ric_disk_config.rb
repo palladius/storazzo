@@ -17,7 +17,7 @@ class RicDiskConfigTest < Minitest::Test
     config_obj = Storazzo::RicDiskSampleConfig.instance()
     puts "config_obj.class: #{config_obj.class}"
     config = config_obj.load # _sample_version
-    pverbose true, "[test_load_sample_version] Config: #{pp config}"
+    pverbose $DEBUG, "[test_load_sample_version] Config: #{pp config}"
     # puts '[RicDiskConfigTest] TODO lets make sure the gem being imported is actually in /etc/storazz-config.smaple blah blah'
     # puts "[RicDiskConfigTest] config_file: ", config_obj.config_file
     assert_equal(

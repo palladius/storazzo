@@ -29,6 +29,16 @@ namespace :test do
     t.pattern = 'test/**/test_*.rb'
     $DEBUG = true
   end
+
+  desc "Test Silently and removes VERBOSITY"
+  Rake::TestTask.new(:silent) do |t|
+    t.libs << "test"
+    t.libs << "test/media"
+    t.verbose = false
+    t.warning = false
+    t.pattern = 'test/**/test_*.rb'
+    $DEBUG = false
+  end
 end
 # namespace :verbose_test do
 #   desc "Test tests/media/* code"

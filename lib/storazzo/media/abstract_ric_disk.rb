@@ -157,8 +157,8 @@ module Storazzo::Media
     end
 
     def validate(opts = {})
-      verbose = opts.fetch(:verbose, true)
-      puts "[VERBOSE] validate(): We're trying to see if your object is valid, across 3 possible sub-classes." if verbose
+      opt_verbose = opts.fetch :verbose, false
+      pverbose opt_verbose, "validate(): [BROKEN] We're trying to see if your object is valid, across 3 possible sub-classes."
       # 1. check for
       raise "Unknown local mount " unless local_mount.is_a?(String)
 
