@@ -3,9 +3,12 @@ require "storazzo"
 require "storazzo/ric_disk"
 require "storazzo/ric_disk_config"
 require 'storazzo/colors'
-require "storazzo/media/local_folder"
+#require "storazzo/media/local_folder"
+require "storazzo/media/gcs_bucket"
 
 require 'pry' # must install the gem... but you ALWAYS want pry installed anyways
+
+# TEST: watch rake test TEST="test/media/test_gcs_bucket.rb"
 
 class GcsBucketTest < Minitest::Test
   include Storazzo::Common
@@ -18,15 +21,15 @@ class GcsBucketTest < Minitest::Test
     deb "[GcsBucketTest] TEAR_UP config_obj: '''#{$sample_config_obj}'''"
   end
 
-  def test_buckets_are_the_two_i_know
+  def test_that_test_buckets_are_the_two_I_know
     # copied from etc/sample.yaml :)
-    expected_list = %w{
+    expected_test_buckets_list = %w{
       gs://my-local-backup/storazzo/backups/
       gs://my-other-bucket/
     }
-    actual_list = Storazzo::RicDisk::GcsBucket.list_all($sample_config_obj)
+    actual_list = Storazzo::Media::GcsBucket.list_all($sample_config_obj)
     assert_equal(
-      expected_list.sort,
+      expected_test_buckets_list.sort,
       actual_list.sort,
       "These are the two lists from Sample Storazzo Config"
     )
@@ -52,7 +55,37 @@ class GcsBucketTest < Minitest::Test
     # config_obj.load # _sample_version
   end
 
-  # def teardown
-  #     puts :TEAR_DOWN_TODO
+  def test_super_duper_list_works
+    # we had a problem on GCS side
+    #Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
+    expected_ret = [
+      [:config_gcs_bucket, "gs://my-local-backup/storazzo/backups/"],
+      [:config_gcs_bucket, "gs://my-other-bucket/"]
+    ]
+    ret = Storazzo::Media::GcsBucket.list_all_with_type()
+    Pry::ColorPrinter.pp(ret)
+    assert_equal(
+      ret.class,
+      Array,
+      "test_super_duper_list_all_with_type_returns_something should return an array.."
+    )
+    assert_equal(ret,expected_ret,"These are the two buckets I expect from test.."
+    )
+  end
+
+  def test_gsutil_returns_something
+    ret = Storazzo::Media::GcsBucket.list_available_buckets()
+    Pry::ColorPrinter.pp(ret)
+  end
+
+  # def test_super_duper_list_all_with_type_returns_something
+  #   deb "This would be already... something :) it means they're all implemented"
+  #   ret = Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
+  #   assert(
+  #     ret.class,
+  #     Array,
+  #     "test_super_duper_list_all_with_type_returns_something should return an array.."
+  #   )
   # end
+
 end

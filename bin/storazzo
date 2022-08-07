@@ -95,7 +95,9 @@ def init() # see lib_autoinit in lib/util.rb
     #puts(white("1. Config"))
     #Pry::ColorPrinter.pp $config.to_verbose_s
     puts(white("2. Mounts/Dirs"))
-    Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
+    Pry::ColorPrinter.pp Storazzo::Media::GcsBucket.list_all_with_type
+    pp Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
+    
   end
   
   def real_program

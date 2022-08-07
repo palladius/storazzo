@@ -41,7 +41,7 @@ module Storazzo
       File.expand_path('../../../', __FILE__) +
       "/etc/storazzo_config.sample.yaml"
 
-    attr_accessor :config, :config_file, :load_called
+    attr_accessor :config, :config_file, :load_called, :project_id
 
     public
 
@@ -119,6 +119,11 @@ module Storazzo
 
     def config_project_id
       @config['Config']['Backends']['GoogleCloudStorage']['ProjectId']
+    end
+
+    #doesnt work :/ alias :project_id, :config_project_id
+    def project_id
+      config_project_id
     end
 
     def already_loaded?
