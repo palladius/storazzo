@@ -3,6 +3,21 @@
 #require "gcs_bucket"
 # require "abstract_ric_disk"
 
+=begin
+ This class is an Abstract Class which forces its 3 inquilines to implement
+ a number of functions, namely:
+ 
+   def self.list_all()
+   def self.list_all_with_type()
+ 
+  Note this needs to work without weird overrides, like:
+
+     def self.list_all_with_type(config=nil) # BAD
+     def self.list_all_with_type()           # GOOD
+
+  
+=end
+
 module Storazzo::Media
   class Storazzo::Media::AbstractRicDisk
     # include Storazzo::Common

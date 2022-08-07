@@ -22,7 +22,7 @@ module Storazzo::Media
       "todo-my-project-id-123" # TODO fix
     end
 
-    def self.list_all(config = nil)
+    def self.list_all() # (config = nil)
       # get lisrts from Config singletone
       # puts " self.list_all: loading config "
       config ||= Storazzo::RicDiskConfig.instance # # ).get_config
@@ -38,16 +38,17 @@ module Storazzo::Media
       config.get_bucket_paths
     end
 
-    def self.list_all_with_type(config = nil)
-      puts "GCS::list_all_with_type() -- pull config"
+    def self.list_all_with_type() # (config = nil)
+      deb "GCS::list_all_with_type() -- pull config"
       config ||= Storazzo::RicDiskConfig.instance
       config.load # in case I need to load it for the first time
-      puts "GCS::list_all_with_type() -- TODO(ricc): also add gsutil ls"
+      #puts "GCS::list_all_with_type() -- TODO(ricc): also add gsutil ls"
       # getFromConfig
       deb "I'm now returning a 'complex' array to tell the caller what kind of element they're getting, eg: GCS from Config Yaml, vs GCS from gsutil ls "
       list_from_config_with_type = config.get_bucket_paths.map { |path| [:config_gcs_bucket, path] }
       ret_list = list_from_config_with_type
       if (config.project_id)
+        
         # so I concatenate Apples with Bananas with names
         ret_list += list_available_buckets(config.project_id).map { |path|
                                               [:gsutil_ls_gcs_bucket, path]
@@ -60,7 +61,8 @@ module Storazzo::Media
     end
 
     def self.list_available_buckets(project_id, opts = {})
-      list_of_buckets = `gsutil ls --project '#{project_id}'`.chomp.split("\n")
+      #list_of_buckets = `gsutil ls --project '#{project_id}'`.chomp.split("\n")
+      list_of_buckets = `gsutil ls`.chomp.split("\n")
       deb "list_of_buckets: #{list_of_buckets}"
       list_of_buckets
     end
