@@ -1,3 +1,8 @@
+#require "storazzo/ric_disk/abstract_ric_disk"
+#require "storazzo/ric_disk/gcs_bucket"
+#require "gcs_bucket"
+# require "abstract_ric_disk"
+
 module Storazzo::Media
   class Storazzo::Media::AbstractRicDisk
     # include Storazzo::Common

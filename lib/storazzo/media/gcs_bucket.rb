@@ -1,5 +1,6 @@
 module Storazzo::Media
-  class Storazzo::RicDisk::GcsBucket
+#  class Storazzo::Media::AbstractRicDisk
+  class Storazzo::Media::GcsBucket < Storazzo::Media::AbstractRicDisk
     extend Storazzo::Common
 
     attr_accessor :project_id
