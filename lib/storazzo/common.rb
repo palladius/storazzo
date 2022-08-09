@@ -34,7 +34,8 @@ module Storazzo::Common
   include Storazzo::Colors
 
   def deb(s)
-    puts "[DEB👀] #{yellow(s)}" if _debug_true # $DEBUG
+    #useless: put logic in _debug_true() # return if ENV['RUBYOPT'] == "-W0"
+    puts "[DEB👀] #{yellow(s)}" if _debug_true() # $DEBUG
   end
 
   # this has a yield
@@ -60,6 +61,7 @@ module Storazzo::Common
 
   def pverbose(is_verbose, str)
     # puts "[V📚RB💀S📚] #{gray str}"
+    return if ENV['RUBYOPT'] == "-W0"
     puts "[🦋🐛🐝🐞🐜🕷🕸🦂🦗🦟] #{gray str}" # insects: http://xahlee.info/comp/unicode_insects.html
   end
 
@@ -83,7 +85,8 @@ module Storazzo::Common
   private
 
   def _debug_true
-    $DEBUG or ENV["DEBUG"] == 'true'
+    return false if ENV["RUBYOPT"] == "-W0"
+    $DEBUG or ENV["DEBUG"] == 'true' # but FALSE isor _debug_true
   end
 
   #    puts "[DEBUG ENABLED!]" if _debug_true

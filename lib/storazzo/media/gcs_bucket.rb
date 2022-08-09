@@ -47,10 +47,10 @@ module Storazzo::Media
       deb "I'm now returning a 'complex' array to tell the caller what kind of element they're getting, eg: GCS from Config Yaml, vs GCS from gsutil ls "
       list_from_config_with_type = config.get_bucket_paths.map { |path| [:config_gcs_bucket, path] }
       ret_list = list_from_config_with_type
-      if (config.project_id)
-        
+      if (config.gcs_enabled?) # should be if GCS enabled :) project_id
         # so I concatenate Apples with Bananas with names
-        ret_list += list_available_buckets(config.project_id).map { |path|
+        #ret_list += list_available_buckets(config.project_id).map { |path|
+        ret_list += list_available_buckets.map { |path|
                                               [:gsutil_ls_gcs_bucket, path]
                                             }
       else
@@ -60,7 +60,8 @@ module Storazzo::Media
       return ret_list
     end
 
-    def self.list_available_buckets(project_id, opts = {})
+    def self.list_available_buckets(opts = {})
+      #project_id = opts.fetch :project_id, nil 
       #list_of_buckets = `gsutil ls --project '#{project_id}'`.chomp.split("\n")
       list_of_buckets = `gsutil ls`.chomp.split("\n")
       deb "list_of_buckets: #{list_of_buckets}"

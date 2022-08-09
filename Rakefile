@@ -37,6 +37,7 @@ namespace :test do
     t.verbose = false
     t.warning = false
     t.pattern = 'test/**/test_*.rb'
+    puts "Note: Best to call me with RUBYOPT='-W0'. Now RUBYOPT=#{ ENV['RUBYOPT'] }" if ENV['RUBYOPT'].nil?
     $DEBUG = false
   end
 end

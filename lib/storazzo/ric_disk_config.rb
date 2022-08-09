@@ -125,6 +125,16 @@ module Storazzo
       config_project_id
     end
 
+    # This should return true if and only if the user has configured the YAML
+    # to use GCS. For now we can just say TRUE since gsutil ls returns without project_id.
+    # However, we might have a flag enabled in storazzo config in next versions.
+    def gcs_enabled?
+      #true
+      defined?(get_config['Config']['Backends']['GoogleCloudStorage'])
+      #get_config['Config']['Backends']['GoogleCloudStorage DOESNT EXIST']
+      # defined? Backends:     GoogleCloudStorage
+    end
+
     def already_loaded?
       # return
       load_called == true
