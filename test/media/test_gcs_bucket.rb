@@ -16,9 +16,9 @@ class GcsBucketTest < Minitest::Test
   def setup # tear_up
     deb "[GcsBucketTest] TEAR_UP with sample Config"
     # removeme = Storazzo::RicDiskConfig.instance()
-    $sample_config_obj = Storazzo::RicDiskSampleConfig.instance()
-    $sample_config_hash = $sample_config_obj.load()
-    deb "[GcsBucketTest] TEAR_UP config_obj: '''#{$sample_config_obj}'''"
+    @sample_config_obj = Storazzo::RicDiskSampleConfig.instance()
+    @sample_config_hash = @sample_config_obj.load()
+    deb "[GcsBucketTest] TEAR_UP config_obj: '''#{@sample_config_obj}'''"
   end
 
   def test_that_test_buckets_are_the_two_I_know
@@ -27,7 +27,7 @@ class GcsBucketTest < Minitest::Test
       gs://my-local-backup/storazzo/backups/
       gs://my-other-bucket/
     }
-    actual_list = Storazzo::Media::GcsBucket.list_all($sample_config_obj)
+    actual_list = Storazzo::Media::GcsBucket.list_all(@sample_config_obj)
     assert_equal(
       expected_test_buckets_list.sort,
       actual_list.sort,
@@ -44,14 +44,14 @@ class GcsBucketTest < Minitest::Test
     # puts Storazzo::RicDiskSampleConfig
     # config_obj = Storazzo::RicDiskSampleConfig.instance()
     if_deb? do
-      Pry::ColorPrinter.pp($sample_config_obj.to_verbose_s())
+      Pry::ColorPrinter.pp(@sample_config_obj.to_verbose_s())
     end
     # pp green(config_obj.to_verbose_s())
 
-    l = $sample_config_obj.load
+    l = @sample_config_obj.load
     Pry::ColorPrinter.pp(l) if $DEBUG
 
-    puts "$sample_config_obj: #{$sample_config_obj}"
+    puts "@sample_config_obj: #{@sample_config_obj}"
     # config_obj.load # _sample_version
   end
 
