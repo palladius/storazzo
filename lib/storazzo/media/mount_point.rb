@@ -7,6 +7,14 @@ module Storazzo::Media
       deb "Maybe its abuot time you refactor that method here :)"
       RicDisk.interesting_mount_points()
     end
+
+    def self.list_all
+      RicDisk.interesting_mount_points
+    end
+
+    def self.list_all_with_type()
+      list_all.map{|x| [:mount_point_todo_less_generic, x] }
+    end
   end
 end
 

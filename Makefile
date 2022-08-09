@@ -63,6 +63,8 @@ test-media-subfolder:
 	rake test TEST="test/media/*.rb"
 test-verbose:
 	rake test:verbose --verbose 
+test-silent:
+	RUBYOPT="-W0" rake test:silent --verbose 
 test-single-file-continuously:
 	\watch -n 5 --color rake test TEST="test/media/test_local_folder.rb"
 

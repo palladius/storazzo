@@ -41,11 +41,11 @@ module Storazzo::Media
     end
 
     def self.list_all
-      raise "[AbstractRicDiskc::self.list_all] You should override this, says StackOverflow and Riccardo"
+      raise "[AbstractRicDiskc::self.list_all] You should override this, says StackOverflow and Riccardo. Class=#{self.class}. Self=#{self}"
     end
 
     def self.list_all_with_type
-      raise "[AbstractRicDiskc::self.list_all_with_type] You should override this, says StackOverflow and Riccardo"
+      raise "[AbstractRicDisk::self.list_all_with_type] You should override this, says StackOverflow and Riccardo. Class=#{self.class}. Self=#{self}"
     end
 
     def self.super_duper_list_all_with_type
@@ -56,11 +56,11 @@ module Storazzo::Media
     end
 
     def parse(opts = {})
-      raise "[AbstractRicDiskc::parse] You should override this, says StackOverflow and Riccardo"
+      raise "[AbstractRicDiskc::parse] You should override this, says StackOverflow and Riccardo. Class=#{self.class}."
     end
 
     def writeable?
-      raise "[AbstractRicDiskc::writeable] You should override this in #{self.class}, says StackOverflow and Riccardo"
+      raise "[AbstractRicDiskc::writeable] You should override this in class=#{self.class}, says StackOverflow and Riccardo"
     end
 
     def get_local_mountpoint

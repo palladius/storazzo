@@ -20,6 +20,7 @@ class MediaMountPointTest < Minitest::Test
   end
 
   def test_what_skip_means
-    skip 'Check for affiliate link, credit card details, pledge history. Foujnd example online. Please Riccardo fix'
+    skip 'Check for blah blah blah. Found example online. Please Riccardo fix. This is just an example of how to SKIP a test :)'
   end
+
 end

@@ -20,9 +20,9 @@ module Storazzo::Media
       super(local_mount) rescue "SUPER_ERROR(#{local_mount}): #{$!}"
     end
 
-    def self.list_all(config = nil)
+    def self.list_all() # WRONG: config = nil
       # get lists from Config singleton
-      config ||= Storazzo::RicDiskConfig.instance # # ).get_config
+      config = Storazzo::RicDiskConfig.instance # # ).get_config
       config.load
       config.get_local_folders
     end
