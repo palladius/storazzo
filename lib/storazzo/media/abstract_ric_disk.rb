@@ -68,9 +68,7 @@ module Storazzo
 
           def get_local_mountpoint
             # raise "[AbstractRicDiskc::get_local_mountpoint] You should override this, says StackOverflow and Riccardo"
-            if local_mountpoint.nil?
-              raise 'You forgot to set local_mountpoint in the constructor for your class, you cheeky little one!'
-            end
+            raise 'You forgot to set local_mountpoint in the constructor for your class, you cheeky little one!' if local_mountpoint.nil?
 
             local_mountpoint
           end

@@ -58,7 +58,9 @@ module Storazzo
             # puts "GCS::list_all_with_type() -- TODO(ricc): also add gsutil ls"
             # getFromConfig
             deb "I'm now returning a 'complex' array to tell the caller what kind of element they're getting, eg: GCS from Config Yaml, vs GCS from gsutil ls "
-            list_from_config_with_type = config.get_bucket_paths.map { |path| [:config_gcs_bucket, path] }
+            list_from_config_with_type = config.get_bucket_paths.map do |path|
+              [:config_gcs_bucket, path]
+            end
             ret_list = list_from_config_with_type
             if config.gcs_enabled? # should be if GCS enabled :) project_id
               # so I concatenate Apples with Bananas with names

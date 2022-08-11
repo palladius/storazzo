@@ -49,9 +49,7 @@ module Storazzo
         verbose = opts.fetch :verbose, true
         pverbose verbose,
                  "This needs an object of type Storazzo::Media::AbstractRicDisk now (this case: #{ric_disk_object.class})"
-        unless ric_disk_object.class.superclass == Storazzo::Media::AbstractRicDisk
-          raise "Woopsie, not a Storazzo::Media::AbstractRicDisk! Intead its a #{ric_disk_object.class}"
-        end
+        raise "Woopsie, not a Storazzo::Media::AbstractRicDisk! Intead its a #{ric_disk_object.class}" unless ric_disk_object.class.superclass == Storazzo::Media::AbstractRicDisk
 
         # ok back to business, now path is a String :)
         path = ric_disk_object.path

@@ -8,3 +8,12 @@
 # where the inspected file is and continue its way up to the root directory.
 #
 # See https://docs.rubocop.org/rubocop/configuration
+
+# https://stackoverflow.com/questions/37228624/rubocop-line-is-too-long-%E2%86%90-how-to-ignore
+# Layout/LineLength:
+#   Max: 100
+Layout/LineLength:
+  #Max: 100
+  Enabled: false
+Metrics/LineLength: # for Rubocop < 0.78.0
+  Enabled: false

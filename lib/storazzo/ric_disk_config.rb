@@ -35,7 +35,7 @@ module Storazzo
 
       DefaultConfigLocation = File.expand_path '~/.storazzo.yaml'
 
-      DefaultConfigLocations = [
+      DEFAULT_CONFIG_LOCATIONS = [
         File.expand_path('~/.storazzo.yaml'), # HOME
         File.expand_path('./.storazzo.yaml') # LOCAL DIR
       ].freeze
@@ -57,7 +57,7 @@ module Storazzo
         # trying default location
         raise 'DefaultConfigLocation is not a string' unless DefaultConfigLocation.is_a?(String)
 
-        possible_locations = DefaultConfigLocations #  [ default_config_locations .. , "./.storazzo.yaml"]
+        possible_locations = DEFAULT_CONFIG_LOCATIONS #  [ default_config_locations .. , "./.storazzo.yaml"]
         deb "[Config.load] Possible Locations: #{possible_locations}"
         if config_path.is_a?(String)
           # possible_locations = [config_path] + possible_locations # .append()
@@ -117,9 +117,7 @@ module Storazzo
       end
 
       def config_ver
-        if @config.nil?
-          raise 'I cant compute Version since I cant compute @config. Are you sure you didnt instance this Singleton without calling load?'
-        end
+        raise 'I cant compute Version since I cant compute @config. Are you sure you didnt instance this Singleton without calling load?' if @config.nil?
 
         @config['apiVersion'] # rescue :StillUnknown
         # config['ConfigVersion']
@@ -220,9 +218,7 @@ module Storazzo
       # UGLY CODE, copipasted from binary for ARGV, ex autosbrodola
       def iterate_through_file_list_for_disks(files_list = [], opts = {})
         verbose = opts.fetch :verbose, false
-        unless files_list.is_a?(Array)
-          raise "[iterate_through_file_list_for_disks] Wrong input, I need an array here: #{files_list} "
-        end
+        raise "[iterate_through_file_list_for_disks] Wrong input, I need an array here: #{files_list} " unless files_list.is_a?(Array)
 
         # I decided i wont accept an emopty list, this is not how you use the gem, you lazy XXX!
         # if files_list == [] # or files_list.nil?  # empty -> ALL

@@ -74,4 +74,4 @@ test-binary-with-system-gem:
 	bin/hello-storazzo
 
 lint:
-	rubocop --auto-correct-all
+	rubocop --auto-correct

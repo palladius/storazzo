@@ -6,14 +6,15 @@ require 'yaml'
 require_relative './common'
 require_relative './ric_disk_config'
 
-#     This is a singleton class. You call me this way..
-#     You call me with:
-#
-#     Storazzo::RicDiskSampleConfig.instance()
-#
-
 module Storazzo
   module Storazzo
+    #     This is a singleton class. You call me this way..
+    #     You call me with:
+    #
+    #     Storazzo::RicDiskSampleConfig.instance()
+    #
+    # It loads a sample config in local gem etc/. Usuful for testing or if no other config is found..
+
     class RicDiskSampleConfig < Storazzo::RicDiskConfig
       # include Storazzo::Common
 
