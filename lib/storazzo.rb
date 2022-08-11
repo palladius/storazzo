@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Inspired from https://guides.rubygems.org/make-your-own-gem/#introduction
 
 module Storazzo
@@ -15,7 +17,7 @@ module Storazzo
   end
 
   def self.version
-    File.read(root + '/VERSION').chomp # "10.0.0"
+    File.read("#{root}/VERSION").chomp # "10.0.0"
   end
 
   #    alias_method :VERSION, :version
@@ -35,7 +37,7 @@ require 'pp'
 # require_all './' , 'media/'
 # require_all 'lib/**/*.rb'
 # require_rel '.', 'media'
-Dir[File.dirname(__FILE__) + '/../lib/*.rb'].each do |file|
+Dir["#{File.dirname(__FILE__)}/../lib/*.rb"].each do |file|
   puts "+ Requiring... #{file}"
   require File.basename(file, File.extname(file))
 end

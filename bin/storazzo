@@ -1,7 +1,8 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require 'storazzo'
-#gem 'storazzo', :path => File.expand_path("../lib", __FILE__)
+# gem 'storazzo', :path => File.expand_path("../lib", __FILE__)
 
 require 'optparse'
 
@@ -9,152 +10,149 @@ extend Storazzo::Colors
 include Storazzo::Common # instead
 
 if RUBY_VERSION.split('.')[0] == 1
-    puts "Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!"
-    exit 2020
-  end
+  puts 'Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!'
+  exit 2020
+end
 
 $PROG_VER = '0.1'
 $DEBUG    = ENV['DEBUG'] == 'true' # (true/false)
 
-$actions = %w{ 
-    show auto help 
-}.sort
-
+$actions = %w[
+  show auto help
+].sort
 
 # you can't but love Ruby monkey-patching ability..
 class Array
   #  puts "array drop"
-    def tail 
-      drop(1) # https://stackoverflow.com/questions/3615700/ruby-what-is-the-easiest-way-to-remove-the-first-element-from-an-array
-    end
+  def tail
+    drop(1) # https://stackoverflow.com/questions/3615700/ruby-what-is-the-easiest-way-to-remove-the-first-element-from-an-array
+  end
 end
 
 HISTORY = <<-BIG_LONG_MULTILINE
     2022-0806  v0.1 First stesure
 BIG_LONG_MULTILINE
 
-
-$description = <<DESCRIPTION_HEREFILE.gsub(/\s+/, " ").strip
+$description = <<DESCRIPTION_HEREFILE.gsub(/\s+/, ' ').strip
     This util shall expose all Storazzo aPIs via CLI: show-local-dirs, ...
     show GCS buckets, ...
 
     It's also my dream to add some nice icons which are joy to the eye, like
-    some  [ ] [x] before the list to show if its agood or bad directory and type also 
+    some  [ ] [x] before the list to show if its agood or bad directory and type also#{' '}
 DESCRIPTION_HEREFILE
 # >> "SELECT * FROM users ORDER BY users.id DESC"
 
 $myconf = {
-  :app_name => "Storazzo CLI: #{$0}",
-  :description => $description,
-  # TODO move to some class default
-  #:media_dirs => %w{/media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/
+  app_name: "Storazzo CLI: #{$PROGRAM_NAME}",
+  description: $description
+  # TODO: move to some class default
+  # :media_dirs => %w{/media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/
   #                  /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/},
-  #:mount_types => %w{vfat ntfs},
+  # :mount_types => %w{vfat ntfs},
 }
 
 def usage(comment = nil)
-    puts white($optparse.banner)
-    puts($optparse.summarize)
-    #puts("Description: " + gray($myconf[:description]))
-    puts red("ERROR: " + comment) if comment
-    # puts "Description: #{ $myconf[:description] }"
-    exit 13
-  end
+  puts white($optparse.banner)
+  puts($optparse.summarize)
+  # puts("Description: " + gray($myconf[:description]))
+  puts red("ERROR: #{comment}") if comment
+  # puts "Description: #{ $myconf[:description] }"
+  exit 13
+end
 
 # include it in main if you want a custome one
-def init() # see lib_autoinit in lib/util.rb
-    $opts = {}
-    # setting defaults
-    $opts[:verbose] = false
-    $opts[:dryrun] = false
-    $opts[:debug] = false
-    $opts[:force] = false
-  
-    $optparse = OptionParser.new do |opts|
-      opts.banner = "#{$0} v.#{$PROG_VER}\n Usage: #{File.basename $0} [options] ACTION [file1] [file2] ..."
-      opts.separator "Actions: #{$actions.join ', '}"
-       opts.separator " $0 show # show options and local folders "
-       opts.separator " $0 auto # takes automated actions based on config and local disk. For lazy users"
-      opts.separator "Options: "
-      opts.on('-d', '--debug', 'enables debug (DFLT=false)') { $opts[:debug] = true; $DEBUG = true }
-      opts.on('-f', '--force', 'force stuff (DFLT=false)') { $opts[:force] = true }
-      opts.on('-h', '--help', 'Display this screen') { usage }
-      # opts.on( '-j', '--jabba', 'Activates my Jabber powerful CLI' ) {  $opts[:jabba] = true  }
-      opts.on('-n', '--dryrun', "Don't really execute code") { $opts[:dryrun] = true }
-      opts.on('-l', '--logfile FILE', 'Write log to FILE')    { |file| $opts[:logfile] = file }
-      opts.on('-v', '--verbose', 'Output more information')   { $opts[:verbose] = true }
-      opts.separator("Description: " + gray($myconf[:description]))
-      #opts.separator " -- "
-    end
-    $optparse.parse!
-  end
+# see lib_autoinit in lib/util.rb
+def init
+  $opts = {}
+  # setting defaults
+  $opts[:verbose] = false
+  $opts[:dryrun] = false
+  $opts[:debug] = false
+  $opts[:force] = false
 
-  def show_action(argv)
-    deb "ARGV remaning is: #{argv}"
-    deb("TODO show_action")
-    #puts(white("1. Config"))
-    #Pry::ColorPrinter.pp $config.to_verbose_s
-    puts(white("2. Mounts/Dirs"))
-    Pry::ColorPrinter.pp Storazzo::Media::GcsBucket.list_all_with_type
-    pp Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
-    
+  $optparse = OptionParser.new do |opts|
+    opts.banner = "#{$PROGRAM_NAME} v.#{$PROG_VER}\n Usage: #{File.basename $PROGRAM_NAME} [options] ACTION [file1] [file2] ..."
+    opts.separator "Actions: #{$actions.join ', '}"
+    opts.separator ' $0 show # show options and local folders '
+    opts.separator ' $0 auto # takes automated actions based on config and local disk. For lazy users'
+    opts.separator 'Options: '
+    opts.on('-d', '--debug', 'enables debug (DFLT=false)') do
+      $opts[:debug] = true
+      $DEBUG = true
+    end
+    opts.on('-f', '--force', 'force stuff (DFLT=false)') { $opts[:force] = true }
+    opts.on('-h', '--help', 'Display this screen') { usage }
+    # opts.on( '-j', '--jabba', 'Activates my Jabber powerful CLI' ) {  $opts[:jabba] = true  }
+    opts.on('-n', '--dryrun', "Don't really execute code") { $opts[:dryrun] = true }
+    opts.on('-l', '--logfile FILE', 'Write log to FILE')    { |file| $opts[:logfile] = file }
+    opts.on('-v', '--verbose', 'Output more information')   { $opts[:verbose] = true }
+    opts.separator("Description: #{gray($myconf[:description])}")
+    # opts.separator " -- "
   end
-  
-  def real_program
-    deb("Hello world from a templated '#{yellow $0}'")
-    deb "+ Options are:  #{gray $opts}"
-    deb "+ Depured args: #{azure ARGV}"
-    deb "+ Script-specifig super-cool conf: #{green $prog_conf_d}"
-    deb "+ Your configuration: #{purple $myconf.inspect}"
-  
-    # Your code goes here...
-    puts white("Hello world from #{$myconf[:app_name]}!")
-    puts "Description: '''#{white $myconf[:description]}'''"
-    Storazzo::Main.say_hi("Note: if the version of this storazzo is behind local version youre probably using a old library. 
+  $optparse.parse!
+end
+
+def show_action(argv)
+  deb "ARGV remaning is: #{argv}"
+  deb('TODO show_action')
+  # puts(white("1. Config"))
+  # Pry::ColorPrinter.pp $config.to_verbose_s
+  puts(white('2. Mounts/Dirs'))
+  Pry::ColorPrinter.pp Storazzo::Media::GcsBucket.list_all_with_type
+  pp Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
+end
+
+def real_program
+  deb("Hello world from a templated '#{yellow $PROGRAM_NAME}'")
+  deb "+ Options are:  #{gray $opts}"
+  deb "+ Depured args: #{azure ARGV}"
+  deb "+ Script-specifig super-cool conf: #{green $prog_conf_d}"
+  deb "+ Your configuration: #{purple $myconf.inspect}"
+
+  # Your code goes here...
+  puts white("Hello world from #{$myconf[:app_name]}!")
+  puts "Description: '''#{white $myconf[:description]}'''"
+  Storazzo::Main.say_hi("Note: if the version of this storazzo is behind local version youre probably using a old library.
     I still need to learn how to call the binary with local/current lib/: bundle exec stiKazzi?")
 
-    $config = Storazzo::RicDiskConfig.instance()
-    $config.load
-    deb "StorazzoConfig: #{$config}"
-    # config.load # auto_sbrodola(ARGV)
-    puts yellow("ARGV: #{ARGV}")
-    #config.iterate_through_file_list_for_disks(ARGV)
+  $config = Storazzo::RicDiskConfig.instance
+  $config.load
+  deb "StorazzoConfig: #{$config}"
+  # config.load # auto_sbrodola(ARGV)
+  puts yellow("ARGV: #{ARGV}")
+  # config.iterate_through_file_list_for_disks(ARGV)
 
-    if_deb? { Storazzo::Main.say_hi("ARGV: #{ARGV}") }
+  if_deb? { Storazzo::Main.say_hi("ARGV: #{ARGV}") }
 
-    if (ARGV == []) 
-        usage("I need at least one argument (storazzo ACTION)")
-    end
-    argv_action = ARGV[0]
-    case argv_action # first argment - action
-        when "show", "list"
-            show_action(ARGV.tail)
-        when "auto"
-            auto_action(ARGV.tail)
-        when "help"
-            usage("There you go, here's your HELP :)")
-        when String
-            usage("Unknown action1: #{argv_action}. Available actions: #{$actions}")
-    else
-        usage("Unknown action2, really strange!: '#{argv_action}'. Actions: #{$actions}")
-    end
-
+  usage('I need at least one argument (storazzo ACTION)') if ARGV == []
+  argv_action = ARGV[0]
+  case argv_action # first argment - action
+  when 'show', 'list'
+    show_action(ARGV.tail)
+  when 'auto'
+    auto_action(ARGV.tail)
+  when 'help'
+    usage("There you go, here's your HELP :)")
+  when String
+    usage("Unknown action1: #{argv_action}. Available actions: #{$actions}")
+  else
+    usage("Unknown action2, really strange!: '#{argv_action}'. Actions: #{$actions}")
   end
-  
-  def main(filename)
-    deb "I'm called by #{white filename}"
-    deb "HISTORY: #{gray HISTORY}"
-    init # Enable this to have command line parsing capabilities!
-    puts white("$DEBUG is #{$DEBUG}. Tu turn on, call me with -d") unless $DEBUG
-    # warn "[warn] template v#{$TEMPLATE_VER }: proviamo il warn che magari depreca il DEB"
-    real_program
-  
-    if_deb? do
-      puts "First I need to figure out how to bring in all the libraries in here.."
-      Storazzo::Main.say_hi("ARGV is: #{ARGV.join ', '}")
-      puts Storazzo.version
-    end
-  end
-  
+end
 
-  main(__FILE__)  
+def main(filename)
+  deb "I'm called by #{white filename}"
+  deb "HISTORY: #{gray HISTORY}"
+  init # Enable this to have command line parsing capabilities!
+  puts white("$DEBUG is #{$DEBUG}. Tu turn on, call me with -d") unless $DEBUG
+  # warn "[warn] template v#{$TEMPLATE_VER }: proviamo il warn che magari depreca il DEB"
+  real_program
+
+  if_deb? do
+    puts 'First I need to figure out how to bring in all the libraries in here..'
+    Storazzo::Main.say_hi("ARGV is: #{ARGV.join ', '}")
+    puts Storazzo.version
+  end
+end
+
+main(__FILE__)

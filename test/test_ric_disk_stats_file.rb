@@ -1,16 +1,18 @@
-require "storazzo/ric_disk_statsfile"
+# frozen_string_literal: true
+
+require 'storazzo/ric_disk_statsfile'
 
 class RicDiskStatsFileTest < Minitest::Test
   def test_version
     version = Storazzo::RicDiskStatsFile.version
     assert(version.is_a?(String),
-           "version should produce a bloody string :P")
+           'version should produce a bloody string :P')
   end
 
   def test_default_name
     dname = Storazzo::RicDiskStatsFile.default_name
     assert(dname.is_a?(String),
-           "DefaultName should produce a bloody string :P")
+           'DefaultName should produce a bloody string :P')
   end
 end
 # module Storazzo

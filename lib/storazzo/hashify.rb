@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # copied from https://dev.to/ayushn21/how-to-generate-yaml-from-ruby-objects-without-type-annotations-4fli
 module Storazzo
   module Hashify
@@ -20,19 +22,19 @@ module Storazzo
         value = instance_variable_get(var)
         value = value.map(&:to_hash) if value.is_a? Array
 
-        hash[var.to_s.delete("@")] = value
+        hash[var.to_s.delete('@')] = value
       end
 
-      return hash
+      hash
     end
 
     def obj_to_hash
       h = {}
       puts self
-      self.instance_variables.each { |var|
+      instance_variables.each do |var|
         # puts var
-        h[var.to_s.delete('@')] = self.instance_variable_get(var) # send(var.to_s.delete('@'))
-      }
+        h[var.to_s.delete('@')] = instance_variable_get(var) # send(var.to_s.delete('@'))
+      end
       h
     end
 

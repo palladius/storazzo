@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # # TODO remove this! Ugly code to just borrow and cleanup a bit,
 
 # module Storazzo

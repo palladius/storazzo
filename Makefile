@@ -10,14 +10,14 @@ help:
 build-local:
 	gem build storazzo.gemspec
 
-build: build-local 
+build: build-local
 
 install:
 	gem install ./storazzo-$(VER).gem
 
 push-to-rubygems: build-local test
 	gem push ./storazzo-$(VER).gem
-push-to-rubygems-without-tests: build-local 
+push-to-rubygems-without-tests: build-local
 	gem push ./storazzo-$(VER).gem
 
 list:
@@ -31,7 +31,7 @@ test-all:
 	#bin/ricdisk-magic Ciao-da-Makefile
 	echo 3. run rake test.. ont configured yet just a memo for the future.
 	RUBYOPT="-W0" rake test
-	echo 4. Prove I can include local gem in irb and play around. Similarly to rails console without reload.  
+	echo 4. Prove I can include local gem in irb and play around. Similarly to rails console without reload.
 	make irb-test
 	@echo 'OK: ALL TESTS PASSED. #STIKA'
 
@@ -62,9 +62,9 @@ test-local-folder:
 test-media-subfolder:
 	rake test TEST="test/media/*.rb"
 test-verbose:
-	rake test:verbose --verbose 
+	rake test:verbose --verbose
 test-silent:
-	RUBYOPT="-W0" rake test:silent --verbose 
+	RUBYOPT="-W0" rake test:silent --verbose
 test-single-file-continuously:
 	\watch -n 5 --color rake test TEST="test/media/test_local_folder.rb"
 
@@ -72,4 +72,6 @@ test-binary-with-local-gem:
 	ruby -Ilib bin/hello-storazzo
 test-binary-with-system-gem:
 	bin/hello-storazzo
-	
+
+lint:
+	rubocop --auto-correct-all

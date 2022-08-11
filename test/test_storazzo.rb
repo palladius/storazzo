@@ -1,10 +1,12 @@
-require "minitest/autorun"
-require "storazzo"
+# frozen_string_literal: true
+
+require 'minitest/autorun'
+require 'storazzo'
 
 class StorazzoTest < Minitest::Test
   def test_storazzo_hi_with_argument
-    assert_match "Hello from Storazzo", Storazzo::Main.say_hi("ruby this should fail")
-    assert_match "ruby this should fail", Storazzo::Main.say_hi("ruby this should fail")
+    assert_match 'Hello from Storazzo', Storazzo::Main.say_hi('ruby this should fail')
+    assert_match 'ruby this should fail', Storazzo::Main.say_hi('ruby this should fail')
   end
   #     def test_storazzo_hi_without_argument
   #         assert_match "Hello from Storazzo", Storazzo::Main.say_hi()

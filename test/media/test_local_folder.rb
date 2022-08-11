@@ -1,10 +1,12 @@
-require "minitest/autorun"
-require "storazzo"
+# frozen_string_literal: true
+
+require 'minitest/autorun'
+require 'storazzo'
 require 'storazzo/common'
-require "storazzo/ric_disk"
-require "storazzo/ric_disk_config"
+require 'storazzo/ric_disk'
+require 'storazzo/ric_disk_config'
 require 'storazzo/colors'
-require "storazzo/media/local_folder"
+require 'storazzo/media/local_folder'
 
 class LocalFolderTest < Minitest::Test
   #    include Storazzo::Colors
@@ -16,13 +18,13 @@ class LocalFolderTest < Minitest::Test
   #     #"Hello from Storazzo", Storazzo::Main.hi("ruby this should fail")
   #     #assert_match "ruby this should fail", Storazzo::Main.hi("ruby this should fail")
   # end
-  #def tear_up
+  # def tear_up
   def setup
-      include Storazzo::Colors
-    puts yellow("LocalFolderTest: tear up")
+    include Storazzo::Colors
+    puts yellow('LocalFolderTest: tear up')
     # @config_useless = Storazzo::RicDiskConfig.instance()
-    @config = Storazzo::RicDiskSampleConfig.safe_instance()
-    @config_load = @config.load()
+    @config = Storazzo::RicDiskSampleConfig.safe_instance
+    @config_load = @config.load
     puts @config.to_verbose_s
     # my_class = Storazzo::RicDisk::LocalFolder
     # my_obj = Storazzo::RicDisk::LocalFolder
@@ -30,27 +32,26 @@ class LocalFolderTest < Minitest::Test
 
   def test_show_all_shouldnt_fail_and_should_return_a_non_empty_array
     assert_equal(Array, Storazzo::Media::LocalFolder.list_all.class,
-                 "Storazzo::RicDisk::LocalFolder.list_all should return an Array")
-    assert(Storazzo::Media::LocalFolder.list_all.size > 0, "Array size should be >0")
+                 'Storazzo::RicDisk::LocalFolder.list_all should return an Array')
+    assert(Storazzo::Media::LocalFolder.list_all.size.positive?, 'Array size should be >0')
     # puts Storazzo::Media::LocalFolder.list_all
   end
 
   def test_list_all_returns_an_array_of_real_directories
     dirs = Storazzo::Media::LocalFolder.list_all
     dirs.each do |mydir|
-      assert_equal(String, mydir.class, "Dir should be a String representing an existing directory")
+      assert_equal(String, mydir.class, 'Dir should be a String representing an existing directory')
       assert(File.directory?(mydir), "Dir should be a file of type 'directory'")
     end
   end
 
   # To only test this:
   # $ ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works
-  def test_1_first_directory_parsing_actually_works()
-
+  def test_1_first_directory_parsing_actually_works
     puts("(#{__FILE__}) WEIRD THING: This test is flaky. SKipping for now until I complete the LocalFolder.parse() code")
     folders = Storazzo::Media::LocalFolder.list_all
     puts "Folders: #{folders}"
-    config = Storazzo::RicDiskSampleConfig.safe_instance()
+    config = Storazzo::RicDiskSampleConfig.safe_instance
     puts "config1: #{config}"
     puts "config2: #{config.load}"
     test_dir = folders.first
@@ -60,7 +61,7 @@ class LocalFolderTest < Minitest::Test
     disk = Storazzo::Media::LocalFolder.new(test_dir)
     stats_file = disk.stats_filename_default_fullpath
     puts "stats_file: #{stats_file}"
-    disk.parse()
+    disk.parse
     deb "config: ''#{config}''"
     # config.iterate_through_file_list_for_disks([test_dir])
     # assert(
@@ -78,7 +79,7 @@ class LocalFolderTest < Minitest::Test
     # puts("(#{__FILE__}) WEIRD THING: This test is flaky. SKipping for now until I complete the LocalFolder.parse() code")
     folders = Storazzo::Media::LocalFolder.list_all
     puts "Folders: #{folders}"
-    config = Storazzo::RicDiskSampleConfig.safe_instance()
+    config = Storazzo::RicDiskSampleConfig.safe_instance
     config.load
     puts "config1: #{config}"
     puts "config2: #{config.load}"
@@ -95,27 +96,27 @@ class LocalFolderTest < Minitest::Test
     # TEST2: config + iterate
     config.iterate_through_file_list_for_disks([test_dir])
     assert(
-      File.exists?(stats_file),
+      File.exist?(stats_file),
       "parse on LocalFolder should create file '#{stats_file}'"
     )
   end
 
   def test_readonly_directory_creates_configfile_outside_of_dir
-    test_dir = "/etc/ssh/"
+    test_dir = '/etc/ssh/'
     disk = Storazzo::Media::LocalFolder.new(test_dir)
     stats_file = disk.stats_filename_default_fullpath
-    config = Storazzo::RicDiskSampleConfig.safe_instance()
+    config = Storazzo::RicDiskSampleConfig.safe_instance
     config.load
     config.iterate_through_file_list_for_disks([test_dir])
     assert(
-      not(File.exists?(stats_file)),
+      !File.exist?(stats_file),
       "parse on LocalFolder should NOT create file '#{stats_file}' but another in another TODO place"
     )
     # ...
   end
 
   def test_readonly_directory_is_indeed_readonly
-    test_dir = "/etc/ssh"
+    test_dir = '/etc/ssh'
     readonly_rdisk = Storazzo::Media::LocalFolder.new(test_dir)
     if_deb? do
       ppp(readonly_rdisk.to_verbose_s)

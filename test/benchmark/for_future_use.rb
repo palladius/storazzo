@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 # copied from https://github.com/minitest/minitest
 
 # optionally run benchmarks, good for CI-only work!
-require "minitest/benchmark" if ENV["BENCHMARK"]
+require 'minitest/benchmark' if ENV['BENCHMARK']
 
 class TestMeme < Minitest::Benchmark
   # Override self.bench_range or default range is [1, 10, 100, 1_000, 10_000]

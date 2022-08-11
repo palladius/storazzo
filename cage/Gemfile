@@ -1,6 +1,8 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
+
+source 'https://rubygems.org'
 
 # local_gem_path = File.expand_path("../") # FileUtils.pwd,
 # puts :local_gem_path, local_gem_path
 # puts :FileUtilspwd, FileUtils.pwd
-gem 'storazzo', path: File.expand_path("../")  # local_gem_path
+gem 'storazzo', path: File.expand_path('../')  # local_gem_path

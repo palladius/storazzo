@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 ############# ############# ############# ############# ############# ############# ############# #############
 # placeholder until i make it work..
@@ -32,7 +33,7 @@ include Storazzo::Common # instead
 # extend Storazzo::Colors
 
 if RUBY_VERSION.split('.')[0] == 1
-  puts "Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!"
+  puts 'Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!'
   exit 2020
 end
 
@@ -47,23 +48,21 @@ HISTORY = <<-BIG_LONG_MULTILINE
   2022-07-DD v0.2 Some private stuff on GIC
 BIG_LONG_MULTILINE
 
-=begin
-
-  ############################################################
-  @author:    Riccardo Carlesso
-  @email:     riccardo.carlesso@gmail.com
-  @maturity:  development
-  @language:  Ruby
-  @synopsis:  Brief Description here
-  @tags:      development, rcarlesso, test
-  @description: See description
- ############################################################
-
-=end
+#
+#   ############################################################
+#   @author:    Riccardo Carlesso
+#   @email:     riccardo.carlesso@gmail.com
+#   @maturity:  development
+#   @language:  Ruby
+#   @synopsis:  Brief Description here
+#   @tags:      development, rcarlesso, test
+#   @description: See description
+#  ############################################################
+#
 
 $myconf = {
-  :app_name => "RicDisk Magic should be sth like #{$0}",
-  :description => "
+  app_name: "RicDisk Magic should be sth like #{$PROGRAM_NAME}",
+  description: "
         This program is loosely inspired to ricdisk-magic.sh but its much better.
         The idea is: iterate through all ARGV elements and build a DB of all files with length and MD5.
         Then if folder is writeable, put this list INSIDE IT as its so conveniente.
@@ -74,13 +73,13 @@ $myconf = {
         Note. This software is part of the Storazzo gem ('sai chi ti saluta un casino?'):
 
             $ gem install storazzo
-    ".strip.gsub(/^\s+/, "").gsub(/\s+$/, ""),
-  # TODO move to some class default
-  :media_dirs => %w{/media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/
-                    /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/},
-  :mount_types => %w{vfat ntfs},
+    ".strip.gsub(/^\s+/, '').gsub(/\s+$/, ''),
+  # TODO: move to some class default
+  media_dirs: %w[/media/riccardo/ /Volumes/ /mnt/ ~/git/storazzo/var/test/
+                 /sobenme/giusto/per/imparare/ad/ammutolire/gli/errori/],
+  mount_types: %w[vfat ntfs]
 }
-$stats_file = "ricdisk_stats_v11.rds" # => RicDiskStatsFile
+$stats_file = 'ricdisk_stats_v11.rds' # => RicDiskStatsFile
 $gcs_bucket = 'TODO-CHANGE-CONFIG-palladius'
 
 # This template from scripta.rb. from 2.1.0 removed aby ric gem dependency.
@@ -91,14 +90,15 @@ $TEMPLATE_VER = '2.1.1'
 def usage(comment = nil)
   puts white($optparse.banner)
   puts($optparse.summarize)
-  puts("Description: " + gray($myconf[:description]))
+  puts("Description: #{gray($myconf[:description])}")
   puts red(comment) if comment
   # puts "Description: #{ $myconf[:description] }"
   exit 13
 end
 
 # include it in main if you want a custome one
-def init() # see lib_autoinit in lib/util.rb
+# see lib_autoinit in lib/util.rb
+def init
   $opts = {}
   # setting defaults
   $opts[:verbose] = false
@@ -107,8 +107,11 @@ def init() # see lib_autoinit in lib/util.rb
   $opts[:force] = false
 
   $optparse = OptionParser.new do |opts|
-    opts.banner = "#{$0} v.#{$PROG_VER}\n Usage: #{File.basename $0} [options] file1 file2 ..."
-    opts.on('-d', '--debug', 'enables debug (DFLT=false)') { $opts[:debug] = true; $DEBUG = true }
+    opts.banner = "#{$PROGRAM_NAME} v.#{$PROG_VER}\n Usage: #{File.basename $PROGRAM_NAME} [options] file1 file2 ..."
+    opts.on('-d', '--debug', 'enables debug (DFLT=false)') do
+      $opts[:debug] = true
+      $DEBUG = true
+    end
     opts.on('-f', '--force', 'force stuff (DFLT=false)') { $opts[:force] = true }
     opts.on('-h', '--help', 'Display this screen') { usage }
     # opts.on( '-j', '--jabba', 'Activates my Jabber powerful CLI' ) {  $opts[:jabba] = true  }
@@ -120,7 +123,7 @@ def init() # see lib_autoinit in lib/util.rb
 end
 
 def real_program
-  deb("Hello world from a templated '#{yellow $0}'")
+  deb("Hello world from a templated '#{yellow $PROGRAM_NAME}'")
   deb "+ Options are:  #{gray $opts}"
   deb "+ Depured args: #{azure ARGV}"
   deb "+ Script-specifig super-cool conf: #{green $prog_conf_d}"
@@ -130,7 +133,7 @@ def real_program
   puts white("Hello world from #{$myconf[:app_name]}!")
   puts "Description: '''#{white $myconf[:description]}'''"
 
-  config = Storazzo::RicDiskConfig.instance()
+  config = Storazzo::RicDiskConfig.instance
   config.load
   puts "StorazzoConfig: #{config}"
   # config.load # auto_sbrodola(ARGV)
@@ -167,8 +170,8 @@ def main(filename)
   # warn "[warn] template v#{$TEMPLATE_VER }: proviamo il warn che magari depreca il DEB"
   real_program
 
-  if ($DEBUG)
-    puts "First I need to figure out how to bring in all the libraries in here.."
+  if $DEBUG
+    puts 'First I need to figure out how to bring in all the libraries in here..'
     Storazzo::Main.say_hi("ARGV is: #{ARGV.join ', '}")
     puts Storazzo.version
   end
