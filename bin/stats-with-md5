@@ -16,6 +16,7 @@ $PROG_VER = '0.5' # on 0.4 it was copied from palladius/sakura. Now should be ma
 $DEBUG    = false
 $reset_autowrite_file_reincarnation = 0
 DEFAULT_MAX_FILES = 'Infinite'
+$default_ping_frequency = 50
 
 =begin
 
@@ -121,27 +122,27 @@ def compute_stats_and_md5(file)
 		# datetimes
 		ret[:stat_safebirthtime] = getSafeCreationTime(file) # in Mac uses birthtime,but on Linux wont work
 #			defined?(stats.birthtime) ? # rescue stats.mtime # eg,  2022-03-05 21:47:51 +0100 on Mac (not implemented on my Linuix)#
-#			stats.birthtime : # works on Mac 
+#			stats.birthtime : # works on Mac
 #			stats.ctime
 		ret[:stat_mtime] = stats.mtime # eg,  2022-03-05 21:47:51 +0100 Returns the modification time of stat.
 		ret[:stat_ctime] = stats.ctime # eg,  2022-03-05 21:47:51 +0100 Returns the change time for stat (that is, the time directory information about the file was changed, not the file itself). Note that on Windows (NTFS), returns creation time (birth time).
 		ret[:stat_atime] = stats.atime # eg,  2022-03-05 21:47:51 +0100 Last Access
 		ret[:stat_gid] = stats.gid     # Group Id
 		ret[:stat_uid] = stats.uid     # UUID
-		ret[:stat_ftype] = stats.ftype     # 
-		
+		ret[:stat_ftype] = stats.ftype     #
+
 		ret[:md5] = '______________NONE______________'
 		if stats.ftype != "directory"
 			file_content = File.read(file)
 			ret[:md5] = Digest::MD5.hexdigest(file_content) # rescue 'none                             ' #=> string with hexadecimal digits
 		end
-	rescue Errno::EISDIR => e 
+	rescue Errno::EISDIR => e
 		#puts "It's a dir, nothing I can do here except skipping the stuff"
-		ret[:md5] = "_________I'm a dir sorry________" 	
-	rescue Exception => e 
+		ret[:md5] = "_________I'm a dir sorry________"
+	rescue Exception => e
 		ret[:error] = e
 	end
-	ret 
+	ret
 end
 
 $print_stats_and_md5_version = "1.1b_220805_F" # files
@@ -160,9 +161,10 @@ end
 def print_stats_and_md5_for_gcs(mybucket_with_subdir, opts = {})
   #	opts_color = opts.fetch :color, true#
   #	opts_verbose = opts.fetch :verbose, false
-  #	opts_ping_frequency = opts.fetch :ping_frequency, 50
+  #	opts_ping_frequency = opts.fetch :ping_frequency, $default_ping_frequency
   opts_max_files = opts.fetch :max_files, nil # BigDecimal('Infinity')
   opts_autowrite = opts.fetch :autowrite, false
+  opts_ping_frequency = opts.fetch :ping_frequency, $default_ping_frequency
 
   raise "Wrong GCS Path: #{mybucket_with_subdir}" unless smells_like_gcs?(mybucket_with_subdir)
 
@@ -217,7 +219,7 @@ end
 def print_colored_polymoprhic(entity_type, md5, mode, file_type, size, content_type, creation_time, filename, opts = {})
   opts_color = opts.fetch :color, true
   opts_verbose = opts.fetch :verbose, false
-  opts_ping_frequency = opts.fetch :ping_frequency, 50
+  opts_ping_frequency = opts.fetch :ping_frequency, $default_ping_frequency
   opts_autowrite = opts.fetch :autowrite, false
 
   # Increment counter across all!
@@ -225,7 +227,7 @@ def print_colored_polymoprhic(entity_type, md5, mode, file_type, size, content_t
   # in main i had to put 2 branched to invoke a single thing but if logic changes that sentence might be printed twice. Instead here, the BEGIN line could be nice to do here instead.
   # $stderr.puts("print_stats_and_md5() Fikst invocation! Consider moving the 2 things in main here :)") if ($print_stats_and_md5_counter == 1)
   # puts("[print_stats_and_md5] version=#{$print_stats_and_md5_version} host=#{Socket.gethostname}(#{`uname`.chomp}) created_on=#{Time.now}") if ($print_stats_and_md5_counter == 1)
-  $stderr.puts "-- print_stats_and_md5(v#{$print_stats_and_md5_version}): #{$print_stats_and_md5_counter - 1} files processed --" if (($print_stats_and_md5_counter) % opts_ping_frequency == 1)
+  $stderr.puts "-- #{Time.now} print_stats_and_md5(v#{$print_stats_and_md5_version}): #{$print_stats_and_md5_counter - 1} files processed --" if (($print_stats_and_md5_counter) % opts_ping_frequency == 1)
 
   maybecolored_md5 = opts_color ? red(md5) : md5
   maybecolored_filename = opts_color ? azure(filename) : filename
@@ -264,29 +266,16 @@ def print_stats_and_md5(file, opts = {})
 
   opts_color = opts.fetch :color, true
   opts_verbose = opts.fetch :verbose, false
-  opts_ping_frequency = opts.fetch :ping_frequency, 50
+  opts_ping_frequency = opts.fetch :ping_frequency, $default_ping_frequency
 
-  # $print_stats_and_md5_counter += 1 # global counter! I should increment at the END of fucntion.. but you never know if i exit wrongly so i do at beginning. so within this function the real #files is N-1 (i.e., if N is 6, we're processing file %5)
-
-  # # in main i had to put 2 branched to invoke a single thing but if logic changes that sentence might be printed twice. Instead here, the BEGIN line could be nice to do here instead.
-  # #$stderr.puts("print_stats_and_md5() Fikst invocation! Consider moving the 2 things in main here :)") if ($print_stats_and_md5_counter == 1)
-  # puts("[print_stats_and_md5] version=#{$print_stats_and_md5_version} host=#{Socket.gethostname}(#{`uname`.chomp}) created_on=#{Time.now}") if ($print_stats_and_md5_counter == 1)
-  # $stderr.puts "-- print_stats_and_md5(v#{$print_stats_and_md5_version}): #{$print_stats_and_md5_counter - 1} files processed --" if (($print_stats_and_md5_counter) % opts_ping_frequency == 1 )
-
-  # puts "print_stats_and_md5: #{file}" if opts_verbose
+  puts "print_stats_and_md5: #{file}" if opts_verbose
   stats = compute_stats_and_md5 file
-  # maybecolored_md5 = opts_color ? red(stats[:md5]) : stats[:md5]
-  # maybecolored_filename = opts_color ? azure(stats[:name]) : stats[:name]
-  # maybecolored_size = opts_color ? white(stats[:size]) : stats[:size]
+
   mode = sprintf("%06o", stats[:mode]) rescue :ERROR # .to_s.right(4)        #=> "100644"
   file_type = stats[:stat_ftype][0] rescue '?'
   file_type = 's' if File.symlink?(file)
   content_type = `file --mime-type -b '#{file}' 2>/dev/null`.chomp # .split(': ',2)[1]
 
-  # colored_string = "[COL] #{red stats[:md5]} #{stats[:size]} #{stats[:stat_safebirthtime]} #{white stats[:name]}"
-  # boring_string =  "[B/W] #{    stats[:md5]} #{stats[:size]} #{stats[:stat_safebirthtime]} #{      stats[:name]}"
-  # puts(opts_color ? colored_string : boring_string)
-  # puts "[OLDv1.1deprecated] #{maybecolored_md5} #{mode} #{file_type} #{maybecolored_size} #{stats[:stat_safebirthtime]} #{maybecolored_filename}"
   print_colored_polymoprhic('file_v1.2', stats[:md5], mode, file_type, stats[:size], content_type,
                             stats[:stat_safebirthtime], stats[:name], opts)
 end
@@ -338,7 +327,7 @@ end
 def print_stats_and_md5_for_directory_from_cli(directory_to_explore_recursively, opts={})
 	puts "# [print_stats_and_md5_for_directory_from_cli] v#{$print_stats_and_md5_version}] DIR to explore (make sure you glob also): #{directory_to_explore_recursively }"
 	opts_autowrite = opts.fetch :autowrite, false
-	opts_verbose = opts.fetch( :verbose, $opts[:verbose]) 
+	opts_verbose = opts.fetch( :verbose, $opts[:verbose])
 	opts_debug = opts.fetch :debug, $opts[:debug]
 	opts_color = opts.fetch :color, $opts[:color]
 	if opts_debug
@@ -349,7 +338,7 @@ def print_stats_and_md5_for_directory_from_cli(directory_to_explore_recursively,
 
 	Dir.glob("#{(directory_to_explore_recursively)}/**/*") do |globbed_filename|
 		# Do work on files & directories ending in .rb
-		#puts "[deb] #{globbed_filename}" 
+		#puts "[deb] #{globbed_filename}"
 		print_stats_and_md5(globbed_filename, :color => opts_color, :verbose => opts_verbose, :autowrite => opts_autowrite)
 	end
 
@@ -394,7 +383,7 @@ def real_program
   tf = Time.now
   #rounding to 3 decimals
   approx_delta = (tf-t0).round(3)
-  puts "# [#{File.basename $0}] Time taken for processing #{stats_and_md5_number_of_files_processed} files: #{approx_delta} seconds" 
+  puts "# [#{File.basename $0}] Time taken for processing #{stats_and_md5_number_of_files_processed} files: #{approx_delta} seconds"
 end
 
 def main(filename)
