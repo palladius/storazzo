@@ -1,12 +1,13 @@
 # frozen_string_literal: true
+# coding: utf-8
 
-gem.required_ruby_version = '2.7.5'
+
+#gem.required_ruby_version = '2.7.5'
 
 Gem::Specification.new do |s|
-  s.required_ruby_version '>= 2.7.5'
-
+  s.required_ruby_version = '>= 2.7.5'
   s.name = 'storazzo'
-  # TOSDO: copy approach from here to dry version calculating: https://github.com/rails/strong_parameters/blob/master/strong_parameters.gemspec#L15
+  # TODO: copy approach from here to dry version calculating: https://github.com/rails/strong_parameters/blob/master/strong_parameters.gemspec#L15
   s.version     = File.read('VERSION').chomp # TODO: cat version File.read(@,.VERSION).chomp
   s.summary     = 'storazzo is an amazing gem. Code is in https://github.com/palladius/storazzo'
   s.description = 'A simple gem to manage your external hard drives and extract MD5 and common stuff from them.'
@@ -28,6 +29,7 @@ Gem::Specification.new do |s|
   # ]
   s.homepage = 'https://rubygems.org/gems/storazzo' # maybe https://github.com/palladius/storazzo
   s.license = 'MIT'
+
   # s.add_dependency "activesupport", "~> 3.0"
-  s.add_dependency 'pry' # , "~> 3.0"
+  #s.add_dependency 'pry' # , "~> 3.0"
 end
