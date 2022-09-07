@@ -32,10 +32,7 @@ end
 
 # nice to paste nice output
 require 'pp'
-# require 'require_all'
 
-# require_all './' , 'media/'
-# require_all 'lib/**/*.rb'
 # require_rel '.', 'media'
 Dir["#{File.dirname(__FILE__)}/../lib/*.rb"].each do |file|
   puts "+ Requiring... #{file}"

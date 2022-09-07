@@ -1,3 +1,4 @@
+2022-09-07 0.6.1 removed ANY trace of bloody require_all qwhich is breaking all apps depending on this!!!
 2022-08-11 0.6.0 [MAJOR] Applied Rubocop everywhere :)
 2022-08-07 0.5.3 Skeleton of CLI finished. Also fixed the GcsBucket class naming bug.
 2022-08-06 0.5.2 Added first embryo of colossal `storazzo` CLI utility.

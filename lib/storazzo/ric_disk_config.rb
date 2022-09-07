@@ -5,11 +5,9 @@ require 'English'
 require 'singleton'
 require 'yaml'
 
-# require 'storazzo/media/abstract_ric_disk'
 Dir["#{File.dirname(__FILE__)}/../lib/*.rb"].each do |file|
   require File.basename(file, File.extname(file))
 end
-# require_all 'media/directory'
 
 #     This is a singleton class. You call me this way..
 #     You call me with:
