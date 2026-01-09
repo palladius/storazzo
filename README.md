@@ -22,7 +22,7 @@ Single test in single file:
 
 * `rake test TEST="test/sum_test.rb" TESTOPTS="--name=test_returns_two"` (sample)
 * `rake test TEST="test/media/test_local_folder.rb" TESTOPTS="--name=test_1_first_directory_parsing_actually_works"`
-* `ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works` (note this includes `storazzo` latest gem 
+* `ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works` (note this includes `storazzo` latest gem
     and doesnt benefit from LATEST code so its NOT good for testing: use RAKE for that).
 
 **Testing binary files** is hard: by default they 'require storazzo' and use the GEM INSTALLed version which is a few versions away, usually.
@@ -32,6 +32,7 @@ So while developing you might want to include the lib/ folder, like this:
 * This will use the gem installed a few days ago, likely so wont do you any good to test latest code: `bin/hello-storazzo`
 
 Now to toggle verbosity I believe I need to go into Rakefile (bummer)
+
 # Thanks
 
 Inspiration from:
