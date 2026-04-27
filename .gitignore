@@ -8,3 +8,6 @@ pkg/
 doc/
 *.gem
 .env
+tmp/
+.git-privatize
+nano_banana/
