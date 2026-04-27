@@ -5,7 +5,7 @@
 #gem.required_ruby_version = '2.7.5'
 
 Gem::Specification.new do |s|
-  s.required_ruby_version = '>= 3.0.0'
+  s.required_ruby_version = '>= 3.4.0'
   s.name = 'storazzo'
   # TODO: copy approach from here to dry version calculating: https://github.com/rails/strong_parameters/blob/master/strong_parameters.gemspec#L15
   s.version     = File.read('VERSION').chomp # TODO: cat version File.read(@,.VERSION).chomp
