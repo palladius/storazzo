@@ -2,3 +2,8 @@
 Gemfile.lock
 .gsutil-backuppa*
 .ondir.was.here.touch
+.bundle/
+vendor/
+pkg/
+doc/
+*.gem
