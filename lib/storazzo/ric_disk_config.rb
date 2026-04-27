@@ -51,7 +51,8 @@ module Storazzo
       # trying default location
       raise 'DefaultConfigLocation is not a string' unless DefaultConfigLocation.is_a?(String)
 
-      possible_locations = DEFAULT_CONFIG_LOCATIONS #  [ default_config_locations .. , "./.storazzo.yaml"]
+      possible_locations = DEFAULT_CONFIG_LOCATIONS.dup #  [ default_config_locations .. , "./.storazzo.yaml"]
+
       deb "[Config.load] Possible Locations: #{possible_locations}"
       if config_path.is_a?(String)
         # possible_locations = [config_path] + possible_locations # .append()

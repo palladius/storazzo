@@ -31,3 +31,7 @@ run *args:
 # Run hello-storazzo
 hello:
     bundle exec ruby -Ilib bin/hello-storazzo
+
+# Build and deploy the gem to RubyGems
+deploy: build
+    gem push storazzo-$(cat VERSION).gem
