@@ -1,15 +1,20 @@
-# Specification: Implement GCS Backup and MD5 Searchable Catalog for Removable Disks
+# Specification: Reboot Storazzo
 
 ## Overview
-This track focuses on rebooting the `storazzo` gem to support cloud backups to GCS, creating a searchable MD5 catalog of all files across drives, and robustly handling removable media.
+Reboot the `storazzo` gem to provide a modern, high-performance tool for cataloging and backing up media across local disks (removable) and Google Cloud Storage.
+
+## User Stories
+- **As a User**, I want to scan a removable disk and have its file metadata (including MD5s) uploaded to GCS so I have a cloud-based index.
+- **As a User**, I want to search my entire collection (local and cloud) for specific files using keywords like "scuba diving" and see which disk or bucket they are on.
+- **As a User**, I want to leverage my existing `~/.storazzo.yaml` configuration to automatically discover my backup buckets.
 
 ## Functional Requirements
-- **Removable Disk Support:** Identify, parse, and catalog files from removable disks (e.g., external HDDs, USB sticks).
-- **MD5 Hashing:** Compute MD5 checksums for all cataloged files to ensure data integrity and enable deduplication/search.
-- **Searchable Database:** Store catalog data in a local SQLite database for fast querying (e.g., searching for "scuba diving").
-- **GCS Backup:** Upload cataloged data and/or physical files to Google Cloud Storage buckets for cloud backup.
+- **Native GCS Client:** Replace `gsutil` dependencies with the `google-cloud-storage` Ruby gem for reliable metadata and file sync.
+- **SQLite Indexing:** Implement a robust `SearchEngine` that parses `.rds` files and stores them in a local SQLite database.
+- **Removable Disk Detection:** Improve the detection and parsing of removable media mounted on the system.
+- **BDD Coverage:** Implement Cucumber or RSpec feature specs to validate the core use cases.
 
 ## Non-Functional Requirements
-- **Performance:** Efficient hashing and database indexing.
-- **Reliability:** Safe handling of offline disks and failed network connections.
-- **User Interface:** Friendly CLI output with progress indicators.
+- **Performance:** Optimized hashing and database ingestion to handle thousands of files.
+- **Friendly CLI:** Approachable output with progress bars and emoji.
+- **Safety:** Confirmations before large-scale operations.
