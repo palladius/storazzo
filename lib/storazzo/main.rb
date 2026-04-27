@@ -19,7 +19,7 @@ module Storazzo
   module Storazzo
     class Main
       require 'storazzo/colors'
-      extend Storazzo::Colors
+      extend ::Storazzo::Colors
 
       # version 1.2
       def self.say_hi(message = nil)

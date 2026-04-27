@@ -6,12 +6,11 @@
 require 'digest'
 
 module Storazzo
-  module Storazzo
-    class RicDisk
-      include Hashify
-      include Storazzo::Common
-      extend Storazzo::Common
-      extend Storazzo::Colors
+  class RicDisk
+    include Hashify
+    include ::Storazzo::Common
+    extend ::Storazzo::Common
+    extend ::Storazzo::Colors
       require 'socket'
 
       ## Instance variables
@@ -428,7 +427,6 @@ module Storazzo
       #         puts("find_active_dirs(): found dirs " + green(active_dirs))
       #         return active_dirs
       #       end
-    end
   end
 end
 

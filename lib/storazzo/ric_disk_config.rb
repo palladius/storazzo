@@ -28,8 +28,8 @@ module Storazzo
   module Storazzo
     class RicDiskConfig
       include Singleton
-      include Storazzo::Common
-      include Storazzo::Colors
+      include ::Storazzo::Common
+      include ::Storazzo::Colors
 
       DefaultConfigLocation = File.expand_path '~/.storazzo.yaml'
 

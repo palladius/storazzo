@@ -33,13 +33,6 @@ end
 # nice to paste nice output
 require 'pp'
 
-# require_rel '.', 'media'
-Dir["#{File.dirname(__FILE__)}/../lib/*.rb"].each do |file|
-  puts "+ Requiring... #{file}"
-  require File.basename(file, File.extname(file))
-end
-
-require 'storazzo'
 require 'storazzo/common'
 require 'storazzo/colors'
 require 'storazzo/hashify'
@@ -52,4 +45,5 @@ require 'storazzo/ric_disk_ugly'     # OLD and 90% working
 require 'storazzo/ric_disk_config' # => RicDiskConfif
 require 'storazzo/ric_disk_sample_config'   # => NOTHING!!
 require 'storazzo/ric_disk_statsfile'
+require 'storazzo/search_engine'
 require 'storazzo/main'

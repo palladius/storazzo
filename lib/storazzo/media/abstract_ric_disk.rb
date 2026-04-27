@@ -23,8 +23,7 @@ module Storazzo
     module Storazzo
       module Media
         class AbstractRicDisk
-          # include Storazzo::Common
-          extend Storazzo::Common
+          extend ::Storazzo::Common
 
           # DefaultStatsFilename = Storazzo::RicDiskStatsFile.default_name
 
