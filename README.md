@@ -3,35 +3,33 @@
 
 📦 Storazzo 💎 gem - a Gem to automatically parse your FS for mounts (💽 💾 💿 ) and compute MD5 (🤐) of all files therein and then collect in central DB 🔋 through 📦 StorazzoApp📦 (TM).
 
+![Storazzo logo](assets/logo.png)
+
 # INSTALL
 
 `gem install storazzo`
 
 (Latest version is hosted in https://rubygems.org/gems/storazzo)
 
-# Tests
+# Development & Testing
 
-I still struggle to enforce the include of LOCAL unchecked code rather than latest required system gem (cmon Ruby!)
-but I found loads of interesting ways to test my code by googling and StoackOverflowing:
+To run the tools locally without installing the gem, use `just` (recommended) or standard Ruby flags.
 
-* `rake test TEST="test/sum_test.rb"`
-* test-gcs-bucket: `ruby -I test test/test_gcs_bucket.rb` (meh - see below)
-* test-media-subfolder: `rake test TEST="test/media/*.rb"`
+### Using `just` (Recommended)
+This repository includes a `justfile` with common development commands:
+* `just setup` - Install dependencies
+* `just test` - Run all tests
+* `just run scan /path` - Run the local `storazzo` CLI
+* `just hello` - Run the local `hello-storazzo` script
 
-Single test in single file:
+### Manual Local Execution
+If you don't have `just` installed, you can use `bundle exec` and the `-Ilib` flag:
+* **Run CLI**: `bundle exec ruby -Ilib bin/storazzo scan /path`
+* **Run Tests**: `bundle exec rake test`
+* **Single Test**: `bundle exec ruby -Ilib:test test/media/test_local_folder.rb`
 
-* `rake test TEST="test/sum_test.rb" TESTOPTS="--name=test_returns_two"` (sample)
-* `rake test TEST="test/media/test_local_folder.rb" TESTOPTS="--name=test_1_first_directory_parsing_actually_works"`
-* `ruby -I test test/test_local_folder.rb -n test_first_directory_parsing_actually_works` (note this includes `storazzo` latest gem
-    and doesnt benefit from LATEST code so its NOT good for testing: use RAKE for that).
-
-**Testing binary files** is hard: by default they 'require storazzo' and use the GEM INSTALLed version which is a few versions away, usually.
-So while developing you might want to include the lib/ folder, like this:
-
-* Use local gem (super latest) for checking latest code: `ruby -Ilib bin/hello-storazzo`
-* This will use the gem installed a few days ago, likely so wont do you any good to test latest code: `bin/hello-storazzo`
-
-Now to toggle verbosity I believe I need to go into Rakefile (bummer)
+### Why `bundle exec` and `-Ilib`?
+Using `bundle exec` ensures all dependencies from the `Gemfile` are available. The `-Ilib` flag adds the local `lib/` directory to the Ruby load path, ensuring your local changes are used instead of any installed gem version.
 
 # Thanks
 

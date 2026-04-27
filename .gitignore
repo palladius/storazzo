@@ -7,3 +7,4 @@ vendor/
 pkg/
 doc/
 *.gem
+.env

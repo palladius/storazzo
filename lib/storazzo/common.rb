@@ -28,7 +28,12 @@
 # 👶 🧒 👦 👧 👩 👨 🧑 🧔 🧓 👴 👵 👤 👥 👪 👫 👬 👭 👱 👳 👲 🧕 👸 🤴 🎅 🤶 disabled
 # 🧏 🦻 🦮 🦯 🦺 🦼 🦽 🦾 🦿 🤵 👮 👷 💁 💂 🕴 🕵 🦸 🦹 🧙 🧚 🧜 🧝 🧞 🧛 🧟 👼 👿 👻 👹 👺 👽 👾 🛸 💀 ☠ 🕱 🧠 🦴 👁 👀 👂 👃 👄 🗢 👅 🦷 🦵 🦶 💭 🗬 🗭 💬 🗨 🗩 🗪 🗫 🗰 🗱 🗮 🗯 🗣 🗤 🗥 🗦 🗧 💦 💧 💢 💫 💤 💨 💥 💪 🗲 🔥 💡 💩 💯 🔟 🔰 🕲
 require_relative 'colors'
-require 'pry'
+# require 'pry'
+begin
+  require 'pry'
+rescue LoadError
+  # Pry not available, no worries
+end
 
 module Storazzo
   module Common
@@ -68,8 +73,12 @@ module Storazzo
     end
 
     def ppp(complex_object_to_colorize)
-      # TODO: i need to learn to return without printing..
-      Pry::ColorPrinter.pp(complex_object_to_colorize)
+      if defined?(Pry::ColorPrinter)
+        Pry::ColorPrinter.pp(complex_object_to_colorize)
+      else
+        require 'pp'
+        pp complex_object_to_colorize
+      end
     end
 
     def fatal(s)

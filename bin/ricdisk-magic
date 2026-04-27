@@ -1,21 +1,15 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-############# ############# ############# ############# ############# ############# ############# #############
-# placeholder until i make it work..
-# https://guides.rubygems.org/make-your-own-gem/#adding-an-executable
-# require 'storazzo'
-# require_relative '../lib/storazzo'
+require 'bundler/setup'
+$LOAD_PATH.unshift(File.expand_path('../lib', __dir__))
+require 'storazzo'
 require 'fileutils'
 require 'yaml'
 require 'socket'
-require 'optparse' # http://ruby.about.com/od/advancedruby/a/optionparser.htm
+require 'optparse'
 
-# Including local gem.
-# puts File.expand_path(FileUtils.pwd, "/../")
-# local_gem_path = File.expand_path(FileUtils.pwd, "/../")
-# gem 'storazzo', path: local_gem_path
-require 'storazzo'
+# require 'storazzo'
 # include Storazzo
 # include Storazzo::Colors
 extend Storazzo::Colors
@@ -32,8 +26,8 @@ include Storazzo::Common # instead
 # include 'lib/ric_disk'
 # extend Storazzo::Colors
 
-if RUBY_VERSION.split('.')[0] == 1
-  puts 'Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!'
+if RUBY_VERSION.split('.')[0].to_i < 3
+  puts 'Refusing to launch a script form Ruby 1 or 2. Sorry Ric, its 2020 damn it!'
   exit 2020
 end
 

@@ -7,7 +7,7 @@ require 'optparse' # http://ruby.about.com/od/advancedruby/a/optionparser.htm
 require 'date' # for DateTime
 require 'tempfile'
 
-if RUBY_VERSION.split('.')[0] == 1
+if RUBY_VERSION.split('.')[0].to_i == 1
   puts 'Refusing to launch a script form Ruby 1. Sorry Ric, its 2020 damn it!'
   exit 2020
 end
