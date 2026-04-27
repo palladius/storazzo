@@ -11,7 +11,7 @@ module Storazzo
     include ::Storazzo::Common
     extend ::Storazzo::Common
     extend ::Storazzo::Colors
-      require 'socket'
+    require 'socket'
 
       ## Instance variables
 

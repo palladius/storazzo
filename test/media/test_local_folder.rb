@@ -9,19 +9,11 @@ require 'storazzo/colors'
 require 'storazzo/media/local_folder'
 
 class LocalFolderTest < Minitest::Test
-  #    include Storazzo::Colors
-  #    include Storazzo::Common
   include Storazzo::Common
+  include Storazzo::Colors
 
-  # def test_fail_on_purpOSE # test_storazzo_hi_with_argument
-  #     assert_match 42, 42 , "change me when it failes from makefile"
-  #     #"Hello from Storazzo", Storazzo::Main.hi("ruby this should fail")
-  #     #assert_match "ruby this should fail", Storazzo::Main.hi("ruby this should fail")
-  # end
-  # def tear_up
   def setup
-    include Storazzo::Colors
-    puts yellow('LocalFolderTest: tear up')
+    # puts yellow('LocalFolderTest: tear up')
     # @config_useless = Storazzo::RicDiskConfig.instance()
     @config = Storazzo::RicDiskSampleConfig.safe_instance
     @config_load = @config.load

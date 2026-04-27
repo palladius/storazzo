@@ -15,9 +15,7 @@ module Storazzo
   # Arguments:
   #   message: (String) - optional
 
-  # Can be same name as Module: https://stackoverflow.com/questions/13261474/ruby-modules-and-classes-same-name-in-structure
-  module Storazzo
-    class Main
+  class Main
       require 'storazzo/colors'
       extend ::Storazzo::Colors
 
@@ -78,6 +76,5 @@ module Storazzo
         pwhite 'All tests END'
         # puts "All tests END"
       end
-    end
   end
 end

@@ -3,4 +3,6 @@
 
 require 'storazzo'
 
-Storazzo::Main.say_hi(ARGV[0])
+msg = ARGV.empty? ? 'HelloStorazzo' : ARGV.join(' ')
+
+Storazzo::Main.say_hi(msg)
