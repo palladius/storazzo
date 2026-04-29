@@ -11,6 +11,14 @@
 
 (Latest version is hosted in https://rubygems.org/gems/storazzo)
 
+# Documentation
+
+For detailed information on how to configure and use Storazzo, please refer to the **[User Manual](docs/USER_MANUAL.md)**.
+
+## Developer Documentation
+- [Ruby Code Review](docs/RUBY_CODE_REVIEW.md)
+- [Ruby Upgrade Guide](docs/RUBY_UPGRADE_GUIDE.md)
+
 # Development & Testing
 
 To run the tools locally without installing the gem, use `just` (recommended) or standard Ruby flags.

@@ -94,13 +94,33 @@ module Storazzo
     desc "show", "Show options and local folders"
     def show
       setup_env
-      puts("1. Mounts/Dirs")
-      require 'pp'
-      pp Storazzo::Media::GcsBucket.list_all_with_type
-      pp Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
+      puts "1. GCS Buckets"
+      Storazzo::Media::GcsBucket.list_all_with_type.each do |item|
+        render_item(item)
+      end
+
+      puts "\n2. Local Mounts & Folders"
+      Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type.each do |item|
+        next if item[0] == :config_gcs_bucket || item[0] == :gsutil_ls_gcs_bucket
+        render_item(item)
+      end
     end
 
     private
+
+    def render_item(item)
+      type, path = item
+      case type
+      when :config_gcs_bucket, :gsutil_ls_gcs_bucket
+        puts "🪣  #{azure(path)}"
+      when :mount_point_todo_less_generic
+        puts "💽  #{yellow(path)}"
+      when :local_folder
+        puts "📁  #{green(path)}"
+      else
+        puts "⚪  #{path} (type: #{type})"
+      end
+    end
 
     def setup_env
       $DEBUG = options[:debug]

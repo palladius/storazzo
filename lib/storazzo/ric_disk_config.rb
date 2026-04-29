@@ -44,10 +44,10 @@ module Storazzo
       verbose = opts.fetch :verbose, false
 
       if already_loaded? # and not self.config.nil?
-        pverbose verbose, "[#{self.class}] Config.Load: already loaded"
+        pverbose verbose, "[#{self.class}] Config.Load: already loaded" if verbose
         return config
       end
-      pverbose verbose, 'Storazzo::RicDiskConfig.load(): BEGIN'
+      pverbose verbose, 'Storazzo::RicDiskConfig.load(): BEGIN' if verbose
       # trying default location
       raise 'DefaultConfigLocation is not a string' unless DefaultConfigLocation.is_a?(String)
 
@@ -58,9 +58,9 @@ module Storazzo
         # possible_locations = [config_path] + possible_locations # .append()
         possible_locations.unshift(config_path) # append to front
         # OR: possible_locations.instert(0, config_path)
-        pverbose verbose, "[LOAD] possible_locations: #{possible_locations}"
+        pverbose verbose, "[LOAD] possible_locations: #{possible_locations}" if verbose
       end
-      pverbose verbose, "Searching these paths in order: #{possible_locations}"
+      pverbose verbose, "Searching these paths in order: #{possible_locations}" if verbose
       # bug "This is not always an array of sTRINGS."
       raise 'possible_locations is not an array' unless possible_locations.is_a?(Array)
 

@@ -13,3 +13,4 @@ The ultimate feature is, wherever you ware, you can answer the question: "Where 
 ## Dos and don'ts
 
 * `Gemfile.lock` should be ignored: this is a gem, not an application, it should be updatable by the user.
+* When committing, ensure to change VERSION and CHANGELOG.md for any non trivial changes. Also use `just deploy` after git push, after approval from user.

@@ -36,6 +36,10 @@ module Storazzo
         config.get_local_folders
       end
 
+      def self.list_all_with_type
+        list_all.map { |x| [:local_folder, x] }
+      end
+
       def parse(opts = {})
         puts "LF.parse(#{opts}): TODO Sbrodola inside the dir: #{local_mountpoint}"
         parse_block_storage_folder

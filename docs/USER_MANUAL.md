@@ -31,6 +31,31 @@ Example:
 ### The Search Engine
 Storazzo aggregates these `.rds` files into a local SQLite database (`~/.storazzo_index.db`). This allows you to perform lightning-fast searches across all your disconnected drives and cloud buckets.
 
+## Usage
+
+Storazzo provides a CLI tool named `storazzo`.
+
+### Commands
+
+#### 1. Scan a disk or folder
+`storazzo scan <PATH>`
+Scans a removable disk or local folder, generates an `.rds` file, and uploads metadata to GCS.
+Example: `storazzo scan /media/user/MY_DRIVE`
+
+#### 2. Search the index
+`storazzo search <QUERY>`
+Search for a keyword across all indexed disks and buckets.
+Example: `storazzo search "vacation 2024"`
+
+#### 3. Backup to GCS
+`storazzo backup <SRC> <DEST_BUCKET>`
+Backs up a local folder to GCS using `gsutil rsync` and indexes the destination.
+Example: `storazzo backup ~/Photos gs://my-photo-backup`
+
+#### 4. Show configuration and mounts
+`storazzo show`
+Displays detected mount points, local folders, and GCS buckets.
+
 ## Current Project Status (April 27, 2026)
 
 Today, we rebooted the project with the following improvements:

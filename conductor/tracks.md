@@ -9,5 +9,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 ---
 
-- [ ] **Track: LLM-Generated Disk Summaries**
+- [~] **Track: LLM-Generated Disk Summaries**
   *Link: [./tracks/llm_summary_20260427/](./tracks/llm_summary_20260427/)*

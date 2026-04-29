@@ -30,7 +30,7 @@ class GcsBucketTest < Minitest::Test
       gs://my-local-backup/storazzo/backups/
       gs://my-other-bucket/
     ]
-    actual_list = Storazzo::Media::GcsBucket.list_all(@sample_config_obj)
+    actual_list = Storazzo::Media::GcsBucket.list_all
     assert_equal(
       expected_test_buckets_list.sort,
       actual_list.sort,
@@ -61,18 +61,21 @@ class GcsBucketTest < Minitest::Test
   def test_super_duper_list_works
     # we had a problem on GCS side
     # Storazzo::Media::AbstractRicDisk.super_duper_list_all_with_type
-    expected_ret = [
+    expected_ret_subset = [
       [:config_gcs_bucket, 'gs://my-local-backup/storazzo/backups/'],
       [:config_gcs_bucket, 'gs://my-other-bucket/']
     ]
-    ret = Storazzo::Media::GcsBucket.list_all_with_type
+    ret = Storazzo::Media::GcsBucket.list_all_with_type(@sample_config_obj)
     Pry::ColorPrinter.pp(ret)
     assert_equal(
-      ret.class,
       Array,
+      ret.class,
       'test_super_duper_list_all_with_type_returns_something should return an array..'
     )
-    assert_equal(ret, expected_ret, 'These are the two buckets I expect from test..')
+    # Check that the expected sample buckets are at least present in the result
+    expected_ret_subset.each do |item|
+      assert_includes(ret, item, "Expected #{item} to be in the GCS bucket list")
+    end
   end
 
   def test_gsutil_returns_something

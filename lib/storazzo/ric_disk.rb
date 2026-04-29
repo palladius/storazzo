@@ -263,7 +263,7 @@ module Storazzo
 
       def self.interesting_mount_points(_opts = {})
         # https://unix.stackexchange.com/questions/177014/showing-only-interesting-mount-points-filtering-non-interesting-types
-        `mount | grep -Ev 'type (proc|sysfs|tmpfs|devpts|debugfs|rpc_pipefs|nfsd|securityfs|fusectl|devtmpfs) '`.split(/\n+/)
+        `mount | grep -Ev 'type (proc|sysfs|tmpfs|devpts|debugfs|rpc_pipefs|nfsd|securityfs|fusectl|devtmpfs|squashfs|autofs|binfmt_misc|configfs|tracefs|hugetlbfs|mqueue|efivarfs|pstore|bpf|cgroup2|nsfs) ' | grep -v '/snap/' | grep -v ' on / type ' | grep -v ' on /boot' | grep -v ' on /run/user'`.split(/\n+/)
       end
 
       # maybe move to a RiccFile class? Maybe even INHERIT from FILE?

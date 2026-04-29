@@ -69,7 +69,7 @@ module Storazzo
       # puts "[V📚RB💀S📚] #{gray str}"
       return if ENV['RUBYOPT'] == '-W0'
 
-      puts "[🦋🐛🐝🐞🐜🕷🕸🦂🦗🦟] #{gray str}" # insects: http://xahlee.info/comp/unicode_insects.html
+      puts "[VERBOSE] #{white str}"
     end
 
     def ppp(complex_object_to_colorize)
