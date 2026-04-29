@@ -4,6 +4,7 @@
 # it's considered interesting if there's a ".ricdisk/.ricdisk"
 
 require 'digest'
+require 'securerandom'
 
 module Storazzo
   class RicDisk
@@ -34,7 +35,7 @@ module Storazzo
       #     # todo substitute with protobuf..
       attr_accessor :name, :description, :ricdisk_file, :ricdisk_file_full, :local_mountpoint, :wr, :path,
                     :ricdisk_file_empty, :size, :active_dirs, :ricdisk_version,
-                    :unique_hash # new 202207
+                    :unique_hash, :disk_uuid, :llm_description, :llm_storage_type # new 202207
 
       ################################
       ## INSTANCE methods
@@ -53,7 +54,6 @@ module Storazzo
         # ok back to business, now path is a String :)
         path = ric_disk_object.path
         deb "RicDisk initialize.. path=#{path}"
-        deb "RicDisk initialize.. path=#{path}"
         @local_mountpoint = File.expand_path(path)
         @ard = ric_disk_object # AbstractRicDiskObject
         @description = "This is an automated RicDisk description from v.#{RicdiskVersion}. Created on #{Time.now}'"
@@ -62,21 +62,34 @@ module Storazzo
         @ricdisk_file_full = "#{@local_mountpoint}/#{@ricdisk_file}"
         @label = path.split('/').last
         @name = path.split('/').last
-        # @wr = File.writable?("#{path}/#{ricdisk_file}" ) # .writeable?
-        # @wr = writeable?
-        @tags = %w[ricdisk storazzo]
+        
+        load_existing_config
+
+        @tags ||= %w[ricdisk storazzo]
         @size = RicDisk._compute_size_could_take_long(path)
-        @unique_hash = "MD5::#{Digest::MD5.hexdigest(File.expand_path(path))}" #   hash = Digest::MD5.hexdigest(File.expand_path(get_local_mountpoint))
+        @unique_hash = "MD5::#{Digest::MD5.hexdigest(File.expand_path(path))}"
+        @disk_uuid ||= SecureRandom.uuid if defined?(SecureRandom)
         @computation_hostname = Socket.gethostname
-        @created_at = Time.now
+        @created_at ||= Time.now
 
         @ricdisk_file_empty = ricdisk_file_empty?
 
-        # @config = RicDiskConfig.instance.get_config
-        # #puts @config if @config
-        # find_info_from_mount(path)
         deb "RicDisk initialize. to_s: #{self}"
-        # find_info_from_df()
+      end
+
+      def load_existing_config
+        return unless File.exist?(@ricdisk_file_full) && !File.empty?(@ricdisk_file_full)
+        
+        begin
+          config = YAML.safe_load(File.read(@ricdisk_file_full))
+          @disk_uuid = config['disk_uuid']
+          @llm_description = config['llm_description']
+          @llm_storage_type = config['llm_storage_type']
+          @tags = config['tags']
+          @name = config['name'] || @name
+        rescue StandardError => e
+          warn "Error loading existing config from #{@ricdisk_file_full}: #{e.message}"
+        end
       end
 
       def ricdisk_file_empty?

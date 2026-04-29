@@ -57,8 +57,8 @@ module Storazzo
       puts "[W⚠️RN] #{azure(s)}"
     end
 
-    def err(_str)
-      puts "[ERR👎] #{red(s)}" # ⛔
+    def err(str)
+      puts "[ERR👎] #{red(str)}" # ⛔
     end
 
     def bug(s)
@@ -91,6 +91,10 @@ module Storazzo
 
     def linux?
       `uname`.chomp == 'Linux'
+    end
+
+    def slugify(string)
+      string.to_s.downcase.strip.gsub(/\s+/, '_').gsub(/[^\w-]/, '')
     end
 
     private
