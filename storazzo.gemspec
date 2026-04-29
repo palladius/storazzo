@@ -27,6 +27,10 @@ Gem::Specification.new do |s|
   #   "storazzo",
   #   "hello-storazzo",
   # ]
+  s.metadata = {
+    "github_repo" => "https://github.com/palladius/storazzo"
+  }
+
   s.homepage = 'https://rubygems.org/gems/storazzo' # maybe https://github.com/palladius/storazzo
   s.license = 'MIT'
 
