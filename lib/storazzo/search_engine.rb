@@ -46,10 +46,45 @@ module Storazzo
       SQL
     end
 
-    def sync_from_gcs
-      puts "Syncing metadata from GCS... (Stub)"
-      # Here we would use Google::Cloud::Storage to download `.rds` files
-      # from the designated GCS metadata bucket and then call `ingest_stats_file`.
+    def sync_all_from_gcs
+      client = Storazzo::GCS::Client.new
+      config = Storazzo::RicDiskConfig.instance
+      config.load
+      
+      buckets = config.get_bucket_paths
+      puts "Syncing metadata from #{buckets.size} buckets..."
+      
+      buckets.each do |bucket_url|
+        bucket_name = bucket_url.gsub('gs://', '').split('/').first
+        # For now, we search in the standard 'backup/ricdisk-magic/' path
+        prefix = "backup/ricdisk-magic/"
+        
+        begin
+          bucket = client.storage.bucket(bucket_name)
+          next unless bucket
+          
+          files = bucket.files(prefix: prefix)
+          rds_files = files.select { |f| f.name.end_with?('.rds') }
+          
+          puts "--- Bucket: gs://#{bucket_name} (#{rds_files.size} catalogs found) ---"
+          
+          rds_files.each do |remote_file|
+            # 1. Download to local tmp
+            local_tmp_path = File.join(Dir.tmpdir, File.basename(remote_file.name))
+            puts "Downloading #{remote_file.name}..."
+            remote_file.download(local_tmp_path)
+            
+            # 2. Ingest into SQLite
+            disk_name = File.basename(remote_file.name, '.rds').gsub('-ricdisk_stats_v11', '')
+            ingest_stats_file(local_tmp_path, disk_name)
+            
+            # 3. Cleanup
+            FileUtils.rm(local_tmp_path)
+          end
+        rescue => e
+          warn "Error syncing from gs://#{bucket_name}: #{e.message}"
+        end
+      end
     end
 
     def query(string)
