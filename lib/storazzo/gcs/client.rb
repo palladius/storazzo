@@ -12,7 +12,7 @@ module Storazzo
 
       def initialize(project_id = nil)
         @project_id = project_id || autodetect_project_id
-        @storage = Google::Cloud::Storage.new(project = @project_id)
+        @storage = Google::Cloud::Storage.new(project_id: @project_id)
         deb "GCS Client initialized for project: #{@project_id}"
       end
 
