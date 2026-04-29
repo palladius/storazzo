@@ -10,8 +10,8 @@
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Foundation and BDD Setup' (Protocol in workflow.md)
 
 ## Phase 2: Enhanced Cataloging and Search
-- [ ] Task: Implement Search Engine Ingestion
-    - [ ] Enhance `SearchEngine#ingest_stats_file` to handle both local and GCS paths
+- [~] Task: Implement Search Engine Ingestion
+    - [x] Enhance `SearchEngine#ingest_stats_file` to handle both local and GCS paths (optimized with transactions) [945275a]
     - [ ] Implement `SearchEngine#sync_all_from_gcs` to loop through all buckets in config
 - [ ] Task: Optimize MD5 Hashing
     - [ ] Refactor `stats-with-md5` logic into a reusable Ruby service

@@ -9,3 +9,9 @@ It allows you to:
 3. Search for a keyword across all indexed drives/folders.
 
 The ultimate feature is, wherever you ware, you can answer the question: "Where is that file/folder X?"
+
+## Dos and don'ts
+
+* Gemfile.lock should be ignored: this is a gem, not an application, it should be updatable by the user.
+
+

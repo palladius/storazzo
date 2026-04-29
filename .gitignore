@@ -10,3 +10,4 @@ doc/
 tmp/
 .git-privatize
 nano_banana/
+Gemfile.lock
