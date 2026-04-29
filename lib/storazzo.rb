@@ -42,6 +42,7 @@ require 'storazzo/media/gcs_bucket'
 require 'storazzo/media/local_folder'
 require 'storazzo/media/mount_point'
 require 'storazzo/gcs/client'
+require 'storazzo/llm/gemini_summarizer'
 require 'storazzo/ric_disk_ugly'     # OLD and 90% working
 require 'storazzo/ric_disk_config' # => RicDiskConfif
 require 'storazzo/ric_disk_sample_config'   # => NOTHING!!

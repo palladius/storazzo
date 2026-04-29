@@ -16,6 +16,8 @@ gem 'minitest', group: :development
 gem 'sqlite3'
 gem 'thor'
 gem 'google-cloud-storage'
+gem 'google-genai'
+gem 'dotenv'
 
 group :test do
   gem 'minitest'

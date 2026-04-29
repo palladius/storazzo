@@ -14,6 +14,7 @@ Rake::TestTask.new(:test) do |t|
   t.warning = false
   # puts "[RiccardoOnly]: t.pattern: #{t.pattern}"
   t.pattern = 'test/**/test_*.rb'
+  t.test_files = FileList['test/**/test_*.rb'].exclude('test/benchmark/**/*')
 end
 
 desc 'By default, Run Unit tests'
