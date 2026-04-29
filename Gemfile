@@ -21,4 +21,7 @@ group :test do
   gem 'minitest'
   gem 'minitest-reporters'
   gem 'mocha'
+  gem 'rspec'
+  gem 'cucumber'
+  gem 'aruba' # For testing CLI applications
 end
