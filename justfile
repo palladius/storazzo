@@ -35,3 +35,8 @@ hello:
 # Build and deploy the gem to RubyGems
 deploy: build
     gem push storazzo-$(cat VERSION).gem
+
+# Testing Riccardo GCS bucket anywhere. TODO(ricc): remove this once tested on another computer
+gsutil-ls:
+  gsutil ls gs://ric-cccwiki-storazzo/backup/ 
+  gsutil cat gs://ric-cccwiki-storazzo/backup/pupurabbux/turboseby/ricdisk_stats_v11.rds
