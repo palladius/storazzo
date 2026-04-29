@@ -8,12 +8,27 @@ module Storazzo
     class Client
       include Storazzo::Common
 
-      attr_reader :storage, :project_id
+      attr_reader :storage, :project_id, :bucket_name
 
-      def initialize(project_id = nil)
+      def initialize(project_id = nil, bucket_name = nil)
         @project_id = project_id || autodetect_project_id
-        @storage = Google::Cloud::Storage.new(project_id: @project_id)
-        deb "GCS Client initialized for project: #{@project_id}"
+        @bucket_name = bucket_name || ENV['GCS_BUCKET'] || "#{@project_id}-storazzo"
+        deb "GCS Client initialized for project: #{@project_id}, bucket: #{@bucket_name}"
+      end
+
+      def storage
+        @storage ||= Google::Cloud::Storage.new(project_id: @project_id)
+      end
+
+      def ensure_bucket_exists
+        return true if bucket_exists?(@bucket_name)
+
+        deb "Bucket #{@bucket_name} not found. Creating it in project #{@project_id}..."
+        storage.create_bucket(@bucket_name)
+        true
+      rescue StandardError => e
+        err "Failed to ensure/create bucket #{@bucket_name}: #{e.message}"
+        false
       end
 
       def autodetect_project_id
@@ -35,19 +50,19 @@ module Storazzo
 
       def bucket_exists?(bucket_name)
         bucket_name = bucket_name.gsub('gs://', '').split('/').first
-        !@storage.bucket(bucket_name).nil?
+        !storage.bucket(bucket_name).nil?
       rescue StandardError => e
         warn "Error checking bucket #{bucket_name}: #{e.message}"
         false
       end
 
       def list_buckets
-        @storage.buckets.map(&:name)
+        storage.buckets.map(&:name)
       end
 
       def upload_file(local_path, bucket_name, remote_path)
         bucket_name = bucket_name.gsub('gs://', '').split('/').first
-        bucket = @storage.bucket(bucket_name)
+        bucket = storage.bucket(bucket_name)
         raise "Bucket #{bucket_name} not found!" unless bucket
 
         deb "Uploading #{local_path} to gs://#{bucket_name}/#{remote_path}..."
@@ -56,7 +71,7 @@ module Storazzo
 
       def download_file(bucket_name, remote_path, local_path)
         bucket_name = bucket_name.gsub('gs://', '').split('/').first
-        bucket = @storage.bucket(bucket_name)
+        bucket = storage.bucket(bucket_name)
         raise "Bucket #{bucket_name} not found!" unless bucket
 
         file = bucket.file(remote_path)

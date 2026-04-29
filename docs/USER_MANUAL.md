@@ -2,7 +2,14 @@
 
 Welcome to Storazzo! This gem helps you manage your physical and cloud media by creating a searchable index of everything you own.
 
-## Core Concepts
+## Configuration
+
+### Environment Variables
+Storazzo uses the following environment variables for cloud integration:
+- **`PROJECT_ID`**: The Google Cloud Project ID (e.g., `ric-cccwiki`).
+- **`GCS_BUCKET`**: The bucket for storing Storazzo metadata (defaults to `PROJECT_ID-storazzo` if unset).
+- **`ACCOUNT`**: The Google account used for authentication (e.g., `palladiusbonton@gmail.com`).
+- **`GEMINI_API_KEY`**: Required for LLM-generated disk summaries (stored securely in `.env`).
 
 ### The .rds File (Ric Disk Stats)
 The `.rds` file is the heart of Storazzo's indexing system. When you "scan" a disk or a GCS bucket, Storazzo generates a `.rds` file (typically named `ricdisk_stats_v11.rds`).
