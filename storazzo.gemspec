@@ -20,18 +20,13 @@ Gem::Specification.new do |s|
   s.executables = Dir['bin/*'].map  do |full_path| # bin/blah-blah
     full_path.gsub('bin/', '')
   end
-  # [
-  #   # todo: everything in bin/
-  #   "ricdisk-magic",
-  #   "stats-with-md5",
-  #   "storazzo",
-  #   "hello-storazzo",
-  # ]
+
   s.metadata = {
-    "github_repo" => "https://github.com/palladius/storazzo"
+    "github_repo" => "https://github.com/palladius/storazzo",
+    "changelog_uri"   => "https://github.com/palladius/storazzo/blob/main/CHANGELOG.md"
   }
 
-  s.homepage = 'https://rubygems.org/gems/storazzo' # maybe https://github.com/palladius/storazzo
+  s.homepage = 'https://github.com/palladius/storazzo'
   s.license = 'MIT'
 
   s.add_dependency "sqlite3"
