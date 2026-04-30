@@ -1,9 +1,9 @@
 # Implementation Plan - LLM-Generated Disk Summaries
 
 ## Phase 1: Deterministic Parsing and Extraction
-- [ ] Task: Create `FolderStats` extraction logic
-    - [ ] Write Tests: Validate that parsing a sample `.rds` file accurately identifies the top 5 folders by total size and top 5 by file count.
-    - [ ] Implement Feature: Build the `Storazzo::Stats::FolderExtractor` service to perform this deterministic extraction efficiently.
+- [x] Task: Create `FolderStats` extraction logic
+    - [x] Write Tests: Validate that parsing a sample `.rds` file accurately identifies the top 5 folders by total size and top 5 by file count. [1c01ec4]
+    - [x] Implement Feature: Build the `Storazzo::Stats::FolderExtractor` service to perform this deterministic extraction efficiently. [1c01ec4]
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Deterministic Parsing and Extraction' (Protocol in workflow.md)
 
 ## Phase 2: Google Gemini Integration
@@ -19,4 +19,7 @@
 - [ ] Task: Implement `storazzo summarize <disk>` command
     - [ ] Write Tests: Verify the CLI correctly generates a summary for an existing `.rds` file and refuses to overwrite an existing summary without the `--force` flag.
     - [ ] Implement Feature: Add the `summarize` command to `bin/storazzo` and build the overwrite protection logic.
+- [ ] Task: Ingest Legacy Configurations from GIC (P3)
+    - [ ] Search `$GIC` for `ricdisk.yml` or `*.rds` files.
+    - [ ] Ingest found metadata into SQLite and upload to the central GCS bucket.
 - [ ] Task: Conductor - User Manual Verification 'Phase 3: CLI Commands and Automation' (Protocol in workflow.md)
