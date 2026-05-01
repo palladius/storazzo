@@ -91,6 +91,29 @@ module Storazzo
       puts "Backup and indexing completed."
     end
 
+    desc "summarize PATH", "Generate an LLM-powered summary for a disk's catalog"
+    method_option :force, type: :boolean, default: false, desc: 'Overwrite existing summary if it exists'
+    def summarize(path)
+      setup_env
+      dir = File.expand_path(path)
+      unless File.directory?(dir)
+        puts "Error: #{dir} is not a valid directory."
+        exit 1
+      end
+
+      summary_file = File.join(dir, "storazzo.yaml")
+      if File.exist?(summary_file) && !options[:force]
+        puts "Warning: A summary file already exists at #{summary_file}."
+        puts "Use --force to rewrite it."
+        exit 0
+      end
+
+      puts "Generating summary for #{dir}..."
+      rd = Storazzo::RicDisk.new(Storazzo::Media::AbstractRicDisk.DirFactory(dir))
+      rd.generate_summary_yaml
+      puts "Summary generated successfully."
+    end
+
     desc "show", "Show options and local folders"
     def show
       setup_env

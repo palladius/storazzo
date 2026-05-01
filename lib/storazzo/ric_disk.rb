@@ -336,6 +336,46 @@ module Storazzo
         # end
       end
 
+      def generate_summary_yaml(opts = {})
+        stats_file = opts[:stats_file] || 'ricdisk_stats_v11.rds'
+        full_rds_path = "#{local_mountpoint}/#{stats_file}"
+        summary_file = "#{local_mountpoint}/storazzo.yaml"
+        
+        return unless File.exist?(full_rds_path)
+        
+        deb "Generating LLM summary for #{name}..."
+        
+        extractor = Storazzo::Stats::FolderExtractor.new(full_rds_path)
+        top_size = extractor.top_folders_by_size(5)
+        top_count = extractor.top_folders_by_count(5)
+        
+        # Get a small preview of the first 10 files
+        content_preview = File.readlines(full_rds_path).reject { |l| l.start_with?('#') }.take(10).join("\n")
+        
+        summarizer = Storazzo::LLM::GeminiSummarizer.new
+        summary = summarizer.summarize_disk(name, top_size, top_count, content_preview)
+        
+        # Merge with existing config if any
+        final_config = {}
+        if File.exist?(summary_file)
+          begin
+            final_config = YAML.safe_load(File.read(summary_file)) || {}
+          rescue StandardError => e
+            warn "Error reading existing summary: #{e.message}"
+          end
+        end
+        
+        final_config.merge!(summary)
+        # Add basic info if missing
+        final_config['disk_uuid'] ||= disk_uuid
+        final_config['name'] ||= name
+        final_config['last_summarized_at'] = Time.now.iso8601
+        
+        File.write(summary_file, final_config.to_yaml)
+        deb "Summary written to #{summary_file}"
+        final_config
+      end
+
       # TODO: obsolete this as i should NOT be calling it from clas, but from method.
       def self.ok_dir?(subdir)
         File.exist?("#{subdir}/.ricdisk") or File.exist?("#{subdir}/.ricdisk.yaml")
@@ -382,6 +422,9 @@ module Storazzo
           deb('File doesnt exist..')
           RicDisk.compute_stats_for_dir_into_file(dir, full_file_path, "ConfigFile doesn't exist")
         end
+        
+        # New: Auto-generate summary
+        generate_summary_yaml(opts)
       end
 
       def self.compute_stats_for_dir_into_file(dir, full_file_path, reason, opts = {})

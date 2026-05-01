@@ -24,6 +24,15 @@ module Storazzo
       end
 
       def summarize_disk(disk_name, top_folders_by_size, top_folders_by_count, content_preview = "")
+        if ENV['STORAZZO_MOCK_LLM'] == 'true'
+          return {
+            "llm_description" => "Mocked description for #{disk_name}",
+            "llm_storage_type" => "Mock Storage",
+            "llm_categorization" => "Mock Category",
+            "llm_tags" => ["mock", "test"]
+          }
+        end
+
         prompt = <<~PROMPT
           You are an expert digital archivist. I am providing you with statistics from a disk scan (Storazzo).
           Please provide a concise YAML summary of this disk's contents.
