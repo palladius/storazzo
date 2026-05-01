@@ -7,9 +7,9 @@
 - [ ] Task: Conductor - User Manual Verification 'Phase 1: Deterministic Parsing and Extraction' (Protocol in workflow.md)
 
 ## Phase 2: Google Gemini Integration
-- [ ] Task: Configure Gemini API Client
-    - [ ] Write Tests: Mock Gemini API responses to verify prompt construction and summary parsing.
-    - [ ] Implement Feature: Add necessary gem dependencies (e.g., `google-genai`) and build the `Storazzo::LLM::GeminiSummarizer` service.
+- [x] Task: Configure Gemini API Client
+    - [x] Write Tests: Mock Gemini API responses to verify prompt construction and summary parsing. [39bce8b]
+    - [x] Implement Feature: Add necessary gem dependencies (e.g., `google-genai`) and build the `Storazzo::LLM::GeminiSummarizer` service. [c982f08]
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Google Gemini Integration' (Protocol in workflow.md)
 
 ## Phase 3: CLI Commands and Automation
