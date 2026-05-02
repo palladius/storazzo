@@ -13,12 +13,12 @@
 - [ ] Task: Conductor - User Manual Verification 'Phase 2: Google Gemini Integration' (Protocol in workflow.md)
 
 ## Phase 3: CLI Commands and Automation
-- [ ] Task: Integrate automatic trigger into `.rds` generation
-    - [ ] Write Tests: Verify the summary YAML is written to disk alongside the `.rds` file upon successful completion of `storazzo scan`.
-    - [ ] Implement Feature: Hook the `FolderExtractor` and `GeminiSummarizer` into the end of the `compute_stats_files` workflow.
-- [ ] Task: Implement `storazzo summarize <disk>` command
-    - [ ] Write Tests: Verify the CLI correctly generates a summary for an existing `.rds` file and refuses to overwrite an existing summary without the `--force` flag.
-    - [ ] Implement Feature: Add the `summarize` command to `bin/storazzo` and build the overwrite protection logic.
+- [x] Task: Integrate automatic trigger into `.rds` generation
+    - [x] Write Tests: Verify the summary YAML is written to disk alongside the `.rds` file upon successful completion of `storazzo scan`. [9616ffd]
+    - [x] Implement Feature: Hook the `FolderExtractor` and `GeminiSummarizer` into the end of the `compute_stats_files` workflow. [9616ffd]
+- [x] Task: Implement `storazzo summarize <disk>` command
+    - [x] Write Tests: Verify the CLI correctly generates a summary for an existing `.rds` file and refuses to overwrite an existing summary without the `--force` flag. [9616ffd]
+    - [x] Implement Feature: Add the `summarize` command to `bin/storazzo` and build the overwrite protection logic. [9616ffd]
 - [ ] Task: Ingest Legacy Configurations from GIC (P3)
     - [ ] Search `$GIC` for `ricdisk.yml` or `*.rds` files.
     - [ ] Ingest found metadata into SQLite and upload to the central GCS bucket.

@@ -1,3 +1,4 @@
+2026-04-29 0.7.6 Improved UI/UX: cleaned up `storazzo show` output with emojis and colors, enhanced verbose output readability, and updated User Manual.
 2026-04-27 0.7.2 Set 3D isometric logo as the official Storazzo logo 💎
 2026-04-27 0.7.1 Added official logo and variations in assets/ 🎨
 2022-09-07 0.6.1 removed ANY trace of bloody require_all qwhich is breaking all apps depending on this!!!
