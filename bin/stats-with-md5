@@ -262,7 +262,7 @@ def print_colored_polymoprhic(entity_type, md5, mode, file_type, size, content_t
 
   maybecolored_md5 = opts_color ? red(md5) : md5
   maybecolored_filename = opts_color ? azure(filename) : filename
-  enlarged_size = format('%7o', size.to_s) # or SIZE
+  enlarged_size = format('%10d', size.to_i) # or SIZE
   maybecolored_size = opts_color ? yellow(enlarged_size) : enlarged_size
   maybecolored_file_type = file_type
   colored_content_type = opts_color ? white(content_type) : content_type

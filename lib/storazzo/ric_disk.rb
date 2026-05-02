@@ -99,7 +99,12 @@ module Storazzo
       end
 
       def ok_dir?
-        !ricdisk_file.nil?
+        # A directory is OK if it has one of the ConfigFiles AND it is not empty.
+        ConfigFiles.each do |config_file|
+          full_path = File.join(path, config_file)
+          return true if File.exist?(full_path) && !File.empty?(full_path)
+        end
+        false
       end
 
       def analyze_local_system

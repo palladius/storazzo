@@ -19,6 +19,53 @@ module Storazzo
     class_option :verbose, type: :boolean, default: false, desc: 'Output more information'
     class_option :debug, type: :boolean, default: false, desc: 'Enable debug mode'
 
+    desc "init [PATH]", "Initialize Storazzo configuration (global or local). Defaults to current directory."
+    def init(path = ".")
+      setup_env
+      # 1. Global config
+      global_config = File.expand_path('~/.storazzo.yaml')
+      unless File.exist?(global_config)
+        if yes?("No global config found. Create one at #{global_config}?")
+          project_id = ask("Google Cloud Project ID?", default: "your-project-id")
+          bucket_path = ask("Default GCS Bucket Path (gs://bucket-name/path/)?", default: "gs://my-bucket/storazzo/")
+          
+          config_content = File.read(Storazzo::RicDiskConfig.gem_default_config_path)
+          config_content.gsub!("YOUR-PROJECT-ID", project_id)
+          config_content.gsub!("gs://my-local-backup/storazzo/backups/", bucket_path)
+          
+          File.write(global_config, config_content)
+          puts "Global config created at #{global_config}!"
+        end
+      end
+
+      # 2. Local config (for the folder)
+      dir = File.expand_path(path)
+      local_config = File.join(dir, "storazzo.yaml")
+      
+      if File.exist?(local_config)
+        puts "Local config already exists at #{local_config}"
+      else
+        if yes?("Initialize folder #{dir} with a storazzo.yaml?")
+          name = ask("Disk/Folder Name?", default: File.basename(dir))
+          tags = ask("Tags (comma separated)?", default: "storazzo, backup")
+          
+          require 'securerandom'
+          content = {
+            "kind" => "RicDisk",
+            "apiVersion" => "v2.1",
+            "name" => name,
+            "disk_uuid" => SecureRandom.uuid,
+            "tags" => tags.split(",").map(&:strip),
+            "created_at" => Time.now.to_s,
+            "computation_hostname" => Socket.gethostname
+          }
+          File.write(local_config, content.to_yaml)
+          puts "Local config created at #{local_config}"
+        end
+      end
+    end
+    map "new-folder" => :init
+
     desc "scan PATH", "Scan a removable disk or local folder and upload its metadata to GCS"
     def scan(path)
       setup_env
@@ -34,6 +81,11 @@ module Storazzo
       config.load
 
       rd = Storazzo::RicDisk.new(Storazzo::Media::AbstractRicDisk.DirFactory(dir))
+      unless rd.ok_dir?
+        puts "missing .yaml (storazzo.yaml) for folder #{dir}. \nRun \"storazzo new-folder #{path}\" to initialize it with a small Wizard which asks you the right Qs."
+        exit 2
+      end
+
       rd.write_config_yaml_to_disk(dir)
       rd.compute_stats_files(upload_to_gcs: true)
 
@@ -148,6 +200,19 @@ module Storazzo
     def setup_env
       $DEBUG = options[:debug]
       $opts = { verbose: options[:verbose], debug: options[:debug] }
+      
+      begin
+        config = Storazzo::RicDiskConfig.instance
+        config.load
+        bucket_path = config.get_bucket_paths.first
+        if bucket_path
+          # Remove gs:// and trailing slash
+          $gcs_bucket = bucket_path.gsub(%r{^gs://}, "").gsub(%r{/$}, "")
+        end
+      rescue => e
+        # Silently fail if config can't be loaded yet (e.g. during init)
+        deb "setup_env: Could not load config for $gcs_bucket: #{e.message}"
+      end
     end
   end
 end
