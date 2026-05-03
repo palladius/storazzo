@@ -5,6 +5,7 @@
 - **CLI Framework:** Thor
 - **Database:** SQLite3
 - **Cloud Storage:** Google Cloud Storage (GCS)
+- **AI/LLM:** Google Gemini (via direct REST API)
 
 ## Infrastructure & Tools
 - **Dependency Management:** RubyGems & Bundler
