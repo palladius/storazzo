@@ -1,0 +1,8 @@
+{
+  "track_id": "mime_optimization_20260503",
+  "type": "optimization",
+  "status": "new",
+  "created_at": "2026-05-03T19:55:00Z",
+  "updated_at": "2026-05-03T19:55:00Z",
+  "description": "Implement native Ruby MIME-type optimization to replace expensive system 'file' command calls."
+}
