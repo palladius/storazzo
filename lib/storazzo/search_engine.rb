@@ -8,10 +8,13 @@ require 'storazzo/common'
 module Storazzo
   class SearchEngine
     include Storazzo::Common
-    DB_PATH = File.expand_path("~/.storazzo_index.db")
+    DEFAULT_DB_PATH = File.expand_path("~/.storazzo_index.db")
 
-    def initialize
-      @db = SQLite3::Database.new(DB_PATH)
+    attr_accessor :db_path
+
+    def initialize(db_path = nil)
+      @db_path = db_path || ENV['STORAZZO_DB_PATH'] || DEFAULT_DB_PATH
+      @db = SQLite3::Database.new(@db_path)
       @db.results_as_hash = true
       create_tables
     end
@@ -46,7 +49,7 @@ module Storazzo
       SQL
     end
 
-    def sync_all_from_gcs
+    def sync_from_gcs
       client = Storazzo::GCS::Client.new
       config = Storazzo::RicDiskConfig.instance
       config.load

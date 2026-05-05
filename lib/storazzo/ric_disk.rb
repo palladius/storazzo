@@ -395,9 +395,16 @@ module Storazzo
         puts azure("[compute_stats_files] TODO implement natively. Now I'm being lazy. stats_file=#{opts_stats_file} dir=#{dir}")
 
         full_file_path = "#{dir}/#{opts_stats_file}"
-        deb 'This refactor is for another day. Actually no, TODAY '
-        pverbose true,
-                 "TODO(ricc): you should compute more SMARTLY the full_file_path (#{full_file_path}): if its R/O it should be elsewhere.."
+        unless writeable?
+          config = Storazzo::RicDiskConfig.instance
+          config.load
+          fallback_dir = config.local_metadata_dir
+          # Create a unique filename based on the directory path to avoid collisions
+          safe_name = dir.gsub(/[\/\s]/, '_').gsub(/^_+/, '')
+          full_file_path = File.join(fallback_dir, "#{safe_name}__#{opts_stats_file}")
+          puts yellow("Directory #{dir} is R/O. Falling back to local storage: #{full_file_path}")
+        end
+
         puts azure("- full_file_path: #{full_file_path}")
         puts azure("- writeable?: #{writeable?}")
 
@@ -405,8 +412,8 @@ module Storazzo
         deb "TEST1 DIR EXISTS: #{dir} -> #{File.directory? dir}"
         raise "Directory doesnt exist: #{dir}" unless File.directory?(dir)
 
-        Dir.chdir(dir)
-        puts azure `ls` # im curious
+        # Dir.chdir(dir) # Removing this to avoid issues with absolute paths in FileService
+        # puts azure `ls` # im curious
         if File.exist?(full_file_path)
           if opts_force_rewrite
             # raise "TODO implement file exists and FORCE enabled"
@@ -433,25 +440,34 @@ module Storazzo
       end
 
       def self.compute_stats_for_dir_into_file(dir, full_file_path, reason, opts = {})
-        max_lines = opts.fetch :max_lines, 42 # TODO: move to nil or -1
-        # full_file_path = "#{dir}/#{stats_file}"
-        puts "Crunching data stats from '#{dir}' into '#{full_file_path}' ... please bear with me.. [reason: '#{reason}']"
-        if max_lines.negative? # infinite
-          command = "find . -print0 | xargs -0 stats-with-md5 --no-color | tee '#{full_file_path}'"
-        elsif mac?
-          # WOW! https://stackoverflow.com/questions/68599963/reliably-stop-bash-find-after-n-matches
-          # find . -type f -iname "*.txt" -print0 |
-          # head -z -n 10 |
-          # xargs -r0 myscript.sh
-          puts red('Sorry head -z doesnt work on Mac :/ so this head -N will be VERY approximate. Probably you should divide by ten or so :)')
-          spannometric_lines = (max_lines / 10)
-          command = "find . -print0 | head -n '#{spannometric_lines}' | xargs -r0 stats-with-md5 --no-color | tee '#{full_file_path}'"
-        else
-          command = "find . -print0 | head -z -n '#{max_lines}' | xargs -r0 stats-with-md5 --no-color | tee '#{full_file_path}'"
+        max_lines = opts.fetch :max_lines, -1
+        ping_frequency = opts.fetch :ping_frequency, 50
+        
+        puts "Crunching data stats from '#{dir}' into '#{full_file_path}' ... [reason: '#{reason}']"
+        
+        count = 0
+        File.open(full_file_path, 'w') do |f|
+          f.puts "# Storazzo Stats File v1.2"
+          f.puts "# Created on: #{Time.now}"
+          f.puts "# Reason: #{reason}"
+          
+          Dir.glob("#{dir}/**/*", File::FNM_DOTMATCH).each do |path|
+            next if File.directory?(path)
+            next if path.end_with?('.rds') # Don't index our own stats files
+            
+            count += 1
+            break if max_lines > 0 && count > max_lines
+            
+            line = Storazzo::Stats::FileService.calculate_and_format(path)
+            f.puts line if line
+            
+            if count % ping_frequency == 0
+              print "." 
+              STDOUT.flush
+            end
+          end
         end
-        puts("[#{`pwd`.chomp}] Executing: #{azure command}")
-        ret = backquote_execute(command)
-        puts "Done. #{ret.split("\n").count} files processed."
+        puts "\nDone. #{count} files processed."
       end
 
       def self.calculate_stats_files_DUPLICATE_STATIC(_dir, _opts = {})

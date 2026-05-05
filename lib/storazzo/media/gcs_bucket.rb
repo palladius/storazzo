@@ -30,6 +30,7 @@ module Storazzo
         'todo-my-project-id-123' # TODO: fix
       end
 
+      # (config = nil)
       def self.list_all(config = nil)
         # get lisrts from Config singletone
         # puts " self.list_all: loading config "
@@ -46,6 +47,7 @@ module Storazzo
         config.get_bucket_paths
       end
 
+      # (config = nil)
       def self.list_all_with_type(config = nil)
         deb 'GCS::list_all_with_type() -- pull config'
         config ||= Storazzo::RicDiskConfig.instance

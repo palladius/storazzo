@@ -30,7 +30,7 @@ class GcsBucketTest < Minitest::Test
       gs://my-local-backup/storazzo/backups/
       gs://my-other-bucket/
     ]
-    actual_list = Storazzo::Media::GcsBucket.list_all
+    actual_list = Storazzo::Media::GcsBucket.list_all(@sample_config_obj)
     assert_equal(
       expected_test_buckets_list.sort,
       actual_list.sort,

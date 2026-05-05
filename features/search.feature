@@ -8,6 +8,6 @@ Feature: Search Catalog
       | disk       | path                      | md5      |
       | TurboSeby | ./diving/raja_ampat.mp4   | abc123def |
       | SDCard    | ./images/gopro_hero.jpg   | xyz789ghi |
-    When I run `storazzo search raja`
+    When I run `storazzo search raja --skip-sync`
     Then the output should contain "TurboSeby"
     And the output should contain "./diving/raja_ampat.mp4"

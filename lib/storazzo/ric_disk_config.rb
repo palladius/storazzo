@@ -120,8 +120,13 @@ module Storazzo
     end
 
     def config_default_folder
-      # self.
-      @config['Config']['DefaultFolder'] # rescue "Unknown config_default_folder: #{$!}"
+      @config['Config']['DefaultFolder'] || File.expand_path('~/.storazzo/')
+    end
+
+    def local_metadata_dir
+      dir = File.expand_path("metadata", config_default_folder)
+      FileUtils.mkdir_p(dir) unless File.directory?(dir)
+      dir
     end
 
     def config_project_id

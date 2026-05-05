@@ -93,13 +93,14 @@ module Storazzo
     end
 
     desc "search QUERY", "Search for a keyword across all indexed disks via SQLite DB"
+    method_option :skip_sync, type: :boolean, default: false, desc: 'Skip syncing from GCS'
     def search(query)
       setup_env
       require 'storazzo/search_engine'
       
       puts "Searching for: #{query}"
       engine = Storazzo::SearchEngine.new
-      engine.sync_from_gcs
+      engine.sync_from_gcs unless options[:skip_sync]
       results = engine.query(query)
       
       if results.empty?
@@ -107,7 +108,7 @@ module Storazzo
       else
         puts "Found #{results.size} matches:"
         results.each do |r|
-          puts "- [#{r[:disk]}] #{r[:path]} (size: #{r[:size]})"
+          puts "- [#{r['disk_name']}] #{r['path']} (size: #{r['size']})"
         end
       end
     end
