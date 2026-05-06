@@ -5,6 +5,7 @@ require 'English'
 module Storazzo
   module Media
     class GcsBucket < Storazzo::Media::AbstractRicDisk
+      include ::Storazzo::Common
       extend ::Storazzo::Common
 
       attr_accessor :project_id
@@ -12,18 +13,26 @@ module Storazzo
       def initialize(local_mount, project_id = nil)
         deb '[Storazzo::Media::GcsBucket] initialize'
 
-        @local_mountpoint = File.expand_path(local_mount)
-        @description = "MountPoint in '#{local_mount}' pointing at TODO with mount options = TODO"
+        @local_mountpoint = local_mount
+        @description = "GCS Bucket in '#{local_mount}'"
         project_id ||= _autodetect_project_id
         @project_id = project_id
-        raise 'Sorry local mount doesnt exist!' unless File.exist?(@local_mountpoint)
+        
+        # Only check existence for local paths (though this class is primarily for GCS)
+        if !local_mount.start_with?("gs://") && !File.exist?(@local_mountpoint)
+          raise "Sorry local mount doesnt exist! (#{@local_mountpoint})" 
+        end
 
-        @wr = writeable? # File.writable?(stats_filename_default_fullpath) # .writeable? stats_file_smart_fullpath
+        @wr = false # GCS buckets are managed via API, not direct file writing in this context
         begin
           super(local_mount)
         rescue StandardError
           "SUPER_ERROR(#{local_mount}): #{$ERROR_INFO}"
         end
+      end
+
+      def path
+        @local_mountpoint
       end
 
       def _autodetect_project_id

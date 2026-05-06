@@ -54,7 +54,8 @@ module Storazzo
         # ok back to business, now path is a String :)
         path = ric_disk_object.path
         deb "RicDisk initialize.. path=#{path}"
-        @local_mountpoint = File.expand_path(path)
+        is_gcs = path.start_with?("gs://")
+        @local_mountpoint = is_gcs ? path : File.expand_path(path)
         @ard = ric_disk_object # AbstractRicDiskObject
         @description = "This is an automated RicDisk description from v.#{RicdiskVersion}. Created on #{Time.now}'"
         @ricdisk_version = RicdiskVersion
@@ -67,7 +68,7 @@ module Storazzo
 
         @tags ||= %w[ricdisk storazzo]
         @size = RicDisk._compute_size_could_take_long(path)
-        @unique_hash = "MD5::#{Digest::MD5.hexdigest(File.expand_path(path))}"
+        @unique_hash = "MD5::#{Digest::MD5.hexdigest(@local_mountpoint)}"
         @disk_uuid ||= SecureRandom.uuid if defined?(SecureRandom)
         @computation_hostname = Socket.gethostname
         @created_at ||= Time.now
@@ -410,30 +411,30 @@ module Storazzo
 
         puts("compute_stats_files(#{white dir}): #{white full_file_path}")
         deb "TEST1 DIR EXISTS: #{dir} -> #{File.directory? dir}"
-        raise "Directory doesnt exist: #{dir}" unless File.directory?(dir)
+        is_gcs = dir.start_with?("gs://")
+        raise "Directory doesnt exist: #{dir}" unless is_gcs || File.directory?(dir)
 
         # Dir.chdir(dir) # Removing this to avoid issues with absolute paths in FileService
         # puts azure `ls` # im curious
         if File.exist?(full_file_path)
           if opts_force_rewrite
-            # raise "TODO implement file exists and FORCE enabled"
             RicDisk.compute_stats_for_dir_into_file(dir, full_file_path, 'ReWrite enabled')
-          else # File.exists?(full_file_path) and (opts_force)
-            puts "File '#{opts_stats_file}' exists already." #  - now should see if its too old, like more than 1 week old"
-            # TODO check for file time...
+          else
+            puts "File '#{opts_stats_file}' exists already."
             print "Lines found: #{yellow `wc -l "#{full_file_path}" `.chomp}. File obsolescence (days): #{yellow obsolescence_days(full_file_path)}."
             if obsolescence_days(full_file_path) > 7
-              # puts yellow("*** ACHTUNG *** FIle is pretty old. You might consider rotating: #{yellow "mv #{full_file_path} #{full_file_path}_old"}. Or invoke with --force")
               puts yellow("*** ACHTUNG *** FIle is pretty old. I'll force a rewrite")
               RicDisk.compute_stats_for_dir_into_file(dir, full_file_path,
                                                       "File older than 7 days. Indeed: #{obsolescence_days(full_file_path)}")
             end
-            upload_to_gcs(full_file_path) if opts_upload_to_gcs
           end
         else
           deb('File doesnt exist..')
-          RicDisk.compute_stats_for_dir_into_file(dir, full_file_path, "ConfigFile doesn't exist")
+          RicDisk.compute_stats_for_dir_into_file(dir, full_file_path, "Stats File doesn't exist")
         end
+        
+        # Always attempt upload if requested and file exists
+        upload_to_gcs(full_file_path) if opts_upload_to_gcs && File.exist?(full_file_path)
         
         # New: Auto-generate summary
         generate_summary_yaml(opts)
@@ -442,6 +443,7 @@ module Storazzo
       def self.compute_stats_for_dir_into_file(dir, full_file_path, reason, opts = {})
         max_lines = opts.fetch :max_lines, -1
         ping_frequency = opts.fetch :ping_frequency, 50
+        is_gcs = dir.start_with?("gs://")
         
         puts "Crunching data stats from '#{dir}' into '#{full_file_path}' ... [reason: '#{reason}']"
         
@@ -451,19 +453,58 @@ module Storazzo
           f.puts "# Created on: #{Time.now}"
           f.puts "# Reason: #{reason}"
           
-          Dir.glob("#{dir}/**/*", File::FNM_DOTMATCH).each do |path|
-            next if File.directory?(path)
-            next if path.end_with?('.rds') # Don't index our own stats files
+          if is_gcs
+            client = Storazzo::GCS::Client.new
+            bucket_name = dir.gsub('gs://', '').split('/').first
+            prefix = dir.gsub("gs://#{bucket_name}/", "")
+            bucket = client.storage.bucket(bucket_name)
+            files = bucket.files(prefix: prefix)
             
-            count += 1
-            break if max_lines > 0 && count > max_lines
-            
-            line = Storazzo::Stats::FileService.calculate_and_format(path)
-            f.puts line if line
-            
-            if count % ping_frequency == 0
-              print "." 
-              STDOUT.flush
+            files.each do |gcs_file|
+              next if gcs_file.name.end_with?('/') # Skip directories
+              next if gcs_file.name.end_with?('.rds')
+              
+              count += 1
+              break if max_lines > 0 && count > max_lines
+              
+              # Construct a pseudo-local path for the RDS file
+              pseudo_path = "gs://#{bucket_name}/#{gcs_file.name}"
+              
+              # Extract metadata from GCS object
+              md5 = Base64.decode64(gcs_file.md5).unpack1('H*') rescue "ERROR"
+              data = {
+                entity_type: 'gcs_v1.2',
+                md5: md5,
+                mode: 'XXXXXX',
+                file_type: 'f',
+                mtime: gcs_file.created_at.iso8601,
+                size: gcs_file.size,
+                content_type: gcs_file.content_type || 'application/octet-stream',
+                path: pseudo_path
+              }
+              f.puts Storazzo::Stats::FileService.format_rds_line(data)
+              
+              if count % ping_frequency == 0
+                print "." 
+                STDOUT.flush
+              end
+            end
+          else
+            # Local directory logic
+            Dir.glob("#{dir}/**/*", File::FNM_DOTMATCH).each do |path|
+              next if File.directory?(path)
+              next if path.end_with?('.rds') # Don't index our own stats files
+              
+              count += 1
+              break if max_lines > 0 && count > max_lines
+              
+              line = Storazzo::Stats::FileService.calculate_and_format(path)
+              f.puts line if line
+              
+              if count % ping_frequency == 0
+                print "." 
+                STDOUT.flush
+              end
             end
           end
         end
@@ -516,17 +557,21 @@ def backquote_execute(cmd, opts = {})
 end
 
 def upload_to_gcs(file, _opts = {})
-  deb("upload_to_gcs(#{file}). TODO(ricc) after breafast upload to GCS : #{file}")
-  mount_name = file.split('/')[-2]
-  filename = "#{mount_name}-#{File.basename file}"
+  deb("upload_to_gcs(#{file})")
+  
+  client = Storazzo::GCS::Client.new
+  # The "special" bucket is defined in the client (GCS_BUCKET or project-id-storazzo)
+  target_bucket = client.bucket_name
+  
+  # Ensure the bucket exists before uploading
+  client.ensure_bucket_exists
+  
+  # Construct a remote path: backup/ricdisk-magic/HOSTNAME-DISKNAME-ricdisk_stats_v11.rds
+  mount_name = file.split('/')[-2] || "root"
   hostname = Socket.gethostname[/^[^.]+/]
-  command = "gsutil cp '#{file}' gs://#{$gcs_bucket}/backup/ricdisk-magic/#{hostname}-#{filename}"
-  deb("Command: #{command}")
-  puts azure("GCS upload disabled until I know if it works :) command='#{command}'")
-  backquote_execute(command, dryrun: true)
-  # if $opts[:debug] do
-  #   puts "+ Current list of files:"
-  #   ret = backquote_execute("gsutil ls -al gs://#{$gcs_bucket}/backup/ricdisk-magic/")
-  #   puts ret
-  # end
+  remote_path = "backup/ricdisk-magic/#{hostname}-#{mount_name}-#{File.basename(file)}"
+  
+  puts azure("Uploading metadata to gs://#{target_bucket}/#{remote_path}...")
+  client.upload_file(file, target_bucket, remote_path)
+  puts green("Metadata successfully uploaded to GCS.")
 end

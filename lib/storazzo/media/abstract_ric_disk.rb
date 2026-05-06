@@ -109,7 +109,7 @@ module Storazzo
 
         readable_class = self.class.to_s.split('::').last # Storazzo::Media::LocalFolder => LocalFolder
         my_keys = instance_variables # wow!
-        "S:M:#{readable_class}(path=#{path}, r/w=#{wr}, keys=#{my_keys})"
+        "S:M:#{readable_class}(path=#{path}, r/w=#{@wr}, keys=#{my_keys})"
       end
 
       def to_verbose_s

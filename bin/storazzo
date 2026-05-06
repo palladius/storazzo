@@ -67,12 +67,16 @@ module Storazzo
     map "new-folder" => :init
 
     desc "scan PATH", "Scan a removable disk or local folder and upload its metadata to GCS"
+    method_option :force, type: :boolean, default: false, desc: "Force re-scanning even if stats file exists"
+    method_option :stats_file, type: :string, desc: "Override default stats filename"
     def scan(path)
       setup_env
       puts "Scanning path: #{path}"
       
-      dir = File.expand_path(path)
-      unless File.directory?(dir)
+      is_gcs = path.start_with?("gs://")
+      dir = is_gcs ? path : File.expand_path(path)
+      
+      unless is_gcs || File.directory?(dir)
         puts "Error: #{dir} is not a valid directory."
         exit 1
       end
@@ -81,13 +85,19 @@ module Storazzo
       config.load
 
       rd = Storazzo::RicDisk.new(Storazzo::Media::AbstractRicDisk.DirFactory(dir))
-      unless rd.ok_dir?
+      
+      unless is_gcs || rd.ok_dir?
         puts "missing .yaml (storazzo.yaml) for folder #{dir}. \nRun \"storazzo new-folder #{path}\" to initialize it with a small Wizard which asks you the right Qs."
         exit 2
       end
 
-      rd.write_config_yaml_to_disk(dir)
-      rd.compute_stats_files(upload_to_gcs: true)
+      rd.write_config_yaml_to_disk(dir) unless is_gcs
+      
+      scan_opts = { upload_to_gcs: true }
+      scan_opts[:force] = options[:force] if options[:force]
+      scan_opts[:stats_file] = options[:stats_file] if options[:stats_file]
+      
+      rd.compute_stats_files(scan_opts)
 
       puts "Scan completed for #{dir}."
     end
