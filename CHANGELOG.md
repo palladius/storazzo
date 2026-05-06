@@ -1,3 +1,4 @@
+2026-05-03 0.8.0 MAJOR: Refactored stats engine into native Ruby `FileService`, implemented R/O directory fallback for metadata, and fixed all BDD tests.
 2026-04-29 0.7.6 Improved UI/UX: cleaned up `storazzo show` output with emojis and colors, enhanced verbose output readability, and updated User Manual.
 2026-04-27 0.7.2 Set 3D isometric logo as the official Storazzo logo 💎
 2026-04-27 0.7.1 Added official logo and variations in assets/ 🎨
