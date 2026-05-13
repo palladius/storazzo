@@ -102,6 +102,26 @@ module Storazzo
       puts "Scan completed for #{dir}."
     end
 
+    desc "ingest FILE [DISK_NAME]", "Ingest a .rds stats file into the local SQLite index"
+    def ingest(file, disk_name = nil)
+      setup_env
+      require 'storazzo/search_engine'
+      
+      full_path = File.expand_path(file)
+      unless File.exist?(full_path)
+        puts "Error: File #{full_path} does not exist."
+        exit 1
+      end
+      
+      # If disk_name is not provided, try to infer it from the filename
+      disk_name ||= File.basename(file, '.rds').gsub('-ricdisk_stats_v11', '').gsub('__', '/')
+      
+      puts "Ingesting #{file} for disk '#{disk_name}'..."
+      engine = Storazzo::SearchEngine.new
+      engine.ingest_stats_file(full_path, disk_name)
+      puts "Ingestion complete."
+    end
+
     desc "search QUERY", "Search for a keyword across all indexed disks via SQLite DB"
     method_option :skip_sync, type: :boolean, default: false, desc: 'Skip syncing from GCS'
     def search(query)
