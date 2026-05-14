@@ -13,7 +13,7 @@ module Storazzo
       include Storazzo::Common
 
       # Using the discovered model name
-      MODEL_NAME = 'gemini-2.5-flash'
+      MODEL_NAME = 'gemini-1.5-flash'
       API_URL = "https://generativelanguage.googleapis.com/v1/models/#{MODEL_NAME}:generateContent"
 
       def initialize(api_key = nil)

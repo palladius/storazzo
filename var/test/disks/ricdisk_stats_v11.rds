@@ -1,19 +1,10 @@
-# [print_stats_and_md5_for_directory_from_cli] v1.1b_220805_F] DIR to explore (make sure you glob also): .
-[file_v1.2] ______________NONE______________ 040775 d 2026-01-18T09:32:25+01:00   10000 [inode/directory] ./disk01-empty
-[file_v1.2] ______________NONE______________ 040775 d 2026-01-18T09:32:25+01:00   10000 [inode/directory] ./disk02-full
-[file_v1.2] ad014ef7702601de45b11ef1cecc0a32 100664 f 2026-01-18T09:32:25+01:00     541 [text/plain] ./disk02-full/Rakefile
-[file_v1.2] d41d8cd98f00b204e9800998ecf8427e 100664 f 2026-01-18T09:32:25+01:00       0 [inode/x-empty] ./disk02-full/fake file.touch
-[file_v1.2] f344106fac7926960912486256a56af9 100664 f 2026-01-18T09:32:25+01:00     454 [text/plain] ./disk02-full/ls.txt
-[file_v1.2] ff63087d9cdc82fec924ee24d5e93843 100664 f 2026-04-27T12:19:52+02:00    1136 [text/plain] ./ricdisk_stats_v11.rds
-# [print_stats_and_md5_for_directory_from_cli] v1.1b_220805_F] DIR to explore (make sure you glob also): ./disk01-empty
-[file_v1.2] d41d8cd98f00b204e9800998ecf8427e 100664 f 2026-01-18T09:32:25+01:00       0 [inode/x-empty] ./disk01-empty/.keep
-[file_v1.2] f8382af52d00023dc4ee9e9029b367b9 100664 f 2026-01-18T09:32:25+01:00    1022 [text/plain] ./disk01-empty/.ricdisk
-# [print_stats_and_md5_for_directory_from_cli] v1.1b_220805_F] DIR to explore (make sure you glob also): ./disk02-full
-[file_v1.2] ad014ef7702601de45b11ef1cecc0a32 100664 f 2026-01-18T09:32:25+01:00     541 [text/plain] ./disk02-full/Rakefile
-[file_v1.2] d41d8cd98f00b204e9800998ecf8427e 100664 f 2026-01-18T09:32:25+01:00       0 [inode/x-empty] ./disk02-full/fake file.touch
-[file_v1.2] f344106fac7926960912486256a56af9 100664 f 2026-01-18T09:32:25+01:00     454 [text/plain] ./disk02-full/ls.txt
-[file_v1.2] d41d8cd98f00b204e9800998ecf8427e 100664 f 2026-01-18T09:32:25+01:00       0 [inode/x-empty] ./disk02-full/.ricdisk
-[file_v1.2] d41d8cd98f00b204e9800998ecf8427e 100664 f 2026-01-18T09:32:25+01:00       0 [inode/x-empty] ./disk02-full/fake file.touch
-[file_v1.2] f344106fac7926960912486256a56af9 100664 f 2026-01-18T09:32:25+01:00     454 [text/plain] ./disk02-full/ls.txt
-[file_v1.2] ad014ef7702601de45b11ef1cecc0a32 100664 f 2026-01-18T09:32:25+01:00     541 [text/plain] ./disk02-full/Rakefile
-# [stats-with-md5] Time taken for processing 15 files: 0.171 seconds
+# Storazzo Stats File v1.2
+# Created on: 2026-05-13 09:07:13 +0200
+# Reason: File older than 7 days. Indeed: 15
+[file_v1.2] d41d8cd98f00b204e9800998ecf8427e 100664 f 2026-01-18T09:32:25+01:00          0 [inode/x-empty] /home/riccardo/git/storazzo/var/test/disks/disk01-empty/.keep
+[file_v1.2] f8382af52d00023dc4ee9e9029b367b9 100664 f 2026-01-18T09:32:25+01:00        530 [text/plain] /home/riccardo/git/storazzo/var/test/disks/disk01-empty/.ricdisk
+[file_v1.2] d41d8cd98f00b204e9800998ecf8427e 100664 f 2026-01-18T09:32:25+01:00          0 [inode/x-empty] /home/riccardo/git/storazzo/var/test/disks/disk02-full/.ricdisk
+[file_v1.2] ad014ef7702601de45b11ef1cecc0a32 100664 f 2026-01-18T09:32:25+01:00        353 [text/plain] /home/riccardo/git/storazzo/var/test/disks/disk02-full/Rakefile
+[file_v1.2] d41d8cd98f00b204e9800998ecf8427e 100664 f 2026-01-18T09:32:25+01:00          0 [inode/x-empty] /home/riccardo/git/storazzo/var/test/disks/disk02-full/fake file.touch
+[file_v1.2] f344106fac7926960912486256a56af9 100664 f 2026-01-18T09:32:25+01:00        300 [text/plain] /home/riccardo/git/storazzo/var/test/disks/disk02-full/ls.txt
+[file_v1.2] 9f31912f2c4c0e5915f63cfbcde24b6a 100664 f 2026-05-03T19:47:00+02:00        621 [text/x-yaml] /home/riccardo/git/storazzo/var/test/disks/storazzo.yaml

@@ -1,17 +1,30 @@
 ---
-llm_description: This disk appears to be a small utility or development drive containing
-  two main directories; one with development-related files (Rakefile, ls.txt) and
-  another with placeholder files. A statistical data file (.rds) in the root suggests
-  it might also store disk analysis results or configurations.
-llm_storage_type: Utility Drive
-llm_categorization: Development Tools, System Utilities, Statistical Data
-llm_tags:
-- development
-- utility
-- stats
-- Rakefile
-- placeholder_files
-- ricdisk
+llm_description: |
+  Error generating summary: Gemini API Error: 400 Bad Request - {
+    "error": {
+      "code": 400,
+      "message": "API key not valid. Please pass a valid API key.",
+      "status": "INVALID_ARGUMENT",
+      "details": [
+        {
+          "@type": "type.googleapis.com/google.rpc.ErrorInfo",
+          "reason": "API_KEY_INVALID",
+          "domain": "googleapis.com",
+          "metadata": {
+            "service": "generativelanguage.googleapis.com"
+          }
+        },
+        {
+          "@type": "type.googleapis.com/google.rpc.LocalizedMessage",
+          "locale": "en-US",
+          "message": "API key not valid. Please pass a valid API key."
+        }
+      ]
+    }
+  }
+llm_storage_type: Unknown
+llm_categorization: Unknown
+llm_tags: []
 disk_uuid: 201fa6ad-2933-4c09-980f-b17165160531
 name: disks
-last_summarized_at: '2026-05-03T19:47:00+02:00'
+last_summarized_at: '2026-05-13T09:07:13+02:00'

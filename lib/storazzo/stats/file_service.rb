@@ -3,6 +3,7 @@
 require 'digest/md5'
 require 'socket'
 require 'date'
+require 'mime/types'
 
 module Storazzo
   module Stats
@@ -26,9 +27,15 @@ module Storazzo
         # Format mode as 6-digit octal (e.g., 100644)
         mode = sprintf('%06o', stats.mode)
         
-        # Get MIME type using the `file` command (standard in Linux/Mac)
-        content_type = `file --mime-type -b '#{file_path}' 2>/dev/null`.chomp
-        content_type = "application/octet-stream" if content_type.empty?
+        # Performance Optimization: Use native Ruby mime-types first
+        content_type = MIME::Types.type_for(file_path).first&.content_type
+        
+        # System Fallback: if native detection fails, use the `file` command
+        if content_type.nil?
+          content_type = `file --mime-type -b '#{file_path}' 2>/dev/null`.chomp
+        end
+        
+        content_type = "application/octet-stream" if content_type.nil? || content_type.empty?
 
         {
           entity_type: ENTITY_TYPE,

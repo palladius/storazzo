@@ -12,6 +12,8 @@ gem 'ruby-lsp', '~> 0.0.4', group: :development
 # gem 'pry'
 gem 'pry', group: :development
 gem 'minitest', group: :development
+gem 'mime-types', group: :development
+gem 'marcel', group: :development
 
 gem 'sqlite3'
 gem 'thor'
